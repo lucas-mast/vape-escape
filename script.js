@@ -458,8 +458,19 @@
     const character = speler.character || {};
     const kleur = KARAKTER_KLEUREN.includes(character.kleur) ? character.kleur : "#39ff14";
     const accessoire = KARAKTER_ACCESSOIRES.includes(character.accessoire) ? character.accessoire : "geen";
-    return '<span class="dashboard-bink" style="--bink-kleur:' + kleur + '" aria-label="Bink-karakter"></span>' +
-      '<span class="dashboard-bink-info"><strong>' + escapeHtml(character.naam || "Bink") + '</strong><small>' + escapeHtml(accessoire) + '</small></span>';
+    const effect = KARAKTER_EFFECTEN.includes(character.effect) ? character.effect : "neon";
+    const karakterSvg = '<svg class="dashboard-bink" viewBox="0 0 160 170" role="img" aria-label="Bink van ' + escapeHtml(speler.naam) + '">' +
+      '<ellipse cx="80" cy="157" rx="42" ry="7" fill="rgba(57,255,20,.16)"/>' +
+      '<path d="M49 127 Q41 148 31 151 Q21 160 44 162 Q65 160 69 139Z" fill="' + kleur + '"/>' +
+      '<path d="M93 139 Q99 160 122 162 Q143 158 129 151 Q115 149 111 126Z" fill="' + kleur + '"/>' +
+      '<path d="M80 39 C111 39 131 60 131 101 C131 137 111 151 80 151 C49 151 29 137 29 101 C29 60 49 39 80 39Z" fill="' + kleur + '" stroke="#000" stroke-width="4"/>' +
+      tekenAccessoireSvg(accessoire, kleur) +
+      '<ellipse cx="63" cy="91" rx="5" ry="7" fill="#000"/><ellipse cx="98" cy="91" rx="5" ry="7" fill="#000"/>' +
+      '<path d="M64 111 Q80 126 96 111" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M48 69 Q55 59 65 63" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="5" stroke-linecap="round"/>' +
+      '</svg>';
+    return '<span class="dashboard-bink-wrap" style="--bink-kleur:' + kleur + '">' + karakterSvg + '</span>' +
+      '<span class="dashboard-bink-info"><strong>' + escapeHtml(character.naam || "Bink") + '</strong><small>' + escapeHtml(accessoire) + ' · ' + escapeHtml(effect) + '</small></span>';
   }
 
   function renderSpelerRij(speler, actief) {
@@ -1170,27 +1181,6 @@
   function startRunnerLoop() {
     if(!runner.actief||runner.frame!==null)return;
     runner.vorigeTijd=0;werkRunnerHudBij();runner.frame=window.requestAnimationFrame(stapRunner);
-  }
-
-  function speelBinkTransitie() {
-    const voorbeeld=document.getElementById("runner-preview-beeld"),paneel=document.querySelector(".runner-preview");
-    if(!voorbeeld||!paneel)return;
-    voorbeeld.classList.remove("bink-spring");void voorbeeld.offsetWidth;voorbeeld.classList.add("bink-spring");
-    for(let i=0;i<5;i++){
-      const wolk=document.createElement("span");wolk.className="bink-wolk";
-      wolk.style.left=(18+Math.random()*64)+"%";wolk.style.setProperty("--wolk-verticaal",(48+Math.random()*28)+"%");
-      wolk.style.animationDelay=(Math.random()*.12)+"s";paneel.appendChild(wolk);
-      window.setTimeout(()=>wolk.remove(),900);
-    }
-  }
-
-  function werkKarakterVoorbeeldBij() {
-    const beeld=document.getElementById("runner-preview-beeld"),naam=document.getElementById("runner-preview-naam");
-    if(beeld)beeld.innerHTML=karakterVoorbeeldSvg();if(naam)naam.textContent=voortgang.character.naam;
-    document.querySelectorAll("[data-action='runner-kleur']").forEach(knop=>{const ok=knop.dataset.kleur===voortgang.character.kleur;knop.classList.toggle("gekozen",ok);knop.setAttribute("aria-pressed",String(ok));});
-    document.querySelectorAll("[data-action='runner-accessoire']").forEach(knop=>{const ok=knop.dataset.accessoire===voortgang.character.accessoire;knop.classList.toggle("gekozen",ok);knop.setAttribute("aria-pressed",String(ok));});
-    document.querySelectorAll("[data-action='runner-effect']").forEach(knop=>{const ok=knop.dataset.effect===(voortgang.character.effect||"neon");knop.classList.toggle("gekozen",ok);knop.setAttribute("aria-pressed",String(ok));});
-    speelBinkTransitie();
   }
 
   function render() {
