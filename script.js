@@ -526,7 +526,7 @@
       "Gebruik de feiten uit de vorige niveaus. De aanwijzingen zijn genoeg om de code te vinden."
     ];
     return '<aside class="spel-zijbalk">' +
-      '<div class="paneel zij-kaart"><span class="mini-label">JOUW SCORE</span><div class="zij-score"><span>Totaal</span><strong>' + score() + ' / 170</strong></div><div class="zij-score"><span>Goed beantwoord</span><strong>' + aantalGoed() + ' / 17</strong></div></div>' +
+      '<div class="paneel zij-kaart"><span class="mini-label">JOUW SCORE</span><div class="zij-score"><span>Totaal</span><strong>' + score() + ' / ' + MAX_SCORE + '</strong></div><div class="zij-score"><span>Goed beantwoord</span><strong>' + aantalGoed() + ' / 17</strong></div></div>' +
       '<div class="paneel zij-kaart"><span class="mini-label">MISSIEHINT</span><h3 style="margin-top:12px">Blijf scherp</h3><p>' + tips[index] + '</p></div>' +
       '<div class="paneel zij-kaart"><div class="level-tips"><span>✓</span><p>Na je keuze verschijnt meteen een uitleg. Lees die goed: je hebt de informatie nodig voor de laatste code.</p></div></div>' +
       '</aside>';
