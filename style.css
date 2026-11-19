@@ -573,7 +573,7 @@ body.onderhoud-actief .app-inhoud {
   --blauw: #3080ff;
   --rood: #fb2c36;
   --geel: #edb200;
-  --oranje: #fe6e00;
+  --oranje: #39ff14;
   --schaduw: 0 4px 12px rgba(0,0,0,.08);
   background: var(--achtergrond);
 }
@@ -583,7 +583,7 @@ html, body {
 }
 body {
   background:
-    radial-gradient(ellipse at 82% 0%, rgba(254,110,0,.045), transparent 35%),
+    radial-gradient(ellipse at 82% 0%, rgba(57,255,20,.045), transparent 35%),
     #fcfaf7;
 }
 .achtergrond-licht { display: none; }
@@ -610,11 +610,11 @@ body {
   backdrop-filter: blur(12px);
 }
 .merk-icoon {
-  border-color: rgba(254,110,0,.55);
-  background: rgba(254,110,0,.16);
+  border-color: rgba(57,255,20,.55);
+  background: rgba(57,255,20,.16);
 }
-.merk-icoon span { background: #fe6e00; box-shadow: 0 0 10px rgba(254,110,0,.55); }
-.merk-tekst span { color: #ffb74d; }
+.merk-icoon span { background: #39ff14; box-shadow: 0 0 10px rgba(57,255,20,.55); }
+.merk-tekst span { color: #a7ff83; }
 .status-label {
   border-color: rgba(255,255,255,.18);
   color: rgba(255,255,255,.88);
@@ -627,8 +627,8 @@ body {
   background: rgba(255,255,255,.08);
 }
 .icoon-knop:hover {
-  border-color: rgba(254,110,0,.8);
-  background: rgba(254,110,0,.2);
+  border-color: rgba(57,255,20,.8);
+  background: rgba(57,255,20,.2);
 }
 .app-inhoud { color: #423d38; }
 .voettekst {
@@ -637,12 +637,12 @@ body {
 }
 .bronregel > span { color: #797067; }
 .bronregel a { color: #665d54; }
-.bronregel a:hover { color: #fe6e00; }
+.bronregel a:hover { color: #39ff14; }
 .voettekst-klein { color: #8b837a; }
-.bovenlabel { color: #fe6e00; }
-.bovenlabel::before { background: #fe6e00; box-shadow: none; }
+.bovenlabel { color: #39ff14; }
+.bovenlabel::before { background: #39ff14; box-shadow: none; }
 .titel-groot, .titel-middel, .vraag-titel { color: #423d38; }
-.titel-groot .accent, .titel-middel .accent { color: #fe6e00; text-shadow: none; }
+.titel-groot .accent, .titel-middel .accent { color: #39ff14; text-shadow: none; }
 .subtitel { color: #797067; }
 .knop {
   min-height: 40px;
@@ -651,12 +651,12 @@ body {
 }
 .knop-primair {
   color: #fff;
-  background: #fe6e00;
-  box-shadow: 0 2px 5px rgba(254,110,0,.18);
+  background: #39ff14;
+  box-shadow: 0 2px 5px rgba(57,255,20,.18);
 }
 .knop-primair:hover:not(:disabled) {
-  background: #ff6b00;
-  box-shadow: 0 4px 12px rgba(254,110,0,.22);
+  background: #39ff14;
+  box-shadow: 0 4px 12px rgba(57,255,20,.22);
 }
 .knop-secundair {
   color: #423d38;
@@ -664,12 +664,12 @@ body {
   background: rgba(255,255,255,.88);
 }
 .knop-secundair:hover:not(:disabled) {
-  border-color: #fe6e00;
-  color: #fe6e00;
+  border-color: #39ff14;
+  color: #39ff14;
   background: #fff7ef;
 }
 .tekstknop { color: #797067; }
-.tekstknop:hover { color: #fe6e00; }
+.tekstknop:hover { color: #39ff14; }
 .missie-kaart {
   border-color: #e3e0dd;
   border-radius: 12px;
@@ -677,25 +677,25 @@ body {
   background: linear-gradient(145deg, #fff, #f3f4f6);
   box-shadow: 0 4px 12px rgba(0,0,0,.08);
 }
-.missie-kaart::before { background: rgba(254,110,0,.13); }
+.missie-kaart::before { background: rgba(57,255,20,.13); }
 .missie-kaart::after { background: rgba(0,199,88,.08); }
 .kaart-kop { color: #797067; }
 .kaart-code {
-  color: #fe6e00;
-  border-color: rgba(254,110,0,.25);
-  background: rgba(254,110,0,.07);
+  color: #39ff14;
+  border-color: rgba(57,255,20,.25);
+  background: rgba(57,255,20,.07);
 }
 .sluitsymbool {
-  border-color: rgba(254,110,0,.25);
-  background: radial-gradient(circle, rgba(254,110,0,.1), rgba(254,110,0,.02) 66%, transparent 67%);
-  box-shadow: 0 0 0 12px rgba(254,110,0,.025), 0 0 0 26px rgba(254,110,0,.018), inset 0 0 55px rgba(254,110,0,.04);
+  border-color: rgba(57,255,20,.25);
+  background: radial-gradient(circle, rgba(57,255,20,.1), rgba(57,255,20,.02) 66%, transparent 67%);
+  box-shadow: 0 0 0 12px rgba(57,255,20,.025), 0 0 0 26px rgba(57,255,20,.018), inset 0 0 55px rgba(57,255,20,.04);
 }
-.sluitsymbool svg { stroke: #fe6e00; filter: none; }
-.sluitsymbool .ring { border-color: rgba(254,110,0,.25); }
-.sluitsymbool .ring::before { background: #fe6e00; box-shadow: 0 0 9px #fe6e00; }
+.sluitsymbool svg { stroke: #39ff14; filter: none; }
+.sluitsymbool .ring { border-color: rgba(57,255,20,.25); }
+.sluitsymbool .ring::before { background: #39ff14; box-shadow: 0 0 9px #39ff14; }
 .kaart-onder strong { color: #423d38; }
 .kaart-onder span { color: #797067; }
-.kaart-stippen i:first-child { background: #fe6e00; box-shadow: 0 0 8px rgba(254,110,0,.35); }
+.kaart-stippen i:first-child { background: #39ff14; box-shadow: 0 0 8px rgba(57,255,20,.35); }
 .paneel {
   border-color: #e3e0dd;
   border-radius: 12px;
@@ -710,8 +710,8 @@ body {
   background: #fff;
 }
 .uitleg-nummer {
-  color: #fe6e00;
-  background: rgba(254,110,0,.09);
+  color: #39ff14;
+  background: rgba(57,255,20,.09);
 }
 .uitleg-kaart p, .land-kaart p { color: #797067; }
 .voortgang-paneel {
@@ -721,10 +721,10 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
 .voortgang-boven { color: #797067; }
-.voortgang-boven strong { color: #fe6e00; }
+.voortgang-boven strong { color: #39ff14; }
 .voortgang-balk { background: #edebe9; }
 .voortgang-vulling {
-  background: linear-gradient(90deg, #fe6e00, #ffb74d);
+  background: linear-gradient(90deg, #39ff14, #a7ff83);
   box-shadow: none;
 }
 .score-chip { border-left-color: #e3e0dd; }
@@ -737,17 +737,17 @@ body {
   background: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.level-kaart.beschikbaar:hover { border-color: rgba(254,110,0,.55); box-shadow: 0 4px 12px rgba(0,0,0,.09); }
+.level-kaart.beschikbaar:hover { border-color: rgba(57,255,20,.55); box-shadow: 0 4px 12px rgba(0,0,0,.09); }
 .level-kaart.afgerond { border-color: rgba(0,199,88,.28); background: #f7fcf8; }
 .level-kaart.vergrendeld { background: #f3f4f6; }
-.level-nummer { color: #fe6e00; }
+.level-nummer { color: #39ff14; }
 .level-status { color: #797067; }
 .level-kaart h3 { color: #423d38; }
 .level-kaart p { color: #797067; }
-.level-kaart .level-actie { color: #fe6e00; }
+.level-kaart .level-actie { color: #39ff14; }
 .level-kaart.afgerond .level-actie { color: #008b43; }
 .level-kaart.vergrendeld .level-actie { color: #797067; }
-.land-kaart .land-naam { color: #fe6e00; }
+.land-kaart .land-naam { color: #39ff14; }
 .wet-notitie { color: #8a8177; }
 .mini-label { color: #797067; }
 .spel-voortgang strong { color: #423d38; }
@@ -757,8 +757,8 @@ body {
   border-radius: 12px;
   background: #fff;
 }
-.vraag-label { color: #fe6e00; }
-.vraag-label::before { background: #fe6e00; box-shadow: none; }
+.vraag-label { color: #39ff14; }
+.vraag-label::before { background: #39ff14; box-shadow: none; }
 .vraag-context { color: #797067; }
 .antwoord-knop {
   border-color: #e3e0dd;
@@ -767,7 +767,7 @@ body {
   background: #fff;
 }
 .antwoord-knop:hover:not(:disabled) {
-  border-color: rgba(254,110,0,.5);
+  border-color: rgba(57,255,20,.5);
   background: #fff8f1;
 }
 .antwoord-letter {
@@ -809,32 +809,32 @@ body {
 .zij-kaart p { color: #797067; }
 .zij-score { border-top-color: #e3e0dd; }
 .zij-score span { color: #797067; }
-.zij-score strong { color: #fe6e00; }
-.level-tips span { color: #fe6e00; }
+.zij-score strong { color: #39ff14; }
+.level-tips span { color: #39ff14; }
 .code-cijfers span {
-  border-color: rgba(254,110,0,.25);
-  color: #fe6e00;
-  background: rgba(254,110,0,.06);
+  border-color: rgba(57,255,20,.25);
+  color: #39ff14;
+  background: rgba(57,255,20,.06);
 }
 .code-aanwijzing {
   border-color: #e3e0dd;
   color: #665d54;
   background: #f3f4f6;
 }
-.code-aanwijzing b { color: #fe6e00; background: rgba(254,110,0,.1); }
+.code-aanwijzing b { color: #39ff14; background: rgba(57,255,20,.1); }
 .code-invoer {
   border-color: #d1d5dc;
   color: #423d38;
   background: #fff;
 }
-.code-invoer:focus { border-color: #fe6e00; box-shadow: 0 0 0 3px rgba(254,110,0,.1); }
+.code-invoer:focus { border-color: #39ff14; box-shadow: 0 0 0 3px rgba(57,255,20,.1); }
 .code-melding { color: #fb2c36; }
 .code-melding.goed-tekst { color: #008b43; }
 .afrond-kaart { background: #fff; }
 .afrond-embleem {
-  border-color: rgba(254,110,0,.25);
-  color: #fe6e00;
-  background: rgba(254,110,0,.07);
+  border-color: rgba(57,255,20,.25);
+  color: #39ff14;
+  background: rgba(57,255,20,.07);
   box-shadow: none;
 }
 .afrond-kaart > p { color: #797067; }
@@ -842,24 +842,24 @@ body {
   border-color: #e3e0dd;
   background: #f3f4f6;
 }
-.statistiek strong { color: #fe6e00; }
+.statistiek strong { color: #39ff14; }
 .statistiek span { color: #797067; }
 .eindboodschap {
-  border-left-color: #fe6e00;
+  border-left-color: #39ff14;
   color: #423d38;
   background: #fff7ef;
 }
 .mascotte-bubbel {
-  border-color: rgba(254,110,0,.2);
+  border-color: rgba(57,255,20,.2);
   color: #423d38;
   background: #fff7ef;
 }
 .mascotte-bubbel::before {
-  border-left-color: rgba(254,110,0,.2);
-  border-bottom-color: rgba(254,110,0,.2);
+  border-left-color: rgba(57,255,20,.2);
+  border-bottom-color: rgba(57,255,20,.2);
   background: #fff7ef;
 }
-.mascotte-bubbel strong { color: #fe6e00; }
+.mascotte-bubbel strong { color: #39ff14; }
 .mascotte-lichaam { fill: #00c758; stroke: #008b43; }
 .mascotte-arm, .mascotte-voetje { fill: #00c758; }
 .mascotte-buik { fill: #dcfce7; }
@@ -910,7 +910,7 @@ body {
   background: #fff;
   outline: none;
 }
-.runner-invoer:focus { border-color: #fe6e00; box-shadow: 0 0 0 3px rgba(254,110,0,.1); }
+.runner-invoer:focus { border-color: #39ff14; box-shadow: 0 0 0 3px rgba(57,255,20,.1); }
 .runner-kleuren { display: flex; gap: 10px; flex-wrap: wrap; }
 .runner-kleur {
   width: 35px;
@@ -931,7 +931,7 @@ body {
   background: var(--karakterkleur);
 }
 .runner-kleur:hover { transform: translateY(-2px); }
-.runner-kleur.gekozen { border: 2px solid #fe6e00; box-shadow: 0 0 0 3px rgba(254,110,0,.1); }
+.runner-kleur.gekozen { border: 2px solid #39ff14; box-shadow: 0 0 0 3px rgba(57,255,20,.1); }
 .runner-accessoires { display: flex; flex-wrap: wrap; gap: 7px; }
 .runner-accessoire {
   min-height: 35px;
@@ -945,8 +945,8 @@ body {
   cursor: pointer;
 }
 .runner-accessoire.gekozen {
-  border-color: #fe6e00;
-  color: #c75300;
+  border-color: #39ff14;
+  color: #39ff14;
   background: #fff7ef;
 }
 .runner-uitleg-kolom { display: flex; flex-direction: column; gap: 14px; }
@@ -960,7 +960,7 @@ body {
   background: #fcfaf7;
   text-align: center;
 }
-.runner-statistieken strong { display: block; color: #fe6e00; font-size: 22px; }
+.runner-statistieken strong { display: block; color: #39ff14; font-size: 22px; }
 .runner-statistieken span { display: block; margin-top: 4px; color: #797067; font-size: 8px; font-weight: 800; letter-spacing: .08em; }
 .runner-besturing-regel {
   display: flex;
@@ -997,7 +997,7 @@ body {
   color: #797067;
   font-size: 10px;
 }
-.runner-record strong { color: #fe6e00; }
+.runner-record strong { color: #39ff14; }
 .runner-hud {
   display: flex;
   align-items: center;
@@ -1051,9 +1051,9 @@ body {
   flex: 1;
   max-width: 220px;
   min-height: 48px;
-  border: 1px solid rgba(254,110,0,.25);
+  border: 1px solid rgba(57,255,20,.25);
   border-radius: 8px;
-  color: #c75300;
+  color: #39ff14;
   background: #fff7ef;
   font-size: 11px;
   font-weight: 900;
@@ -1066,7 +1066,7 @@ body {
 .runner-spelhint { margin-top: 10px; text-align: center; }
 .runner-verlies { color: #fb2c36; background: #fff2f2; border-color: rgba(251,44,54,.22); }
 .runner-bonus-regel { color: #797067; font-size: 11px; }
-.runner-bonus-regel strong { color: #fe6e00; }
+.runner-bonus-regel strong { color: #39ff14; }
 
 @media (max-width: 680px) {
   .site-shell { width: calc(100% - 28px); }
@@ -1092,7 +1092,7 @@ body {
 body.onderhoud-actief {
   color: #423d38;
   background:
-    radial-gradient(ellipse at 74% 42%, rgba(254,110,0,.09), transparent 36%),
+    radial-gradient(ellipse at 74% 42%, rgba(57,255,20,.09), transparent 36%),
     #fcfaf7;
 }
 body.onderhoud-actief .onderhoud-paneel {
@@ -1103,33 +1103,396 @@ body.onderhoud-actief .onderhoud-paneel {
   box-shadow: 0 4px 12px rgba(0,0,0,.08);
 }
 body.onderhoud-actief .onderhoud-paneel::before {
-  background: linear-gradient(115deg, transparent 15%, rgba(254,110,0,.035) 48%, transparent 65%);
+  background: linear-gradient(115deg, transparent 15%, rgba(57,255,20,.035) 48%, transparent 65%);
 }
 body.onderhoud-actief .onderhoud-badge {
-  border-color: rgba(254,110,0,.2);
-  color: #c75300;
-  background: rgba(254,110,0,.07);
+  border-color: rgba(57,255,20,.2);
+  color: #39ff14;
+  background: rgba(57,255,20,.07);
 }
 body.onderhoud-actief .onderhoud-badge .status-punt,
 body.onderhoud-actief .onderhoud-status .status-punt {
-  background: #fe6e00;
-  box-shadow: 0 0 10px rgba(254,110,0,.35);
+  background: #39ff14;
+  box-shadow: 0 0 10px rgba(57,255,20,.35);
 }
 body.onderhoud-actief .onderhoud-tekst .titel-groot { color: #423d38; }
-body.onderhoud-actief .onderhoud-tekst .titel-groot .accent { color: #fe6e00; }
+body.onderhoud-actief .onderhoud-tekst .titel-groot .accent { color: #39ff14; }
 body.onderhoud-actief .onderhoud-tekst .subtitel { color: #797067; }
 body.onderhoud-actief .onderhoud-status {
-  border-color: rgba(254,110,0,.18);
+  border-color: rgba(57,255,20,.18);
   color: #8a4b1e;
-  background: rgba(254,110,0,.05);
+  background: rgba(57,255,20,.05);
 }
 body.onderhoud-actief .onderhoud-licht {
-  background: rgba(254,110,0,.14);
+  background: rgba(57,255,20,.14);
 }
 body.onderhoud-actief .onderhoud-bubbel {
-  border-color: rgba(254,110,0,.22);
+  border-color: rgba(57,255,20,.22);
   color: #423d38;
   background: #fff7ef;
 }
-body.onderhoud-actief .onderhoud-bubbel strong { color: #fe6e00; }
+body.onderhoud-actief .onderhoud-bubbel strong { color: #39ff14; }
 body.onderhoud-actief .onderhoud-voet { color: #797067; }
+
+
+/* NEON BLACK THEME — zwart als basis, neon als accent */
+:root {
+  color-scheme: dark;
+  --achtergrond: #000000;
+  --paneel: rgba(3, 10, 3, .96);
+  --paneel-licht: rgba(6, 18, 6, .98);
+  --rand: rgba(57, 255, 20, .34);
+  --tekst: #efffed;
+  --gedempt: #a5b89f;
+  --groen: #39ff14;
+  --groen-donker: #063b08;
+  --paars: #ff00e5;
+  --blauw: #00f5ff;
+  --rood: #ff1744;
+  --geel: #faff00;
+  --schaduw: 0 0 28px rgba(57, 255, 20, .12);
+}
+
+html,
+body {
+  background: #000000 !important;
+}
+
+body.spel-toegankelijk {
+  color: #efffed !important;
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(57,255,20,.12), transparent 48%),
+    radial-gradient(ellipse at 100% 65%, rgba(0,245,255,.045), transparent 34%),
+    #000000 !important;
+}
+
+body.onderhoud-actief {
+  color: #efffed !important;
+  background:
+    radial-gradient(ellipse at 72% 45%, rgba(57,255,20,.11), transparent 38%),
+    #000000 !important;
+}
+
+body.spel-toegankelijk .app-inhoud,
+body.onderhoud-actief .app-inhoud {
+  color: #efffed !important;
+}
+
+body.spel-toegankelijk .bovenbalk,
+body.spel-toegankelijk .voettekst {
+  border-color: rgba(57,255,20,.23) !important;
+}
+
+body.spel-toegankelijk .voettekst,
+body.spel-toegankelijk .voettekst-klein,
+body.spel-toegankelijk .bronregel > span,
+body.spel-toegankelijk .bronregel a {
+  color: #9dbb98 !important;
+}
+
+body.spel-toegankelijk .bronregel a:hover,
+body.spel-toegankelijk .tekstknop:hover {
+  color: #39ff14 !important;
+  text-shadow: 0 0 10px rgba(57,255,20,.75);
+}
+
+body.spel-toegankelijk .titel-groot,
+body.spel-toegankelijk .titel-middel,
+body.spel-toegankelijk .vraag-titel,
+body.spel-toegankelijk .level-kaart h3,
+body.spel-toegankelijk .kaart-onder strong,
+body.spel-toegankelijk .zij-kaart h3,
+body.spel-toegankelijk .runner-uitleg h2 {
+  color: #efffed !important;
+  text-shadow: 0 0 12px rgba(57,255,20,.16);
+}
+
+body.spel-toegankelijk .subtitel,
+body.spel-toegankelijk .level-kaart p,
+body.spel-toegankelijk .land-kaart p,
+body.spel-toegankelijk .vraag-context,
+body.spel-toegankelijk .zij-kaart p,
+body.spel-toegankelijk .runner-uitleg p,
+body.spel-toegankelijk .runner-spelhint,
+body.spel-toegankelijk .runner-record,
+body.spel-toegankelijk .runner-besturing-regel {
+  color: #a5b89f !important;
+}
+
+body.spel-toegankelijk .bovenlabel,
+body.spel-toegankelijk .bovenlabel::before,
+body.spel-toegankelijk .titel-groot .accent,
+body.spel-toegankelijk .titel-middel .accent,
+body.spel-toegankelijk .level-nummer,
+body.spel-toegankelijk .level-kaart .level-actie,
+body.spel-toegankelijk .land-kaart .land-naam,
+body.spel-toegankelijk .voortgang-boven strong,
+body.spel-toegankelijk .zij-score strong,
+body.spel-toegankelijk .level-tips span,
+body.spel-toegankelijk .statistiek strong,
+body.spel-toegankelijk .runner-statistieken strong,
+body.spel-toegankelijk .runner-record strong,
+body.spel-toegankelijk .runner-bonus-regel strong {
+  color: #39ff14 !important;
+  text-shadow: 0 0 7px rgba(57,255,20,.65), 0 0 18px rgba(57,255,20,.28);
+}
+
+body.spel-toegankelijk .paneel,
+body.spel-toegankelijk .missie-kaart,
+body.spel-toegankelijk .uitleg-kaart,
+body.spel-toegankelijk .land-kaart,
+body.spel-toegankelijk .voortgang-paneel,
+body.spel-toegankelijk .level-kaart,
+body.spel-toegankelijk .vraag-paneel,
+body.spel-toegankelijk .zij-kaart,
+body.spel-toegankelijk .feedback,
+body.spel-toegankelijk .afrond-kaart,
+body.spel-toegankelijk .statistiek,
+body.spel-toegankelijk .eindboodschap,
+body.spel-toegankelijk .runner-preview,
+body.spel-toegankelijk .runner-hud,
+body.spel-toegankelijk .runner-speelveld,
+body.spel-toegankelijk .runner-canvas-omhulsel,
+body.spel-toegankelijk .runner-statistieken > div,
+body.spel-toegankelijk .runner-invoer,
+body.spel-toegankelijk .runner-accessoire,
+body.spel-toegankelijk .runner-kleur,
+body.spel-toegankelijk .code-aanwijzing,
+body.spel-toegankelijk .code-invoer,
+body.spel-toegankelijk .antwoord-knop,
+body.spel-toegankelijk .mascotte-bubbel,
+body.onderhoud-actief .onderhoud-paneel,
+body.onderhoud-actief .onderhoud-bubbel {
+  color: #efffed !important;
+  border-color: rgba(57,255,20,.32) !important;
+  background: linear-gradient(145deg, rgba(6,16,6,.98), rgba(0,0,0,.98)) !important;
+  box-shadow: 0 0 10px rgba(57,255,20,.10), inset 0 0 18px rgba(57,255,20,.025) !important;
+}
+
+body.spel-toegankelijk .missie-kaart::before,
+body.spel-toegankelijk .missie-kaart::after {
+  background: rgba(57,255,20,.13) !important;
+  filter: blur(48px);
+}
+
+body.spel-toegankelijk .knop-primair {
+  color: #000000 !important;
+  border-color: #39ff14 !important;
+  background: linear-gradient(135deg, #a7ff83 0%, #39ff14 100%) !important;
+  box-shadow: 0 0 9px rgba(57,255,20,.8), 0 0 24px rgba(57,255,20,.35) !important;
+}
+
+body.spel-toegankelijk .knop-primair:hover:not(:disabled) {
+  box-shadow: 0 0 14px rgba(57,255,20,.95), 0 0 32px rgba(57,255,20,.5) !important;
+}
+
+body.spel-toegankelijk .knop-secundair,
+body.spel-toegankelijk .tekstknop,
+body.spel-toegankelijk .runner-aanraakbediening button {
+  color: #caffc2 !important;
+  border-color: rgba(57,255,20,.42) !important;
+  background: rgba(0,0,0,.92) !important;
+}
+
+body.spel-toegankelijk .knop-secundair:hover:not(:disabled),
+body.spel-toegankelijk .runner-aanraakbediening button:hover {
+  color: #39ff14 !important;
+  border-color: #39ff14 !important;
+  background: rgba(57,255,20,.09) !important;
+  box-shadow: 0 0 14px rgba(57,255,20,.28) !important;
+}
+
+body.spel-toegankelijk .level-kaart.beschikbaar:hover,
+body.spel-toegankelijk .level-kaart.afgerond {
+  border-color: rgba(57,255,20,.7) !important;
+  background: linear-gradient(145deg, rgba(8,30,8,.98), #000000) !important;
+  box-shadow: 0 0 16px rgba(57,255,20,.17) !important;
+}
+
+body.spel-toegankelijk .level-kaart.vergrendeld {
+  opacity: .48;
+  background: #020402 !important;
+}
+
+body.spel-toegankelijk .voortgang-balk {
+  background: #101810 !important;
+}
+
+body.spel-toegankelijk .voortgang-vulling {
+  background: linear-gradient(90deg, #39ff14, #b4ff9e) !important;
+  box-shadow: 0 0 13px rgba(57,255,20,.72) !important;
+}
+
+body.spel-toegankelijk .antwoord-knop:hover:not(:disabled) {
+  border-color: #39ff14 !important;
+  background: rgba(57,255,20,.07) !important;
+  box-shadow: 0 0 13px rgba(57,255,20,.16) !important;
+}
+
+body.spel-toegankelijk .antwoord-letter,
+body.spel-toegankelijk .code-cijfers span,
+body.spel-toegankelijk .uitleg-nummer,
+body.spel-toegankelijk .kaart-code {
+  color: #39ff14 !important;
+  border-color: rgba(57,255,20,.5) !important;
+  background: rgba(57,255,20,.08) !important;
+  text-shadow: 0 0 8px rgba(57,255,20,.6);
+}
+
+body.spel-toegankelijk .antwoord-knop.goed,
+body.spel-toegankelijk .feedback.goed-feedback {
+  border-color: rgba(57,255,20,.8) !important;
+  background: rgba(57,255,20,.09) !important;
+}
+
+body.spel-toegankelijk .antwoord-knop.goed .antwoord-letter {
+  color: #000000 !important;
+  background: #39ff14 !important;
+  box-shadow: 0 0 12px rgba(57,255,20,.7);
+}
+
+body.spel-toegankelijk .antwoord-knop.fout,
+body.spel-toegankelijk .feedback.fout-feedback {
+  border-color: rgba(255,23,68,.65) !important;
+  background: rgba(255,23,68,.08) !important;
+}
+
+body.spel-toegankelijk .antwoord-knop.fout .antwoord-letter {
+  color: #000000 !important;
+  background: #ff1744 !important;
+  box-shadow: 0 0 12px rgba(255,23,68,.6);
+}
+
+body.spel-toegankelijk .code-invoer,
+body.spel-toegankelijk .runner-invoer {
+  color: #efffed !important;
+  border-color: rgba(57,255,20,.45) !important;
+  background: #000000 !important;
+  caret-color: #39ff14;
+}
+
+body.spel-toegankelijk .code-invoer:focus,
+body.spel-toegankelijk .runner-invoer:focus {
+  border-color: #39ff14 !important;
+  box-shadow: 0 0 0 3px rgba(57,255,20,.2), 0 0 15px rgba(57,255,20,.25) !important;
+}
+
+body.spel-toegankelijk .runner-kleur.gekozen,
+body.spel-toegankelijk .runner-accessoire.gekozen {
+  color: #39ff14 !important;
+  border-color: #39ff14 !important;
+  background: rgba(57,255,20,.1) !important;
+  box-shadow: 0 0 13px rgba(57,255,20,.42) !important;
+}
+
+body.spel-toegankelijk .runner-kleur::before {
+  box-shadow: 0 0 10px var(--karakterkleur);
+}
+
+body.spel-toegankelijk .runner-preview strong,
+body.spel-toegankelijk .runner-hud-stat strong,
+body.spel-toegankelijk .runner-hud-stat span,
+body.spel-toegankelijk .runner-preview span,
+body.spel-toegankelijk .runner-canvas-ondertekst,
+body.spel-toegankelijk .runner-aanraak {
+  color: #caffc2 !important;
+}
+
+body.spel-toegankelijk .runner-canvas-ondertekst {
+  background: #020702 !important;
+  border-top: 1px solid rgba(57,255,20,.25);
+}
+
+body.spel-toegankelijk .runner-leven.actief {
+  color: #ff1744 !important;
+  text-shadow: 0 0 9px rgba(255,23,68,.8);
+}
+
+body.spel-toegankelijk .mascotte-bubbel::before {
+  background: #020702 !important;
+  border-color: rgba(57,255,20,.32) !important;
+}
+
+body.spel-toegankelijk .mascotte-bubbel strong,
+body.spel-toegankelijk .mascotte-lichaam,
+body.spel-toegankelijk .mascotte-arm,
+body.spel-toegankelijk .mascotte-voetje,
+body.spel-toegankelijk .mascotte--blij .mascotte-lichaam {
+  fill: #39ff14 !important;
+  color: #39ff14 !important;
+  text-shadow: 0 0 9px rgba(57,255,20,.65);
+}
+
+body.spel-toegankelijk .mascotte-buik {
+  fill: #061806 !important;
+}
+
+body.spel-toegankelijk .mascotte-lichaam {
+  stroke: #39ff14 !important;
+  filter: drop-shadow(0 0 7px rgba(57,255,20,.55));
+}
+
+body.spel-toegankelijk .runner-verlies,
+body.spel-toegankelijk .code-melding {
+  color: #ff1744 !important;
+  border-color: rgba(255,23,68,.48) !important;
+}
+
+body.spel-toegankelijk button:focus-visible,
+body.spel-toegankelijk a:focus-visible,
+body.spel-toegankelijk input:focus-visible,
+body.onderhoud-actief button:focus-visible,
+body.onderhoud-actief a:focus-visible {
+  outline: 2px solid #39ff14 !important;
+  outline-offset: 4px;
+  box-shadow: 0 0 14px rgba(57,255,20,.4);
+}
+
+body.onderhoud-actief .onderhoud-paneel {
+  border-radius: 18px !important;
+}
+
+body.onderhoud-actief .onderhoud-badge,
+body.onderhoud-actief .onderhoud-status {
+  color: #caffc2 !important;
+  border-color: rgba(57,255,20,.38) !important;
+  background: rgba(57,255,20,.07) !important;
+}
+
+body.onderhoud-actief .onderhoud-badge .status-punt,
+body.onderhoud-actief .onderhoud-status .status-punt,
+body.spel-toegankelijk .status-punt {
+  background: #39ff14 !important;
+  box-shadow: 0 0 12px #39ff14 !important;
+}
+
+body.onderhoud-actief .onderhoud-tekst .titel-groot {
+  color: #efffed !important;
+  text-shadow: 0 0 14px rgba(57,255,20,.18);
+}
+
+body.onderhoud-actief .onderhoud-tekst .titel-groot .accent,
+body.onderhoud-actief .onderhoud-bubbel strong {
+  color: #39ff14 !important;
+  text-shadow: 0 0 9px rgba(57,255,20,.72);
+}
+
+body.onderhoud-actief .onderhoud-tekst .subtitel,
+body.onderhoud-actief .onderhoud-voet {
+  color: #a5b89f !important;
+}
+
+body.onderhoud-actief .onderhoud-licht {
+  background: rgba(57,255,20,.18) !important;
+  box-shadow: 0 0 55px rgba(57,255,20,.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.spel-toegankelijk *,
+  body.onderhoud-actief * {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
