@@ -1086,3 +1086,50 @@ body {
   .runner-statistieken strong { font-size: 19px; }
   .runner-hud-stat strong { font-size: 14px; }
 }
+
+
+/* Onderhoudspagina binnen dezelfde warme vormgeving */
+body.onderhoud-actief {
+  color: #423d38;
+  background:
+    radial-gradient(ellipse at 74% 42%, rgba(254,110,0,.09), transparent 36%),
+    #fcfaf7;
+}
+body.onderhoud-actief .onderhoud-paneel {
+  border-color: #e3e0dd;
+  border-radius: 12px;
+  color: #423d38;
+  background: linear-gradient(145deg, #fff, #f3f4f6);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+body.onderhoud-actief .onderhoud-paneel::before {
+  background: linear-gradient(115deg, transparent 15%, rgba(254,110,0,.035) 48%, transparent 65%);
+}
+body.onderhoud-actief .onderhoud-badge {
+  border-color: rgba(254,110,0,.2);
+  color: #c75300;
+  background: rgba(254,110,0,.07);
+}
+body.onderhoud-actief .onderhoud-badge .status-punt,
+body.onderhoud-actief .onderhoud-status .status-punt {
+  background: #fe6e00;
+  box-shadow: 0 0 10px rgba(254,110,0,.35);
+}
+body.onderhoud-actief .onderhoud-tekst .titel-groot { color: #423d38; }
+body.onderhoud-actief .onderhoud-tekst .titel-groot .accent { color: #fe6e00; }
+body.onderhoud-actief .onderhoud-tekst .subtitel { color: #797067; }
+body.onderhoud-actief .onderhoud-status {
+  border-color: rgba(254,110,0,.18);
+  color: #8a4b1e;
+  background: rgba(254,110,0,.05);
+}
+body.onderhoud-actief .onderhoud-licht {
+  background: rgba(254,110,0,.14);
+}
+body.onderhoud-actief .onderhoud-bubbel {
+  border-color: rgba(254,110,0,.22);
+  color: #423d38;
+  background: #fff7ef;
+}
+body.onderhoud-actief .onderhoud-bubbel strong { color: #fe6e00; }
+body.onderhoud-actief .onderhoud-voet { color: #797067; }
