@@ -495,21 +495,21 @@
 
   function renderKaart() {
     const klaar = afgerondeLevels();
-    const voortgangPercentage = Math.round((klaar / 4) * 100);
-    const eindKnop = voortgang.completed[3] ? '<div class="rij-knoppen" style="margin-top:22px"><button class="knop knop-primair" type="button" data-action="eindscherm">BEKIJK JE EINDRESULTAAT →</button></div>' : "";
+    const voortgangPercentage = Math.round((klaar / 5) * 100);
+    const eindKnop = voortgang.completed[4] ? '<div class="rij-knoppen" style="margin-top:22px"><button class="knop knop-primair" type="button" data-action="eindscherm">BEKIJK JE EINDRESULTAAT →</button></div>' : "";
     return '<section class="pagina">' +
       '<div class="terugrij">' + terugKnop("Hoofdmenu", "naar-start") + '<button class="tekstknop" type="button" data-action="reset">↻ Opnieuw beginnen</button></div>' +
       '<p class="bovenlabel">KIES JE VOLGENDE STAP</p><h1 class="titel-middel">De missiekaart</h1>' +
-      '<p class="subtitel">Vier levels brengen je dichter bij de uitgang. Voltooi een niveau om het volgende vrij te spelen.</p>' +
-      '<div class="voortgang-paneel"><div class="voortgang-tekst"><div class="voortgang-boven"><span>MISSIEVOORTGANG</span><strong>' + klaar + ' / 4 NIVEAUS</strong></div>' +
+      '<p class="subtitel">Vijf niveaus brengen je dichter bij de uitgang. Voltooi een niveau om het volgende vrij te spelen.</p>' +
+      '<div class="voortgang-paneel"><div class="voortgang-tekst"><div class="voortgang-boven"><span>MISSIEVOORTGANG</span><strong>' + klaar + ' / 5 NIVEAUS</strong></div>' +
       '<div class="voortgang-balk"><div class="voortgang-vulling" style="width:' + voortgangPercentage + '%"></div></div></div>' +
-      '<div class="score-chip"><strong>' + score() + '</strong><span>VAN 170 PUNTEN</span></div></div>' +
-      '<div class="level-grid">' + [0, 1, 2, 3].map(renderLevelKaart).join("") + '</div>' +
+      '<div class="score-chip"><strong>' + score() + '</strong><span>VAN ' + MAX_SCORE + ' PUNTEN</span></div></div>' +
+      '<div class="level-grid">' + [0, 1, 2, 3, 4].map(renderLevelKaart).join("") + '</div>' +
       '<div class="land-regels">' +
-      '<article class="land-kaart"><span class="land-naam">Nederland</span><strong>Leeftijdsgrens en smaakverbod</strong><p>Verkoop aan jongeren onder 18 is verboden. Sinds 2024 mogen vapes met andere smaken dan tabak niet worden verkocht. Sinds 2026 mogen vapes alleen nog in tabaksspeciaalzaken worden verkocht.</p></article>' +
+      '<article class="land-kaart"><span class="land-naam">Nederland</span><strong>Leeftijdsgrens en smaakverbod</strong><p>Verkoop aan jongeren onder 18 is verboden. Sinds 2024 mogen vapes met andere smaken dan tabak niet worden verkocht. Sinds 2026 mogen vapes alleen nog in speciaalzaken worden verkocht.</p></article>' +
       '<article class="land-kaart"><span class="land-naam">Verenigd Koninkrijk</span><strong>Wegwerpvapes verboden</strong><p>Sinds 1 juni 2025 is de verkoop en levering van wegwerpvapes verboden. Herbruikbare vapes vallen niet onder dit specifieke verbod.</p></article>' +
-      '<article class="land-kaart"><span class="land-naam">Australië</span><strong>Alleen via apotheken</strong><p>Vapes mogen alleen via apotheken worden verstrekt als therapeutische producten. Daar gelden strenge voorwaarden voor.</p></article>' +
-      '</div><p class="wet-notitie">Regels verschillen per land en kunnen veranderen. Dit zijn voorbeelden van landelijke regels, geen volledig juridisch overzicht. De bronnen onderaan deze pagina verwijzen naar officiële informatie.</p>' +
+      '<article class="land-kaart"><span class="land-naam">Australië</span><strong>Verstrekking via apotheken</strong><p>Australië werkt met strenge regels waarbij vapes als therapeutische producten via apotheken worden verstrekt.</p></article>' +
+      '</div><p class="wet-notitie">Regels verschillen per land en kunnen veranderen. Dit is een korte selectie, geen volledig juridisch overzicht. Raadpleeg de officiële bronnen onderaan de pagina.</p>' +
       eindKnop + '</section>';
   }
 
@@ -613,23 +613,25 @@
     return '<section class="pagina"><div class="paneel afrond-kaart">' +
       '<div class="afrond-embleem">✓</div><p class="bovenlabel" style="justify-content:center">NIVEAU VOLTOOID</p>' +
       '<h1 class="titel-middel">' + levelNames[huidigLevel] + '</h1>' +
-      '<p>Je hebt dit level afgerond. Bekijk de uitleg die je hebt gekregen en ga daarna door naar de volgende uitdaging.</p>' +
-      '<div class="afrond-statistieken"><div class="statistiek"><strong>' + levelPunten(huidigLevel) + '</strong><span>Punten in dit niveau</span></div><div class="statistiek"><strong>' + score() + '</strong><span>Totaal aantal punten</span></div><div class="statistiek"><strong>' + afgerondeLevels() + ' / 4</strong><span>Levels afgerond</span></div></div>' +
-      '<div class="eindboodschap">Je voortgang is opgeslagen. Het volgende level is nu vrijgespeeld.</div>' +
+      '<p>Je hebt dit niveau afgerond. Het volgende onderdeel is nu vrijgespeeld.</p>' +
+      '<div class="afrond-statistieken"><div class="statistiek"><strong>' + levelPunten(huidigLevel) + '</strong><span>Punten in dit niveau</span></div><div class="statistiek"><strong>' + score() + '</strong><span>Totaal aantal punten</span></div><div class="statistiek"><strong>' + afgerondeLevels() + ' / 5</strong><span>Niveaus afgerond</span></div></div>' +
+      '<div class="eindboodschap">Je voortgang is opgeslagen. Je kunt door naar de volgende uitdaging.</div>' +
       '<div class="rij-knoppen"><button class="knop knop-secundair" type="button" data-action="naar-kaart">MISSIEKAART</button>' +
-      (next < 4 ? '<button class="knop knop-primair" type="button" data-action="volgend-level">VOLGEND NIVEAU →</button>' : '<button class="knop knop-primair" type="button" data-action="eindscherm">BEKIJK RESULTAAT →</button>') +
+      (next < 4 ? '<button class="knop knop-primair" type="button" data-action="volgend-level">VOLGEND NIVEAU →</button>' : (next === 4 ? '<button class="knop knop-primair" type="button" data-action="naar-kaart">NIVEAU 05 VRIJGESPEELD →</button>' : '<button class="knop knop-primair" type="button" data-action="eindscherm">BEKIJK RESULTAAT →</button>')) +
       '</div></div></section>';
   }
 
   function renderEindscherm() {
     const goed = aantalGoed();
     const percentage = Math.round((goed / TOTAL_QUESTIONS) * 100);
+    const spelBonus = voortgang.answers["runner-clear"] === true ? 30 : 0;
     return '<section class="pagina"><div class="paneel afrond-kaart">' +
       '<div class="afrond-embleem">✦</div><p class="bovenlabel" style="justify-content:center">MISSIE GESLAAGD</p>' +
       '<h1 class="titel-middel">JE BENT ONTSNAPT<br><span class="accent">AAN DE VAPEVAL!</span></h1>' +
-      '<p>Je hebt alle vier de levels voltooid en de uitgang gevonden. Bekijk wat je hebt verzameld.</p>' +
-      '<div class="afrond-statistieken"><div class="statistiek"><strong>' + score() + '</strong><span>Van 170 punten</span></div><div class="statistiek"><strong>' + percentage + '%</strong><span>Goed beantwoord</span></div><div class="statistiek"><strong>' + goed + ' / 17</strong><span>Goede antwoorden</span></div></div>' +
+      '<p>Je hebt alle vijf de niveaus voltooid en de finish gehaald. Dit is jouw resultaat.</p>' +
+      '<div class="afrond-statistieken"><div class="statistiek"><strong>' + score() + '</strong><span>Van ' + MAX_SCORE + ' punten</span></div><div class="statistiek"><strong>' + percentage + '%</strong><span>Kennisvragen goed</span></div><div class="statistiek"><strong>' + goed + ' / 17</strong><span>Goede antwoorden</span></div></div>' +
       '<div class="eindboodschap"><strong>JE BENT ONTSNAPT AAN DE VAPEVAL!</strong><br>Onthoud: jouw toekomst is meer waard dan een vape. Je hoeft niet mee te doen met groepsdruk. Hulp vragen of nee zeggen is juist sterk.</div>' +
+      '<p class="runner-bonus-regel">Bonus hindernisbaan: <strong>' + spelBonus + ' / 30 punten</strong></p>' +
       '<div class="rij-knoppen"><button class="knop knop-secundair" type="button" data-action="naar-kaart">BEKIJK NIVEAUS</button><button class="knop knop-primair" type="button" data-action="reset">SPEEL OPNIEUW ↻</button></div>' +
       '</div></section>';
   }
