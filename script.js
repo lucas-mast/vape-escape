@@ -528,7 +528,7 @@
       '<div><strong>' + kop + '</strong><p>' + (gekozenUitleg || q.explanation || "") + '</p>' +
       (extra ? '<p class="feedback-extra">' + extra + '</p>' : '') +
       '</div></div>' +
-      mascotteWeergave(goed ? "blij" : "verdrietig", goed ? "Yes! Dat had je goed. Weer een stap dichter bij de uitgang!" : "Oei, dat was niet helemaal goed. Geen paniek: van fouten leer je. Lees de uitleg!") +
+      mascotteWeergave(goed ? "blij" : "verdrietig", goed ? "Top! Dat had je goed. Weer een stap dichter bij de uitgang!" : "Oei, dat was niet helemaal goed. Geen paniek: van fouten leer je. Lees de uitleg!") +
       '<div class="feedback-acties"><button class="knop knop-primair knop-klein" type="button" data-action="volgende">' + (huidigeVraag + 1 >= aantal ? "NIVEAU AFRONDEN" : "VOLGENDE VRAAG") + ' →</button></div>';
   }
 
