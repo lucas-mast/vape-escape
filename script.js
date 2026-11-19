@@ -1342,18 +1342,25 @@
       if (KARAKTER_KLEUREN.includes(kleur)) {
         voortgang.character.kleur = kleur;
         bewaarVoortgang();
-        render();
+        werkKarakterVoorbeeldBij();
       }
     } else if (knopElement.dataset.action === "runner-accessoire") {
       const accessoire = knopElement.dataset.accessoire;
       if (KARAKTER_ACCESSOIRES.includes(accessoire)) {
         voortgang.character.accessoire = accessoire;
         bewaarVoortgang();
-        render();
+        werkKarakterVoorbeeldBij();
+      }
+    } else if (knopElement.dataset.action === "runner-effect") {
+      const effect = knopElement.dataset.effect;
+      if (KARAKTER_EFFECTEN.includes(effect)) {
+        voortgang.character.effect = effect;
+        bewaarVoortgang();
+        werkKarakterVoorbeeldBij();
       }
     } else if (knopElement.dataset.action === "profiel") {
       gaNaar("profiel");
-    } else if (knopElement.dataset.action.startsWith("dashboard-")) {
+    } else if ((knopElement.dataset.action || "").startsWith("dashboard-")) {
       verwerkDashboardActie(knopElement);
     } else if (knopElement.dataset.action === "runner-stop") {
       stopRunnerLoop();
@@ -1386,6 +1393,47 @@
   window.addEventListener("pagehide", sluitSpelerSessie);
   window.addEventListener("beforeunload", sluitSpelerSessie);
   window.setInterval(werkSpelersStatusBij, 60000);
+
+  function speelBinkTransitie() {
+    const voorbeeld = document.getElementById("runner-preview-beeld");
+    const paneel = document.querySelector(".runner-preview");
+    if (!voorbeeld || !paneel) return;
+    voorbeeld.classList.remove("bink-spring");
+    void voorbeeld.offsetWidth;
+    voorbeeld.classList.add("bink-spring");
+    for (let i = 0; i < 5; i++) {
+      const wolk = document.createElement("span");
+      wolk.className = "bink-wolk";
+      wolk.style.left = (18 + Math.random() * 64) + "%";
+      wolk.style.setProperty("--wolk-verticaal", (48 + Math.random() * 28) + "%");
+      wolk.style.animationDelay = (Math.random() * .12) + "s";
+      paneel.appendChild(wolk);
+      window.setTimeout(() => wolk.remove(), 900);
+    }
+  }
+
+  function werkKarakterVoorbeeldBij() {
+    const beeld = document.getElementById("runner-preview-beeld");
+    const naam = document.getElementById("runner-preview-naam");
+    if (beeld) beeld.innerHTML = karakterVoorbeeldSvg();
+    if (naam) naam.textContent = voortgang.character.naam;
+    document.querySelectorAll("[data-action='runner-kleur']").forEach(knop => {
+      const geselecteerd = knop.dataset.kleur === voortgang.character.kleur;
+      knop.classList.toggle("gekozen", geselecteerd);
+      knop.setAttribute("aria-pressed", String(geselecteerd));
+    });
+    document.querySelectorAll("[data-action='runner-accessoire']").forEach(knop => {
+      const geselecteerd = knop.dataset.accessoire === voortgang.character.accessoire;
+      knop.classList.toggle("gekozen", geselecteerd);
+      knop.setAttribute("aria-pressed", String(geselecteerd));
+    });
+    document.querySelectorAll("[data-action='runner-effect']").forEach(knop => {
+      const geselecteerd = knop.dataset.effect === (voortgang.character.effect || "neon");
+      knop.classList.toggle("gekozen", geselecteerd);
+      knop.setAttribute("aria-pressed", String(geselecteerd));
+    });
+    speelBinkTransitie();
+  }
 
   window.addEventListener("keydown", event => {
     if (pagina !== "runner-spel" || !runner.actief) return;
