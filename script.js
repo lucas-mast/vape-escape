@@ -642,7 +642,12 @@
       '<h1 class="titel-groot">VAPE<br><span class="accent">ESCAPE</span></h1>',
       '<p class="subtitel">Kun jij ontsnappen aan de vapeval? Ontdek wat vapen met je lichaam doet, herken groepsdruk en kraak het slot. Vijf niveaus. Eén missie: kies voor jezelf.</p>',
       '<div class="startknoppen">',
-      '<button class="knop knop-primair" type="button" id="start-knop">START DE MISSIE <span class="knop-pijl">→</span></button>',
+      '<form class="speler-start-form" id="start-form">',
+      '<label for="speler-naam">VUL EERST JE NAAM IN</label>',
+      '<input id="speler-naam" name="naam" maxlength="20" minlength="2" autocomplete="nickname" placeholder="Jouw naam" required>',
+      '<p id="speler-naam-fout" class="form-fout" aria-live="polite"></p>',
+      '<button class="knop knop-primair" type="submit" id="start-knop">START DE MISSIE <span class="knop-pijl">→</span></button>',
+      '</form>',
       '<button class="knop knop-secundair" type="button" id="hoe-knop">HOE SPEEL JE?</button>',
       '</div>',
       '<div class="missie-meta">',
@@ -674,7 +679,7 @@
       '<article class="uitleg-kaart"><span class="uitleg-nummer">03</span><div><h3>Bewaar je voortgang</h3><p>Je score en vrijgespeelde niveaus worden automatisch op dit apparaat opgeslagen.</p></div></article>' +
       '</div>' +
       '<div class="paneel paneel-padding"><div class="level-tips"><span>◎</span><p><strong>Goed om te weten:</strong> je hoeft niet alles meteen goed te hebben. Gebruik de uitleg om te leren. Je kunt niveaus opnieuw spelen en je score verbeteren.</p></div>' +
-      '<div class="rij-knoppen" style="margin-top:22px"><button class="knop knop-primair" type="button" id="start-knop">BEGREPEN — START! <span class="knop-pijl">→</span></button></div></div>' +
+      '<div class="rij-knoppen" style="margin-top:22px"><button class="knop knop-primair" type="button" data-action="naar-start">TERUG — VUL JE NAAM IN <span class="knop-pijl">→</span></button></div></div>' +
       '</section>';
   }
 
@@ -697,7 +702,7 @@
     const voortgangPercentage = Math.round((klaar / 5) * 100);
     const eindKnop = voortgang.completed[4] ? '<div class="rij-knoppen" style="margin-top:22px"><button class="knop knop-primair" type="button" data-action="eindscherm">BEKIJK JE EINDRESULTAAT →</button></div>' : "";
     return '<section class="pagina">' +
-      '<div class="terugrij">' + terugKnop("Hoofdmenu", "naar-start") + '<button class="tekstknop" type="button" data-action="reset">↻ Opnieuw beginnen</button></div>' +
+      '<div class="terugrij">' + terugKnop("Hoofdmenu", "naar-start") + '<div class="rij-knoppen"><button class="tekstknop" type="button" data-action="profiel">MIJN PROFIEL</button><button class="tekstknop" type="button" data-action="reset">↻ Opnieuw beginnen</button></div></div>' +
       '<p class="bovenlabel">KIES JE VOLGENDE STAP</p><h1 class="titel-middel">De missiekaart</h1>' +
       '<p class="subtitel">Vijf niveaus brengen je dichter bij de uitgang. Voltooi een niveau om het volgende vrij te spelen.</p>' +
       '<div class="voortgang-paneel"><div class="voortgang-tekst"><div class="voortgang-boven"><span>MISSIEVOORTGANG</span><strong>' + klaar + ' / 5 NIVEAUS</strong></div>' +
@@ -1127,7 +1132,9 @@
 
   function render() {
     let inhoud = "";
-    if (pagina === "start") inhoud = renderStart();
+    if (pagina === "dashboard") inhoud = renderDashboard();
+    else if (pagina === "profiel") inhoud = renderProfiel();
+    else if (pagina === "start") inhoud = renderStart();
     else if (pagina === "hoe") inhoud = renderHoe();
     else if (pagina === "kaart") inhoud = renderKaart();
     else if (pagina === "spel") inhoud = renderLevel();
@@ -1245,9 +1252,7 @@
   app.addEventListener("click", event => {
     const knopElement = event.target.closest("button");
     if (!knopElement || knopElement.disabled) return;
-    if (knopElement.id === "start-knop") {
-      gaNaar("kaart");
-    } else if (knopElement.id === "hoe-knop") {
+    if (knopElement.id === "hoe-knop") {
       gaNaar("hoe");
     } else if (knopElement.dataset.action === "naar-kaart") {
       gaNaar("kaart");
@@ -1285,6 +1290,10 @@
         bewaarVoortgang();
         render();
       }
+    } else if (knopElement.dataset.action === "profiel") {
+      gaNaar("profiel");
+    } else if (knopElement.dataset.action.startsWith("dashboard-")) {
+      verwerkDashboardActie(knopElement);
     } else if (knopElement.dataset.action === "runner-stop") {
       stopRunnerLoop();
       gaNaar("runner-aanpassen");
@@ -1292,20 +1301,30 @@
   });
 
   app.addEventListener("submit", event => {
-    if (event.target && event.target.id === "code-formulier") {
+    if (event.target && event.target.id === "start-form") {
+      event.preventDefault();
+      startSpelerSessie();
+    } else if (event.target && event.target.id === "code-formulier") {
       event.preventDefault();
       controleerCode();
     }
   });
 
-  app.addEventListener("change", event => {
+  app.addEventListener("input", event => {
     if (event.target && event.target.id === "runner-naam") {
-      const naam = event.target.value.trim().slice(0, 16);
-      voortgang.character.naam = naam || "Bink";
+      voortgang.character.naam = event.target.value.trim().slice(0, 16) || "Bink";
+      const previewName = document.getElementById("runner-preview-naam");
+      if (previewName) previewName.textContent = voortgang.character.naam;
       bewaarVoortgang();
-      render();
     }
   });
+
+  app.addEventListener("click", () => registreerActiviteit());
+  window.addEventListener("pointerdown", () => registreerActiviteit(), { passive: true });
+  window.addEventListener("keydown", () => registreerActiviteit());
+  window.addEventListener("pagehide", sluitSpelerSessie);
+  window.addEventListener("beforeunload", sluitSpelerSessie);
+  window.setInterval(werkSpelersStatusBij, 60000);
 
   window.addEventListener("keydown", event => {
     if (pagina !== "runner-spel" || !runner.actief) return;
@@ -1381,5 +1400,6 @@
   });
   console.info("Vape Escape developer tools actief. Typ vapeEscape.help() voor commando's.");
 
+  if (dashboardMode) pagina = "dashboard";
   render();
 })();
