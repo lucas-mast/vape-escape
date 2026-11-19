@@ -440,16 +440,15 @@
       '<div class="starttekst">',
       '<p class="bovenlabel">DE OVERLEVINGSGAME</p>',
       '<h1 class="titel-groot">VAPE<br><span class="accent">ESCAPE</span></h1>',
-      '<p class="subtitel">Kun jij ontsnappen aan de vapeval? Ontdek wat vapen met je lichaam doet, herken groepsdruk en kraak het slot. Vier levels. Eén missie: kies voor jezelf.</p>',
+      '<p class="subtitel">Kun jij ontsnappen aan de vapeval? Ontdek wat vapen met je lichaam doet, herken groepsdruk en kraak het slot. Vijf niveaus. Eén missie: kies voor jezelf.</p>',
       '<div class="startknoppen">',
       '<button class="knop knop-primair" type="button" id="start-knop">START DE MISSIE <span class="knop-pijl">→</span></button>',
       '<button class="knop knop-secundair" type="button" id="hoe-knop">HOE SPEEL JE?</button>',
       '</div>',
       '<div class="missie-meta">',
-      '<div class="meta-item"><strong>04</strong><span>Niveaus</span></div>',
+      '<div class="meta-item"><strong>05</strong><span>Niveaus</span></div>',
       '<div class="meta-item"><strong>17</strong><span>Kennischecks</span></div>',
-      '<div class="meta-item"><strong>170</strong><span>Te verdienen punten</span></div>',
-      '</div>',
+      '<div class="meta-item"><strong>200</strong><span>Te verdienen punten</span></div>',
       '</div>',
       mascotteWeergave("normaal", "Hoi! Ik ben Vapo. Klaar voor de missie?", true),
       '</div>',
@@ -470,9 +469,9 @@
       '<p class="bovenlabel">VOORBEREIDING</p><h1 class="titel-middel">Hoe speel je Vape Escape?</h1>' +
       '<p class="subtitel">Lees de regels en begin daarna aan je missie. Je hoeft niets te installeren en je kunt op je eigen tempo spelen.</p>' +
       '<div class="uitleg-grid">' +
-      '<article class="uitleg-kaart"><span class="uitleg-nummer">01</span><div><h3>Speel vier niveaus</h3><p>Begin bij Vape-feiten. Daarna speel je Feit of fabel, Groepsdruk en de laatste ontsnapping vrij.</p></div></article>' +
+      '<article class="uitleg-kaart"><span class="uitleg-nummer">01</span><div><h3>Speel vijf niveaus</h3><p>Leer over vapen, herken groepsdruk, kraak het slot en ontwijk daarna de obstakels in de hindernisbaan.</p></div></article>' +
       '<article class="uitleg-kaart"><span class="uitleg-nummer">02</span><div><h3>Verdien punten</h3><p>Elk goed antwoord is 10 punten waard. Na ieder antwoord krijg je uitleg, ook als je het fout hebt.</p></div></article>' +
-      '<article class="uitleg-kaart"><span class="uitleg-nummer">03</span><div><h3>Bewaar je voortgang</h3><p>Je score en vrijgespeelde levels worden automatisch op dit apparaat opgeslagen.</p></div></article>' +
+      '<article class="uitleg-kaart"><span class="uitleg-nummer">03</span><div><h3>Bewaar je voortgang</h3><p>Je score en vrijgespeelde niveaus worden automatisch op dit apparaat opgeslagen.</p></div></article>' +
       '</div>' +
       '<div class="paneel paneel-padding"><div class="level-tips"><span>◎</span><p><strong>Goed om te weten:</strong> je hoeft niet alles meteen goed te hebben. Gebruik de uitleg om te leren. Je kunt niveaus opnieuw spelen en je score verbeteren.</p></div>' +
       '<div class="rij-knoppen" style="margin-top:22px"><button class="knop knop-primair" type="button" id="start-knop">BEGREPEN — START! <span class="knop-pijl">→</span></button></div></div>' +
@@ -524,7 +523,7 @@
       "Let op het verschil tussen vloeistof, aerosol en nicotine. Een vape maakt geen gewone waterdamp.",
       "Lees elke zin goed. Eén woord kan een bewering helemaal veranderen.",
       "Kies wat veilig is en bij jouw grens past. Je hoeft niemand te overtuigen.",
-      "Gebruik de feiten uit de vorige levels. De aanwijzingen zijn genoeg om de code te vinden."
+      "Gebruik de feiten uit de vorige niveaus. De aanwijzingen zijn genoeg om de code te vinden."
     ];
     return '<aside class="spel-zijbalk">' +
       '<div class="paneel zij-kaart"><span class="mini-label">JOUW SCORE</span><div class="zij-score"><span>Totaal</span><strong>' + score() + ' / 170</strong></div><div class="zij-score"><span>Goed beantwoord</span><strong>' + aantalGoed() + ' / 17</strong></div></div>' +
@@ -590,7 +589,7 @@
     return '<div class="paneel vraag-paneel code-paneel">' +
       '<span class="vraag-label">LAATSTE NIVEAU · DIGITAAL SLOT</span>' +
       '<h2 class="vraag-titel">Kraak de viercijferige code</h2>' +
-      '<p class="vraag-context">De uitgang is bijna open. Combineer de regels en feiten uit de vorige levels om de code te vinden.</p>' +
+      '<p class="vraag-context">De uitgang is bijna open. Combineer de regels en feiten uit de vorige niveaus om de code te vinden.</p>' +
       '<div class="code-cijfers" aria-label="Vier cijfers nodig"><span>?</span><span>?</span><span>?</span><span>?</span></div>' +
       '<div class="code-aanwijzingen"><div class="code-aanwijzing"><b>1–2</b><span>In Nederland mag een vape pas vanaf welke leeftijd worden verkocht? Gebruik beide cijfers.</span></div><div class="code-aanwijzing"><b>3</b><span>Hoeveel milliliter mag het reservoir van een vape maximaal bevatten volgens de Nederlandse regels?</span></div><div class="code-aanwijzing"><b>4</b><span>In welk jaar ging het verbod op de verkoop van wegwerpvapes in het Verenigd Koninkrijk in? Gebruik alleen het laatste cijfer.</span></div></div>' +
       '<form class="code-formulier" id="code-formulier"><label class="mini-label" for="code-invoer" style="position:absolute;left:-9999px">Voer de viercijferige code in</label><input class="code-invoer" id="code-invoer" name="code" type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="0000" aria-describedby="code-melding"><button class="knop knop-primair" type="submit">OPEN HET SLOT →</button></form>' +
@@ -1030,7 +1029,7 @@
   }
 
   function resetSpel() {
-    const bevestiging = window.confirm("Weet je zeker dat je opnieuw wilt beginnen? Je score en vrijgespeelde levels worden op dit apparaat gewist.");
+    const bevestiging = window.confirm("Weet je zeker dat je opnieuw wilt beginnen? Je score en vrijgespeelde niveaus worden op dit apparaat gewist.");
     if (!bevestiging) return;
     voortgang = legeVoortgang();
     bewaarVoortgang();
