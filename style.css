@@ -295,3 +295,264 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Vapo de mascotte */
+.mascotte-wrap {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  animation: mascotteBinnen .42s cubic-bezier(.2,.8,.2,1) both;
+}
+.mascotte-beeld {
+  position: relative;
+  flex: 0 0 112px;
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+}
+.mascotte-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: mascotteZweef 3.2s ease-in-out infinite;
+  transform-origin: 50% 88%;
+}
+.mascotte-lichaam { fill: #8ef5b3; stroke: #d0ffe0; stroke-width: 2; }
+.mascotte-buik { fill: #c9ffda; opacity: .72; }
+.mascotte-arm { fill: #78e7a4; stroke: #c7ffda; stroke-width: 1.5; }
+.mascotte-oog { fill: #14243a; }
+.wenkbrauw { fill: none; stroke: #315b4b; stroke-width: 2.4; stroke-linecap: round; }
+.mond-blij, .mond-verdrietig { fill: none; stroke: #315b4b; stroke-width: 3; stroke-linecap: round; }
+.mond-verdrietig { display: none; }
+.mascotte--verdrietig .mond-blij { display: none; }
+.mascotte--verdrietig .mond-verdrietig { display: block; }
+.mascotte--verdrietig .wenkbrauw { stroke: #8b405c; }
+.mascotte--verdrietig .mascotte-lichaam { fill: #a8d9c1; }
+.mascotte--blij .mascotte-lichaam { animation: mascotteBlij 1.2s ease-in-out infinite; }
+.mascotte-voetje { fill: #8ef5b3; }
+.mascotte-schaduw { fill: rgba(0,0,0,.2); }
+.mascotte-glans { fill: #effff4; opacity: .8; }
+.mascotte-bubbel {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(142,245,179,.23);
+  border-radius: 15px 15px 15px 5px;
+  color: #dfeee6;
+  background: linear-gradient(135deg, rgba(142,245,179,.1), rgba(180,154,255,.07));
+  box-shadow: 0 9px 25px rgba(0,0,0,.12);
+  font-size: 11px;
+  line-height: 1.65;
+}
+.mascotte-bubbel::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  bottom: 20px;
+  width: 12px;
+  height: 12px;
+  border-left: 1px solid rgba(142,245,179,.23);
+  border-bottom: 1px solid rgba(142,245,179,.23);
+  background: #132b2b;
+  transform: rotate(45deg);
+}
+.mascotte-bubbel strong { display: block; margin-bottom: 3px; color: var(--groen); font-size: 10px; letter-spacing: .08em; }
+.mascotte-compact { max-width: 420px; margin-top: 22px; }
+.mascotte-compact .mascotte-beeld { flex-basis: 88px; width: 88px; height: 88px; }
+.mascotte-compact .mascotte-bubbel { padding: 12px 14px; }
+.mascotte-feedback { margin: 15px 0 2px; }
+.mascotte-feedback .mascotte-beeld { flex-basis: 88px; width: 88px; height: 88px; }
+.mascotte-feedback .mascotte-bubbel { background: linear-gradient(135deg, rgba(142,245,179,.09), rgba(180,154,255,.065)); }
+@keyframes mascotteBinnen { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes mascotteZweef { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-6px) rotate(1deg); } }
+@keyframes mascotteBlij { 0%,100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+
+/* Tijdelijke onderhoudspagina */
+body.onderhoud-actief {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 72% 42%, rgba(180,154,255,.16), transparent 37%),
+    radial-gradient(ellipse at 20% 80%, rgba(142,245,179,.1), transparent 36%),
+    #080b14;
+}
+body.onderhoud-actief .site-shell { width: min(100% - 40px, 1040px); }
+body.onderhoud-actief .bovenbalk,
+body.onderhoud-actief .voettekst,
+body.onderhoud-actief .achtergrond-licht { display: none; }
+body.onderhoud-actief .app-inhoud {
+  min-height: 100svh;
+  justify-content: center;
+  padding: 36px 0;
+}
+.onderhoud-scherm { width: 100%; }
+.onderhoud-badge {
+  display: table;
+  margin: 0 auto 17px;
+  padding: 9px 13px;
+  border: 1px solid rgba(255,217,138,.24);
+  border-radius: 99px;
+  color: #ffe0a3;
+  background: rgba(255,217,138,.07);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+.onderhoud-badge .status-punt {
+  display: inline-block;
+  margin-right: 8px;
+  background: #ffd98a;
+  box-shadow: 0 0 12px #ffd98a;
+  animation: statusKnipper 1.8s ease-in-out infinite;
+}
+.onderhoud-paneel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+  align-items: center;
+  gap: 25px;
+  min-height: 450px;
+  padding: clamp(25px, 5vw, 58px);
+  overflow: hidden;
+  border: 1px solid rgba(163,174,216,.18);
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(25,33,54,.96), rgba(12,17,31,.97));
+  box-shadow: 0 30px 100px rgba(0,0,0,.4);
+}
+.onderhoud-paneel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 15%, rgba(255,255,255,.025) 48%, transparent 65%);
+  transform: translateX(-100%);
+  animation: glansPassage 7s ease-in-out infinite;
+}
+.onderhoud-tekst { position: relative; z-index: 1; }
+.onderhoud-tekst .titel-groot { font-size: clamp(39px, 5.7vw, 67px); }
+.onderhoud-tekst .subtitel { font-size: 14px; }
+.onderhoud-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 27px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,217,138,.17);
+  border-radius: 10px;
+  color: #d6c9a9;
+  background: rgba(255,217,138,.045);
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .12em;
+}
+.onderhoud-status .status-punt {
+  width: 6px;
+  height: 6px;
+  background: #ffd98a;
+  box-shadow: 0 0 10px #ffd98a;
+}
+.onderhoud-figuur {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 340px;
+}
+.onderhoud-licht {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: rgba(142,245,179,.13);
+  filter: blur(65px);
+  animation: lichtAdem 4s ease-in-out infinite;
+}
+.mascotte-werk {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 280px);
+  height: 285px;
+  overflow: visible;
+  animation: klusBeweging 2.8s ease-in-out infinite;
+}
+.mascotte-werk .mascotte-lichaam { fill: #8ef5b3; }
+.mascotte-werk .mascotte-arm { transform-origin: 130px 115px; }
+.mascotte-helm { fill: #ffd35d; stroke: #fff0b5; stroke-width: 2.5; }
+.mascotte-helm-rand { fill: #f3b83e; stroke: #fff0b5; stroke-width: 2; }
+.mascotte-helm-streep { stroke: #fff1b7; stroke-width: 4; stroke-linecap: round; }
+.mascotte-hamer {
+  transform-origin: 150px 132px;
+  animation: hamerTik 1.8s ease-in-out infinite;
+}
+.hamer-steel { fill: none; stroke: #c4d0e2; stroke-width: 8; stroke-linecap: round; }
+.hamer-kop { fill: #a8b5c9; stroke: #e1eaff; stroke-width: 2; }
+.hamer-detail { fill: none; stroke: #74849f; stroke-width: 2; }
+.onderhoud-grond { display: flex; justify-content: center; gap: 10px; width: 78%; margin-top: -12px; }
+.onderhoud-grond span { width: 28%; height: 3px; border-radius: 9px; background: linear-gradient(90deg, transparent, rgba(142,245,179,.38), transparent); }
+.onderhoud-bubbel {
+  position: relative;
+  z-index: 2;
+  max-width: 230px;
+  margin-top: 15px;
+  padding: 12px 16px;
+  border: 1px solid rgba(142,245,179,.24);
+  border-radius: 14px 14px 4px 14px;
+  color: #d9e8df;
+  background: rgba(22,45,39,.8);
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+  animation: bubbelWip 3s ease-in-out infinite;
+}
+.onderhoud-bubbel strong { color: var(--groen); }
+.onderhoud-voet { margin: 18px 0 0; color: #75819b; font-size: 10px; text-align: center; letter-spacing: .04em; }
+@keyframes statusKnipper { 0%,100% { opacity: 1; } 50% { opacity: .48; } }
+@keyframes glansPassage { 0%,35% { transform: translateX(-100%); } 65%,100% { transform: translateX(100%); } }
+@keyframes lichtAdem { 0%,100% { transform: scale(.9); opacity: .65; } 50% { transform: scale(1.13); opacity: 1; } }
+@keyframes klusBeweging { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-8px) rotate(1deg); } }
+@keyframes hamerTik { 0%,65%,100% { transform: rotate(0); } 76% { transform: rotate(-23deg); } 87% { transform: rotate(8deg); } }
+@keyframes bubbelWip { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* Extra vloeiende reacties en overgangen */
+.paneel, .level-kaart, .uitleg-kaart, .land-kaart, .missie-kaart {
+  transition: border-color .28s ease, box-shadow .28s ease, background .28s ease, transform .28s cubic-bezier(.2,.8,.2,1);
+}
+.level-kaart.beschikbaar { animation: kaartVerschijn .45s ease both; }
+.level-kaart:nth-child(2) { animation-delay: .05s; }
+.level-kaart:nth-child(3) { animation-delay: .1s; }
+.level-kaart:nth-child(4) { animation-delay: .15s; }
+.antwoord-knop { animation: antwoordVerschijn .32s ease both; }
+.antwoord-knop:nth-child(2) { animation-delay: .035s; }
+.antwoord-knop:nth-child(3) { animation-delay: .07s; }
+.antwoord-knop:nth-child(4) { animation-delay: .105s; }
+.knop { will-change: transform; }
+.knop-primair:hover:not(:disabled) { filter: brightness(1.06); }
+.voortgang-vulling { transition: width .65s cubic-bezier(.2,.8,.2,1); }
+@keyframes kaartVerschijn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes antwoordVerschijn { from { opacity: 0; transform: translateX(-7px); } to { opacity: 1; transform: translateX(0); } }
+
+@media (max-width: 680px) {
+  .mascotte-compact { margin-top: 18px; }
+  .mascotte-compact .mascotte-beeld { flex-basis: 76px; width: 76px; height: 76px; }
+  .mascotte-bubbel { padding: 12px; font-size: 10px; }
+  body.onderhoud-actief .site-shell { width: calc(100% - 28px); }
+  body.onderhoud-actief .app-inhoud { padding: 20px 0; }
+  .onderhoud-paneel { grid-template-columns: 1fr; gap: 4px; padding: 26px 21px 22px; text-align: center; }
+  .onderhoud-tekst .bovenlabel { justify-content: center; }
+  .onderhoud-tekst .titel-groot { font-size: clamp(39px, 11vw, 58px); }
+  .onderhoud-tekst .subtitel { margin-left: auto; margin-right: auto; font-size: 12px; }
+  .onderhoud-status { margin-top: 18px; }
+  .onderhoud-figuur { min-height: 270px; }
+  .mascotte-werk { width: 220px; height: 225px; }
+  .onderhoud-bubbel { margin-top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascotte-svg, .mascotte-werk, .mascotte-hamer, .onderhoud-bubbel, .onderhoud-licht, .onderhoud-badge .status-punt,
+  .onderhoud-paneel::before, .antwoord-knop, .level-kaart.beschikbaar, .mascotte--blij .mascotte-lichaam {
+    animation: none !important;
+  }
+}
