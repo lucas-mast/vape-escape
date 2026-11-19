@@ -214,26 +214,26 @@
     },
     {
       id: "p2",
-      prompt: "Een klasgenoot zegt: \"Deze vape heeft geen nicotine, dus hij is helemaal veilig.\"",
-      context: "Je weet inmiddels dat ook een vape zonder nicotine risico's kan hebben. Hoe reageer je?",
+      prompt: "In de groepschat deelt iemand een filmpje van een vape-uitdaging en tagt jou. Je vrienden zeggen dat je mee moet doen om erbij te horen.",
+      context: "Je wilt niet meedoen aan de uitdaging, maar je wilt ook geen ruzie in de groepschat. Wat doe je?",
       options: [
         {
-          text: "Je legt rustig uit dat ook de aerosol zonder nicotine schadelijke stoffen kan bevatten.",
+          text: "Je zegt dat je niet meedoet en deelt het filmpje niet verder.",
           best: true,
-          outcome: "Goed gezien. Je reageert met een feit in plaats van met ruzie. Zonder nicotine is een vape niet automatisch onschadelijk."
+          outcome: "Sterke keuze. Je bepaalt zelf waar je aan meedoet en helpt niet om de uitdaging verder te verspreiden."
         },
         {
-          text: "Je gelooft het meteen, want je klasgenoot klinkt zeker.",
+          text: "Je doet mee, omdat je bang bent dat de groep je anders buitensluit.",
           best: false,
-          outcome: "Zelfverzekerd klinken maakt een bewering nog niet waar. Controleer informatie bij betrouwbare bronnen zoals het RIVM."
+          outcome: "De druk van een groepschat bepaalt dan jouw keuze. Je mag ook online nee zeggen en hoeft niets te bewijzen."
         },
         {
-          text: "Je probeert de vape om zelf te onderzoeken of het klopt.",
+          text: "Je stuurt het filmpje door naar andere groepen zodat iedereen kan kijken.",
           best: false,
-          outcome: "Je hoeft een risico niet zelf uit te proberen om te weten dat het niet veilig is. Betrouwbare informatie helpt je om een keuze te maken."
+          outcome: "Door het filmpje verder te verspreiden, wordt de uitdaging groter. Je kunt beter niet meedoen en het niet doorsturen."
         }
       ],
-      bestReason: "Je hoeft geen discussie te winnen. Deel het feit en laat je niet overhalen om het zelf te proberen."
+      bestReason: "Je kunt kort reageren, het filmpje niet doorsturen en de chat verlaten als de druk doorgaat."
     },
     {
       id: "p3",
