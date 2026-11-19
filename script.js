@@ -507,7 +507,7 @@
       '<div class="land-regels">' +
       '<article class="land-kaart"><span class="land-naam">Nederland</span><strong>Leeftijdsgrens en smaakverbod</strong><p>Verkoop aan jongeren onder 18 is verboden. Sinds 2024 mogen vapes met andere smaken dan tabak niet worden verkocht. Sinds 2026 mogen vapes alleen nog in speciaalzaken worden verkocht.</p></article>' +
       '<article class="land-kaart"><span class="land-naam">Verenigd Koninkrijk</span><strong>Wegwerpvapes verboden</strong><p>Sinds 1 juni 2025 is de verkoop en levering van wegwerpvapes verboden. Herbruikbare vapes vallen niet onder dit specifieke verbod.</p></article>' +
-      '<article class="land-kaart"><span class="land-naam">Australië</span><strong>Verstrekking via apotheken</strong><p>Australië werkt met strenge regels waarbij vapes als therapeutische producten via apotheken worden verstrekt.</p></article>' +
+      '<article class="land-kaart"><span class="land-naam">Australië</span><strong>Alleen verkoop via apotheken</strong><p>Vapes mogen daar alleen via apotheken worden verkocht voor therapeutisch gebruik. Wegwerpvapes worden niet via apotheken verkocht. Voorwaarden verschillen per staat en territorium.</p></article>' +
       '</div><p class="wet-notitie">Regels verschillen per land en kunnen veranderen. Dit is een korte selectie, geen volledig juridisch overzicht. Raadpleeg de officiële bronnen onderaan de pagina.</p>' +
       eindKnop + '</section>';
   }
