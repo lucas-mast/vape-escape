@@ -316,6 +316,11 @@
         if (KARAKTER_KLEUREN.includes(parsed.character.kleur)) clean.character.kleur = parsed.character.kleur;
         if (KARAKTER_ACCESSOIRES.includes(parsed.character.accessoire)) clean.character.accessoire = parsed.character.accessoire;
       }
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clean));
+      } catch (opslagFout) {
+        // Het spel blijft speelbaar als lokale opslag niet beschikbaar is.
+      }
       return clean;
     } catch (error) {
       return legeVoortgang();
