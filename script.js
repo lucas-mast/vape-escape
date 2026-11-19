@@ -648,8 +648,8 @@
 
   function tekenAccessoireSvg(accessoire, kleur) {
     if (accessoire === "pet") return '<path d="M43 51 Q47 23 80 22 Q112 23 117 51Z" fill="' + kleur + '" stroke="#423d38" stroke-width="3"/><path d="M38 51 Q80 43 124 54 Q116 66 83 63 Q55 62 38 59Z" fill="#edebe9" stroke="#423d38" stroke-width="2"/>';
-    if (accessoire === "kroon") return '<path d="M49 50 L43 27 L67 42 L80 19 L94 42 L117 27 L111 52Z" fill="#ffb74d" stroke="#423d38" stroke-width="3"/><path d="M49 52 H111" stroke="#423d38" stroke-width="3"/>';
-    if (accessoire === "koptelefoon") return '<path d="M43 76 V64 Q43 24 80 24 Q117 24 117 64 V76" fill="none" stroke="#423d38" stroke-width="8"/><rect x="35" y="68" width="16" height="27" rx="7" fill="#3080ff" stroke="#423d38" stroke-width="2"/><rect x="109" y="68" width="16" height="27" rx="7" fill="#3080ff" stroke="#423d38" stroke-width="2"/>';
+    if (accessoire === "kroon") return '<path d="M49 50 L43 27 L67 42 L80 19 L94 42 L117 27 L111 52Z" fill="#faff00" stroke="#423d38" stroke-width="3"/><path d="M49 52 H111" stroke="#423d38" stroke-width="3"/>';
+    if (accessoire === "koptelefoon") return '<path d="M43 76 V64 Q43 24 80 24 Q117 24 117 64 V76" fill="none" stroke="#423d38" stroke-width="8"/><rect x="35" y="68" width="16" height="27" rx="7" fill="#00f5ff" stroke="#423d38" stroke-width="2"/><rect x="109" y="68" width="16" height="27" rx="7" fill="#00f5ff" stroke="#423d38" stroke-width="2"/>';
     return "";
   }
 
@@ -669,11 +669,11 @@
 
   function renderRunnerAanpassen() {
     const kleuren = [
-      { kleur: "#fe6e00", naam: "Oranje" },
-      { kleur: "#3080ff", naam: "Blauw" },
-      { kleur: "#00c758", naam: "Groen" },
-      { kleur: "#8200da", naam: "Paars" },
-      { kleur: "#4a423a", naam: "Bruin" }
+      { kleur: "#39ff14", naam: "Neon groen" },
+      { kleur: "#00f5ff", naam: "Neon blauw" },
+      { kleur: "#ff00e5", naam: "Neon roze" },
+      { kleur: "#a020f0", naam: "Neon paars" },
+      { kleur: "#faff00", naam: "Neon geel" }
     ];
     const accessoires = [
       { id: "geen", naam: "Geen" },
@@ -834,7 +834,7 @@
     runner.obstakels.forEach(obstakel => tekenRunnerVape(ctx, obstakel));
     tekenRunnerKarakter(ctx, runner.verstreken);
     if (runner.verstreken < runner.onkwetsbaarTot) {
-      ctx.strokeStyle = "rgba(254,110,0,.65)"; ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(57,255,20,.65)"; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(runnerBaanX(runner.baan, 440), 423, 38 + Math.sin(runner.verstreken * 18) * 4, 0, Math.PI * 2); ctx.stroke();
     }
     ctx.fillStyle = "#000000"; ctx.font = "700 14px ui-sans-serif, system-ui"; ctx.textAlign = "center";
@@ -1139,9 +1139,9 @@
   const developerTools = Object.freeze({
     help() {
       console.info(
-        "Vape Escape — ontwikkelaarscommando's\\n" +
-        "vapeEscape.level(1) t/m vapeEscape.level(5)  Open direct een niveau\\n" +
-        "vapeEscape.map()                            Open de missiekaart\\n" +
+        "Vape Escape — ontwikkelaarscommando's\n" +
+        "vapeEscape.level(1) t/m vapeEscape.level(5)  Open direct een niveau\n" +
+        "vapeEscape.map()                            Open de missiekaart\n" +
         "vapeEscape.home()                           Ga naar het hoofdmenu"
       );
       return "Gebruik vapeEscape.level(1) t/m vapeEscape.level(5).";
