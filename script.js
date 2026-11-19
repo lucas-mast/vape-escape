@@ -55,12 +55,17 @@
 
   const STORAGE_KEY = "vape-escape-voortgang-v1";
   const TOTAL_QUESTIONS = 17;
-  const levelNames = ["Vape-feiten", "Feit of fabel", "Groepsdruk", "De laatste ontsnapping"];
+  const MAX_SCORE = 200;
+  const RUNNER_GOAL_SECONDS = 45;
+  const KARAKTER_KLEUREN = ["#fe6e00", "#3080ff", "#00c758", "#8200da", "#4a423a"];
+  const KARAKTER_ACCESSOIRES = ["geen", "pet", "kroon", "koptelefoon"];
+  const levelNames = ["Vape-feiten", "Feit of fabel", "Groepsdruk", "De laatste ontsnapping", "De vapehindernisbaan"];
   const levelDescriptions = [
     "Ontdek wat er in een vape zit en wat nicotine met je lichaam doet.",
     "Prik door misleidende beweringen heen en leer hoe regels per land verschillen.",
     "Oefen met lastige situaties en kies hoe jij bij jouw eigen grens blijft.",
-    "Gebruik alles wat je hebt geleerd om het digitale slot te openen."
+    "Gebruik alles wat je hebt geleerd om het digitale slot te openen.",
+    "Ren, wissel van baan en ontwijk de vapes. Houd je drie levens en haal de finish."
   ];
 
   const factsQuestions = [
@@ -147,39 +152,39 @@
   const truthQuestions = [
     {
       id: "t1",
-      prompt: "Vape-damp is alleen maar waterdamp.",
-      correctIndex: 1,
-      explanation: "Niet waar. Wat je inademt is een aerosol: kleine druppeltjes en deeltjes uit een verhitte vloeistof. Daarin kunnen nicotine, metalen en andere schadelijke stoffen zitten."
+      prompt: "Kunnen mensen in de buurt ook stoffen uit uitgeademde vape-aerosol inademen?",
+      correctIndex: 0,
+      explanation: "Waar. Het RIVM beschrijft dat gebruikers stoffen uitademen die ook bij omstanders terecht kunnen komen. Dat kan bijvoorbeeld irritatie aan keel, neus en ogen veroorzaken."
     },
     {
       id: "t2",
-      prompt: "De meeste vapes bevatten nicotine.",
-      correctIndex: 0,
-      explanation: "Waar. Veel vapes bevatten nicotine, soms in een hoge hoeveelheid. Er bestaan ook vapes zonder nicotine, maar ook die zijn niet automatisch onschadelijk."
+      prompt: "Een lege vape mag gewoon bij het restafval, omdat hij klein is.",
+      correctIndex: 1,
+      explanation: "Niet waar. Een vape is een elektrisch apparaat, vaak met een ingebouwde batterij. Lever hem in bij een inzamelpunt voor kleine elektrische apparaten, niet bij het restafval."
     },
     {
       id: "t3",
-      prompt: "Nicotine kan ervoor zorgen dat je steeds opnieuw wilt vapen.",
-      correctIndex: 0,
-      explanation: "Waar. Nicotine is sterk verslavend. Je lichaam en hersenen kunnen eraan wennen, waardoor je trek kunt krijgen en ontwenningsklachten kunt ervaren."
+      prompt: "Webwinkels mogen vapes in Nederland rechtstreeks aan consumenten verkopen.",
+      correctIndex: 1,
+      explanation: "Niet waar. Online verkoop aan consumenten is in Nederland verboden. Dit verbod geldt sinds 1 juli 2023."
     },
     {
       id: "t4",
-      prompt: "Het brein van een tiener is nog in ontwikkeling.",
+      prompt: "Sinds 2026 mogen e-sigaretten in Nederland alleen nog in speciaalzaken worden verkocht.",
       correctIndex: 0,
-      explanation: "Waar. Vooral gebieden die helpen bij plannen, keuzes maken en impulsen beheersen ontwikkelen nog. Nicotine kan die ontwikkeling verstoren."
+      explanation: "Waar. De Rijksoverheid vermeldt dat e-sigaretten vanaf 2026 alleen nog in speciaalzaken mogen worden verkocht."
     },
     {
       id: "t5",
-      prompt: "In Nederland mogen vapes met fruitsmaak gewoon worden verkocht.",
+      prompt: "Een winkel mag reclame maken voor vapes op sociale media, zolang er maar bij staat dat nicotine verslavend is.",
       correctIndex: 1,
-      explanation: "Niet waar. Sinds 1 januari 2024 mogen vapes en e-liquids met andere smaken dan tabak niet meer worden verkocht in Nederland."
+      explanation: "Niet waar. Voor tabaksproducten en aanverwante producten, waaronder e-sigaretten, geldt in Nederland een reclameverbod. Een waarschuwing maakt reclame niet toegestaan."
     },
     {
       id: "t6",
-      prompt: "Overal ter wereld gelden precies dezelfde regels voor vapes.",
-      correctIndex: 1,
-      explanation: "Niet waar. Landen kiezen verschillende regels. In het Verenigd Koninkrijk is de verkoop van wegwerpvapes sinds 1 juni 2025 verboden. In Australië mogen vapes alleen via apotheken worden verstrekt onder strenge voorwaarden. In Nederland zijn onder andere verkoop aan jongeren onder 18 en smaakjes anders dan tabak verboden."
+      prompt: "In het Verenigd Koninkrijk is de verkoop van wegwerpvapes sinds 1 juni 2025 verboden.",
+      correctIndex: 0,
+      explanation: "Waar. Het verbod geldt voor wegwerpvapes, zowel met als zonder nicotine, en voor verkoop in winkels en online. Herbruikbare vapes vallen niet onder dit specifieke verbod."
     }
   ];
 
@@ -278,14 +283,15 @@
     }
   ];
 
-  const allQuestionIds = factsQuestions.map(q => q.id)
+  const questionIds = factsQuestions.map(q => q.id)
     .concat(truthQuestions.map(q => q.id))
     .concat(scenarios.map(q => q.id))
     .concat(["escape-code"]);
+  const allQuestionIds = questionIds.concat(["runner-clear"]);
   const validIdSet = new Set(allQuestionIds);
 
   function legeVoortgang() {
-    return { completed: [false, false, false, false], answers: {} };
+    return { completed: [false, false, false, false, false], answers: {}, runnerBest: 0, character: { naam: "Vapo", kleur: "#fe6e00", accessoire: "pet" } };
   }
 
   function laadVoortgang() {
@@ -304,6 +310,12 @@
           }
         });
       }
+      if (Number.isFinite(parsed.runnerBest)) clean.runnerBest = Math.max(0, Math.min(RUNNER_GOAL_SECONDS, parsed.runnerBest));
+      if (parsed.character && typeof parsed.character === "object") {
+        if (typeof parsed.character.naam === "string") clean.character.naam = parsed.character.naam.slice(0, 16);
+        if (KARAKTER_KLEUREN.includes(parsed.character.kleur)) clean.character.kleur = parsed.character.kleur;
+        if (KARAKTER_ACCESSOIRES.includes(parsed.character.accessoire)) clean.character.accessoire = parsed.character.accessoire;
+      }
       return clean;
     } catch (error) {
       return legeVoortgang();
@@ -317,6 +329,7 @@
   let feedback = null;
   let codeMelding = "";
   let codePogingen = 0;
+  let runner = { actief: false, frame: null, vorigeTijd: 0, verstreken: 0, spawnTijd: 0, baan: 1, levens: 3, obstakels: [], onkwetsbaarTot: 0, raakkans: 0, teller: 0 };
   let geluidAan = false;
   let audioContext = null;
 
@@ -329,11 +342,11 @@
   }
 
   function aantalGoed() {
-    return allQuestionIds.filter(id => voortgang.answers[id] === true).length;
+    return questionIds.filter(id => voortgang.answers[id] === true).length;
   }
 
   function score() {
-    return aantalGoed() * 10;
+    return aantalGoed() * 10 + (voortgang.answers["runner-clear"] === true ? 30 : 0);
   }
 
   function afgerondeLevels() {
@@ -349,8 +362,10 @@
       factsQuestions.map(q => q.id),
       truthQuestions.map(q => q.id),
       scenarios.map(q => q.id),
-      ["escape-code"]
+      ["escape-code"],
+      ["runner-clear"]
     ][index];
+    if (index === 4) return voortgang.answers["runner-clear"] === true ? 30 : 0;
     return ids.filter(id => voortgang.answers[id] === true).length * 10;
   }
 
