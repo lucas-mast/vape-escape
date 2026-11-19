@@ -22,7 +22,7 @@
           </div>
           <div class="onderhoud-figuur">
             <div class="onderhoud-licht"></div>
-            <svg class="mascotte-svg mascotte-werk" viewBox="0 0 180 190" role="img" aria-label="Vapo de mascotte draagt een gele bouwhelm en houdt een hamer vast">
+            <svg class="mascotte-svg mascotte-werk" viewBox="0 0 180 190" role="img" aria-label="Bink de mascotte draagt een gele bouwhelm en houdt een hamer vast">
               <ellipse class="mascotte-schaduw" cx="88" cy="174" rx="54" ry="9"></ellipse>
               <path class="mascotte-arm" d="M47 107 Q22 119 30 142 Q34 153 45 142 L63 124Z"></path>
               <path class="mascotte-arm" d="M126 107 Q148 103 151 124 L143 146 Q135 151 129 139 L118 122Z"></path>
@@ -44,7 +44,7 @@
               <circle class="mascotte-glans" cx="52" cy="79" r="4"></circle>
             </svg>
             <div class="onderhoud-grond"><span></span><span></span><span></span></div>
-            <div class="onderhoud-bubbel"><strong>Vapo zegt:</strong><br>Ik ben bijna klaar! Nog even geduld.</div>
+            <div class="onderhoud-bubbel"><strong>Bink zegt:</strong><br>Ik ben bijna klaar! Nog even geduld.</div>
           </div>
         </div>
         <p class="onderhoud-voet">Bedankt voor je geduld. Tot snel bij Vape Escape!</p>
@@ -291,7 +291,7 @@
   const validIdSet = new Set(allQuestionIds);
 
   function legeVoortgang() {
-    return { completed: [false, false, false, false, false], answers: {}, runnerBest: 0, character: { naam: "Vapo", kleur: "#fe6e00", accessoire: "pet" } };
+    return { completed: [false, false, false, false, false], answers: {}, runnerBest: 0, character: { naam: "Bink", kleur: "#fe6e00", accessoire: "pet" } };
   }
 
   function laadVoortgang() {
@@ -312,7 +312,7 @@
       }
       if (Number.isFinite(parsed.runnerBest)) clean.runnerBest = Math.max(0, Math.min(RUNNER_GOAL_SECONDS, parsed.runnerBest));
       if (parsed.character && typeof parsed.character === "object") {
-        if (typeof parsed.character.naam === "string") clean.character.naam = parsed.character.naam.slice(0, 16);
+        if (typeof parsed.character.naam === "string") clean.character.naam = parsed.character.naam === "Vapo" ? "Bink" : parsed.character.naam.slice(0, 16);
         if (KARAKTER_KLEUREN.includes(parsed.character.kleur)) clean.character.kleur = parsed.character.kleur;
         if (KARAKTER_ACCESSOIRES.includes(parsed.character.accessoire)) clean.character.accessoire = parsed.character.accessoire;
       }
@@ -416,7 +416,7 @@
     const extraClass = compact ? " mascotte-compact" : " mascotte-feedback";
     return '<div class="mascotte-wrap' + extraClass + '">' +
       '<div class="mascotte-beeld ' + expressie + '">' +
-      '<svg class="mascotte-svg" viewBox="0 0 160 160" role="img" aria-label="' + (uiting === "verdrietig" ? "Vapo kijkt bezorgd" : (uiting === "blij" ? "Vapo is blij" : "Vapo de mascotte")) + '">' +
+      '<svg class="mascotte-svg" viewBox="0 0 160 160" role="img" aria-label="' + (uiting === "verdrietig" ? "Bink kijkt bezorgd" : (uiting === "blij" ? "Bink is blij" : "Bink de mascotte")) + '">' +
       '<ellipse class="mascotte-schaduw" cx="80" cy="148" rx="43" ry="7"></ellipse>' +
       '<path class="mascotte-arm" d="M43 93 Q19 100 27 124 Q31 134 41 126 L56 109Z"></path>' +
       '<path class="mascotte-arm" d="M117 92 Q140 98 133 122 Q129 133 119 125 L104 108Z"></path>' +
@@ -430,7 +430,7 @@
       '<path class="mascotte-voetje" d="M95 146 Q103 160 120 159 Q132 155 123 151 Q110 151 109 136Z"></path>' +
       '<circle class="mascotte-glans" cx="46" cy="56" r="4"></circle>' +
       '</svg></div>' +
-      '<div class="mascotte-bubbel"><strong>Vapo</strong><span>' + bericht + '</span></div>' +
+      '<div class="mascotte-bubbel"><strong>Bink</strong><span>' + bericht + '</span></div>' +
       '</div>';
   }
 
@@ -450,7 +450,7 @@
       '<div class="meta-item"><strong>17</strong><span>Kennischecks</span></div>',
       '<div class="meta-item"><strong>200</strong><span>Te verdienen punten</span></div>',
       '</div>',
-      mascotteWeergave("normaal", "Hoi! Ik ben Vapo. Klaar voor de missie?", true),
+      mascotteWeergave("normaal", "Hoi! Ik ben Bink! Vapen is geen gezonde keuze. Samen kiezen we voor een vapevrije toekomst!", true),
       '</div>',
       '<aside class="missie-kaart" aria-label="Missie: open het digitale slot">',
       '<div class="kaart-kop"><span>MISSIE 001 / GEZONDHEID</span><span class="kaart-code">TOEGANG GEBLOKKEERD</span></div>',
@@ -542,7 +542,7 @@
       '<div><strong>' + kop + '</strong><p>' + (gekozenUitleg || q.explanation || "") + '</p>' +
       (extra ? '<p class="feedback-extra">' + extra + '</p>' : '') +
       '</div></div>' +
-      mascotteWeergave(goed ? "blij" : "verdrietig", goed ? "Top! Dat had je goed. Weer een stap dichter bij de uitgang!" : "Oei, dat was niet helemaal goed. Geen paniek: van fouten leer je. Lees de uitleg!") +
+      mascotteWeergave(goed ? "blij" : "verdrietig", goed ? "Goed gedaan! Jij kiest voor een gezonde toekomst. Laat je niet overhalen om te vapen!" : "Oei, dat antwoord klopt niet. Geen zorgen: je kunt dit leren! Vapen is geen gezonde keuze.") +
       '<div class="feedback-acties"><button class="knop knop-primair knop-klein" type="button" data-action="volgende">' + (huidigeVraag + 1 >= aantal ? "NIVEAU AFRONDEN" : "VOLGENDE VRAAG") + ' →</button></div>';
   }
 
@@ -1099,7 +1099,7 @@
   app.addEventListener("change", event => {
     if (event.target && event.target.id === "runner-naam") {
       const naam = event.target.value.trim().slice(0, 16);
-      voortgang.character.naam = naam || "Vapo";
+      voortgang.character.naam = naam || "Bink";
       bewaarVoortgang();
       render();
     }
