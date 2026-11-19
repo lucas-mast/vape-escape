@@ -849,7 +849,11 @@
   function tekenAccessoireSvg(accessoire, kleur) {
     if (accessoire === "pet") return '<path d="M43 51 Q47 23 80 22 Q112 23 117 51Z" fill="' + kleur + '" stroke="#423d38" stroke-width="3"/><path d="M38 51 Q80 43 124 54 Q116 66 83 63 Q55 62 38 59Z" fill="#edebe9" stroke="#423d38" stroke-width="2"/>';
     if (accessoire === "kroon") return '<path d="M49 50 L43 27 L67 42 L80 19 L94 42 L117 27 L111 52Z" fill="#faff00" stroke="#423d38" stroke-width="3"/><path d="M49 52 H111" stroke="#423d38" stroke-width="3"/>';
-    if (accessoire === "koptelefoon") return '<path d="M43 76 V64 Q43 24 80 24 Q117 24 117 64 V76" fill="none" stroke="#423d38" stroke-width="8"/><rect x="35" y="68" width="16" height="27" rx="7" fill="#00f5ff" stroke="#423d38" stroke-width="2"/><rect x="109" y="68" width="16" height="27" rx="7" fill="#00f5ff" stroke="#423d38" stroke-width="2"/>';
+    if (accessoire === "koptelefoon") return '<path d="M43 76 V64 Q43 24 80 24 Q117 24 117 64 V76" fill="none" stroke="#efffed" stroke-width="8"/><rect x="35" y="68" width="16" height="27" rx="7" fill="#00f5ff" stroke="#000" stroke-width="2"/><rect x="109" y="68" width="16" height="27" rx="7" fill="#00f5ff" stroke="#000" stroke-width="2"/>';
+    if (accessoire === "bril") return '<g fill="none" stroke="#000" stroke-width="5"><circle cx="62" cy="91" r="13"/><circle cx="98" cy="91" r="13"/><path d="M75 91 H85"/></g>';
+    if (accessoire === "cape") return '<path d="M48 80 L19 143 Q80 164 141 143 L112 80Z" fill="#ff00e5" opacity=".9" stroke="#000" stroke-width="3"/>';
+    if (accessoire === "vleugels") return '<path d="M42 95 Q3 50 11 112 Q20 138 48 119 M118 95 Q157 50 149 112 Q140 138 112 119" fill="#00f5ff" stroke="#000" stroke-width="3"/>';
+    if (accessoire === "antenne") return '<path d="M80 42 L80 11" stroke="#faff00" stroke-width="5"/><circle cx="80" cy="9" r="9" fill="#faff00" stroke="#000" stroke-width="2"/>';
     return "";
   }
 
@@ -879,7 +883,11 @@
       { id: "geen", naam: "Geen" },
       { id: "pet", naam: "Pet" },
       { id: "kroon", naam: "Kroon" },
-      { id: "koptelefoon", naam: "Koptelefoon" }
+      { id: "koptelefoon", naam: "Koptelefoon" },
+      { id: "bril", naam: "Neonbril" },
+      { id: "cape", naam: "Cape" },
+      { id: "vleugels", naam: "Vleugels" },
+      { id: "antenne", naam: "Antenne" }
     ];
     const kleurKnoppen = kleuren.map(item =>
       '<button type="button" class="runner-kleur' + (voortgang.character.kleur === item.kleur ? ' gekozen' : '') + '" style="--karakterkleur:' + item.kleur + '" data-action="runner-kleur" data-kleur="' + item.kleur + '" aria-label="Kies ' + item.naam + '" aria-pressed="' + (voortgang.character.kleur === item.kleur) + '"></button>'
@@ -894,80 +902,110 @@
       '<div class="runner-aanpas-grid">' +
       '<div class="paneel runner-personalisatie">' +
       '<span class="mini-label">JOUW KARAKTER</span>' +
-      '<div class="runner-preview">' + karakterVoorbeeldSvg() + '<strong>' + escapeHtml(voortgang.character.naam) + '</strong><span>Deelnemer aan de hindernisbaan</span></div>' +
+      '<div class="runner-preview"><div id="runner-preview-beeld" class="runner-preview-beeld">' + karakterVoorbeeldSvg() + '</div><strong id="runner-preview-naam">' + escapeHtml(voortgang.character.naam) + '</strong><span>Deelnemer aan de hindernisbaan</span></div>' +
       '<label class="runner-label" for="runner-naam">Naam van je karakter</label>' +
       '<input class="runner-invoer" id="runner-naam" maxlength="16" value="' + escapeHtml(voortgang.character.naam) + '" placeholder="Vul een naam in">' +
       '<span class="runner-label">Kies een kleur</span><div class="runner-kleuren">' + kleurKnoppen + '</div>' +
       '<span class="runner-label">Kies een accessoire</span><div class="runner-accessoires">' + accessoireKnoppen + '</div>' +
+      '<span class="runner-label">Kies een effect</span><div class="runner-accessoires">' +
+      KARAKTER_EFFECTEN.map(effect => '<button type="button" class="runner-accessoire runner-effect' + ((voortgang.character.effect || "neon") === effect ? ' gekozen' : '') + '" data-action="runner-effect" data-effect="' + effect + '" aria-pressed="' + ((voortgang.character.effect || "neon") === effect) + '">' + ({ neon: "Neongloed", vonken: "Vonken", sterren: "Sterren", wolken: "Wolken" }[effect]) + '</button>').join("") +
+      '</div>' +
       '</div>' +
       '<div class="runner-uitleg-kolom">' +
-      '<div class="paneel runner-uitleg"><span class="mini-label">DE OPDRACHT</span><h2>Ontwijk de obstakels</h2><p>Ren over drie banen en ontwijk de vape-obstakels. Je hebt drie levens. Houd het 45 seconden vol om de finish te halen.</p><div class="runner-statistieken"><div><strong>3</strong><span>LEVENS</span></div><div><strong>45</strong><span>SECONDEN</span></div><div><strong>+30</strong><span>BONUSPUNTEN</span></div></div></div>' +
+      '<div class="paneel runner-uitleg"><span class="mini-label">DE OPDRACHT</span><h2>Verzamel 10 munten</h2><p>Ontwijk de snelle vape-obstakels en verzamel de zeldzame munten. Je hebt vijf levens. Verzamel alle tien om te winnen.</p><div class="runner-statistieken"><div><strong>5</strong><span>LEVENS</span></div><div><strong>10</strong><span>MUNTEN NODIG</span></div><div><strong>+30</strong><span>BONUSPUNTEN</span></div></div></div>' +
       '<div class="paneel runner-uitleg"><span class="mini-label">BESTURING</span><div class="runner-besturing-regel"><kbd>←</kbd><kbd>→</kbd><span>Wissel van baan met de pijltjestoetsen</span></div><div class="runner-besturing-regel"><kbd>A</kbd><kbd>D</kbd><span>Of gebruik de A- en D-toets</span></div><div class="runner-besturing-regel"><span class="runner-aanraak">LINKS / RECHTS</span><span>Op een telefoon gebruik je de knoppen op het scherm</span></div></div>' +
       '<button class="knop knop-primair runner-startknop" type="button" data-action="runner-start">START DE HINDERNISBAAN →</button>' +
-      '<p class="runner-record">Beste resultaat: <strong>' + Math.floor(voortgang.runnerBest) + ' van 45 seconden</strong></p>' +
+      '<p class="runner-record">Beste resultaat: <strong>' + Math.floor(voortgang.runnerBest) + ' van 10 munten</strong></p>' +
       '</div></div></section>';
   }
 
   function renderRunnerSpel() {
     return '<section class="pagina runner-pagina">' +
       '<div class="runner-hud"><button class="tekstknop" type="button" data-action="runner-stop">← Stop en terug</button>' +
-      '<div class="runner-hud-stat"><span>LEVENS</span><strong id="runner-levens">● ● ●</strong></div>' +
-      '<div class="runner-hud-stat"><span>TIJD</span><strong id="runner-tijd">00:45</strong></div>' +
-      '<div class="runner-hud-stat"><span>BAAN</span><strong id="runner-karakter">' + escapeHtml(voortgang.character.naam) + '</strong></div></div>' +
-      '<div class="paneel runner-speelveld"><div class="runner-canvas-omhulsel"><canvas id="runner-canvas" width="960" height="520" aria-label="Hindernisbaan met drie banen. Ontwijk de vape-obstakels door naar links en rechts te bewegen."></canvas><div class="runner-canvas-ondertekst">ONTWIJK DE OBSTAKELS · HOUD HET 45 SECONDEN VOL</div></div>' +
+      '<div class="runner-hud-stat"><span>LEVENS</span><strong id="runner-levens">● ● ● ● ●</strong></div>' +
+      '<div class="runner-hud-stat"><span>MUNTEN</span><strong id="runner-tijd">0 / 10</strong></div>' +
+      '<div class="runner-hud-stat"><span>TIJD</span><strong id="runner-klok">00:00</strong></div></div>' +
+      '<div class="paneel runner-speelveld"><div class="runner-canvas-omhulsel"><canvas id="runner-canvas" width="960" height="520" aria-label="Hindernisbaan met drie banen. Ontwijk vape-obstakels en verzamel tien zeldzame munten."></canvas><div class="runner-canvas-ondertekst">ONTWIJK DE VAPES · VERZAMEL 10 ZELDZAME MUNTEN</div></div>' +
       '<div class="runner-aanraakbediening"><button type="button" data-action="runner-links" aria-label="Beweeg naar links">← LINKS</button><button type="button" data-action="runner-rechts" aria-label="Beweeg naar rechts">RECHTS →</button></div></div>' +
-      '<p class="runner-spelhint">Tip: kijk vooruit en wissel op tijd van baan. Je hebt drie levens.</p>' +
+      '<p class="runner-spelhint">Tip: wissel soepel van baan en let goed op de munten. Vapes komen steeds sneller.</p>' +
       '</section>';
   }
 
   function renderRunnerMislukt() {
     return '<section class="pagina"><div class="paneel afrond-kaart runner-resultaat">' +
       '<div class="afrond-embleem runner-verlies">!</div><p class="bovenlabel" style="justify-content:center">POGING VOORBIJ</p>' +
-      '<h1 class="titel-middel">Je bent geraakt</h1>' +
-      '<p>Je drie levens zijn op. Geen probleem: pas je route aan en probeer de hindernisbaan opnieuw.</p>' +
-      '<div class="afrond-statistieken"><div class="statistiek"><strong>0</strong><span>Levens over</span></div><div class="statistiek"><strong>' + Math.floor(runner.verstreken) + ' s</strong><span>Volgehouden</span></div><div class="statistiek"><strong>' + Math.floor(voortgang.runnerBest) + ' s</strong><span>Beste tijd</span></div></div>' +
+      '<h1 class="titel-middel">Je levens zijn op</h1>' +
+      '<p>Je hebt ' + runner.muntenVerzameld + ' van de 10 munten gevonden. Pas je route aan en probeer het opnieuw.</p>' +
+      '<div class="afrond-statistieken"><div class="statistiek"><strong>0</strong><span>Levens over</span></div><div class="statistiek"><strong>' + runner.muntenVerzameld + ' / 10</strong><span>Munten verzameld</span></div><div class="statistiek"><strong>' + Math.floor(voortgang.runnerBest) + ' / 10</strong><span>Beste record</span></div></div>' +
       '<div class="rij-knoppen"><button class="knop knop-secundair" type="button" data-action="naar-kaart">MISSIEKAART</button><button class="knop knop-primair" type="button" data-action="runner-start">OPNIEUW PROBEREN ↻</button></div>' +
       '</div></section>';
   }
 
   function beginRunner() {
     stopRunnerLoop();
-    runner = { actief: true, frame: null, vorigeTijd: 0, verstreken: 0, spawnTijd: 0, baan: 1, levens: 3, obstakels: [], onkwetsbaarTot: 0, raakkans: 0, teller: 0, laatsteBaan: -1 };
+    runner = {
+      actief: true, frame: null, vorigeTijd: 0, verstreken: 0, spawnTijd: 0,
+      muntSpawnTijd: 0, volgendeMunt: 3.1 + Math.random() * 2.1,
+      baan: 1, doelBaan: 1, levens: 5, obstakels: [], munten: [], deeltjes: [],
+      muntenVerzameld: 0, onkwetsbaarTot: 0, spring: 0, teller: 0, laatsteBaan: -1
+    };
     gaNaar("runner-spel");
   }
 
   function stopRunnerLoop() {
     runner.actief = false;
-    if (runner.frame !== null && window.cancelAnimationFrame) {
-      window.cancelAnimationFrame(runner.frame);
-    }
+    if (runner.frame !== null && window.cancelAnimationFrame) window.cancelAnimationFrame(runner.frame);
     runner.frame = null;
   }
 
   function runnerBaanX(baan, y) {
     const verhouding = Math.max(0, Math.min(1, y / 520));
-    const boven = [403, 480, 557];
-    const onder = [245, 480, 715];
-    return boven[baan] + (onder[baan] - boven[baan]) * verhouding;
+    const boven = [403, 480, 557], onder = [245, 480, 715];
+    const positie = Math.max(0, Math.min(2, baan));
+    const links = Math.floor(positie), rechts = Math.min(2, links + 1), fractie = positie - links;
+    const x1 = boven[links] + (onder[links] - boven[links]) * verhouding;
+    const x2 = boven[rechts] + (onder[rechts] - boven[rechts]) * verhouding;
+    return x1 + (x2 - x1) * fractie;
+  }
+
+  function maakRunnerWolk(x, y, hoeveelheid) {
+    for (let i = 0; i < hoeveelheid; i++) {
+      runner.deeltjes.push({
+        x: x + (Math.random() - .5) * 20, y: y + (Math.random() - .5) * 10,
+        dx: (Math.random() - .5) * 48, dy: -18 - Math.random() * 38,
+        leven: .42 + Math.random() * .32, maxLeven: .75, grootte: 4 + Math.random() * 7
+      });
+    }
+  }
+
+  function tekenRunnerWolkjes(ctx, delta) {
+    runner.deeltjes = runner.deeltjes.filter(deeltje => deeltje.leven > 0);
+    runner.deeltjes.forEach(deeltje => {
+      deeltje.x += deeltje.dx * delta;
+      deeltje.y += deeltje.dy * delta;
+      deeltje.leven -= delta;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, deeltje.leven / deeltje.maxLeven) * .68;
+      ctx.fillStyle = "#d8ffd0"; ctx.shadowColor = "#39ff14"; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(deeltje.x, deeltje.y, deeltje.grootte, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    });
   }
 
   function tekenRunnerVape(ctx, obstakel) {
     const x = runnerBaanX(obstakel.baan, obstakel.y);
     const schaal = .72 + Math.max(0, obstakel.y / 520) * .5;
-    const breedte = 31 * schaal;
-    const hoogte = 67 * schaal;
+    const breedte = 31 * schaal, hoogte = 67 * schaal;
     ctx.save();
     ctx.translate(x, obstakel.y);
-    ctx.rotate(Math.sin(obstakel.teller || 0) * .04);
+    ctx.rotate(Math.sin(obstakel.teller || 0) * .07);
     ctx.fillStyle = "rgba(57,255,20,.10)";
     ctx.beginPath(); ctx.ellipse(0, hoogte * .48, breedte * .85, 6 * schaal, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#020702";
-    ctx.shadowColor = "#39ff14"; ctx.shadowBlur = 16 * schaal;
+    ctx.fillStyle = "#020702"; ctx.shadowColor = "#39ff14"; ctx.shadowBlur = 17 * schaal;
     ctx.beginPath(); ctx.roundRect(-breedte / 2, -hoogte / 2, breedte, hoogte, 8 * schaal); ctx.fill();
     ctx.shadowBlur = 0; ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2 * schaal; ctx.stroke();
     ctx.fillStyle = "#39ff14";
     ctx.beginPath(); ctx.roundRect(-breedte / 2 + 4 * schaal, -hoogte / 2 - 5 * schaal, breedte - 8 * schaal, 8 * schaal, 3 * schaal); ctx.fill();
-    ctx.fillStyle = "#39ff14";
     ctx.beginPath(); ctx.roundRect(-breedte / 2 + 3 * schaal, -4 * schaal, breedte - 6 * schaal, 19 * schaal, 3 * schaal); ctx.fill();
     ctx.strokeStyle = "#020502"; ctx.lineWidth = 3 * schaal; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(-7 * schaal, 0); ctx.lineTo(7 * schaal, 11 * schaal); ctx.moveTo(7 * schaal, 0); ctx.lineTo(-7 * schaal, 11 * schaal); ctx.stroke();
@@ -976,158 +1014,181 @@
     ctx.restore();
   }
 
+  function tekenRunnerMunt(ctx, munt) {
+    const x = runnerBaanX(munt.baan, munt.y), y = munt.y + Math.sin(munt.teller * 3) * 4;
+    const schaal = .72 + Math.max(0, munt.y / 520) * .35;
+    ctx.save(); ctx.translate(x, y); ctx.scale(schaal, schaal);
+    ctx.shadowColor = "#faff00"; ctx.shadowBlur = 22; ctx.fillStyle = "#faff00";
+    ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0; ctx.strokeStyle = "#fffca8"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = "#000"; ctx.font = "900 17px ui-sans-serif, system-ui"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("V", 0, 1); ctx.restore();
+  }
+
   function tekenRunnerKarakter(ctx, tijd) {
     const x = runnerBaanX(runner.baan, 440);
-    const y = 423 + Math.sin(tijd * 13) * 4;
+    const voortgangSprong = runner.spring > 0 ? 1 - runner.spring / .72 : 0;
+    const springHoogte = runner.spring > 0 ? Math.sin(voortgangSprong * Math.PI) * 40 : 0;
+    const y = 423 - springHoogte + Math.sin(tijd * 8) * 2;
     const kleur = voortgang.character.kleur;
-    const knipper = runner.verstreken < runner.onkwetsbaarTot && Math.floor(tijd * 12) % 2 === 0;
+    const knipper = runner.verstreken < runner.onkwetsbaarTot && Math.floor(tijd * 15) % 2 === 0;
     if (knipper) return;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.fillStyle = "rgba(57,255,20,.12)";
-    ctx.beginPath(); ctx.ellipse(0, 31, 28, 7, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = kleur;
-    ctx.beginPath(); ctx.ellipse(0, 0, 23, 28, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#000000"; ctx.lineWidth = 2.5; ctx.stroke();
-    ctx.fillStyle = "#000000";
-    ctx.beginPath(); ctx.arc(-8, -4, 3, 0, Math.PI * 2); ctx.arc(8, -4, 3, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#000000"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
-    ctx.beginPath(); ctx.moveTo(-7, 8); ctx.quadraticCurveTo(0, 15, 7, 8); ctx.stroke();
-    if (voortgang.character.accessoire === "pet") {
-      ctx.fillStyle = "#000000"; ctx.beginPath(); ctx.arc(0, -20, 17, Math.PI, 0); ctx.fill();
-      ctx.fillRect(-18, -22, 36, 5);
-    } else if (voortgang.character.accessoire === "kroon") {
-      ctx.fillStyle = "#faff00"; ctx.beginPath(); ctx.moveTo(-15, -20); ctx.lineTo(-19, -37); ctx.lineTo(-7, -28); ctx.lineTo(0, -43); ctx.lineTo(7, -28); ctx.lineTo(19, -37); ctx.lineTo(15, -20); ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = "#000000"; ctx.stroke();
-    } else if (voortgang.character.accessoire === "koptelefoon") {
-      ctx.strokeStyle = "#000000"; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(0, -4, 23, Math.PI, 0); ctx.stroke();
-      ctx.fillStyle = "#00f5ff"; ctx.fillRect(-25, -7, 7, 18); ctx.fillRect(18, -7, 7, 18);
+    ctx.save(); ctx.translate(x, y);
+    if (runner.spring > 0) ctx.rotate(voortgangSprong * Math.PI * 2);
+    ctx.fillStyle = "rgba(57,255,20,.14)";
+    ctx.beginPath(); ctx.ellipse(0, 31 + springHoogte * .18, 28, 7, 0, 0, Math.PI * 2); ctx.fill();
+    const accessoire = voortgang.character.accessoire;
+    if (accessoire === "cape") {
+      ctx.fillStyle = "#ff00e5"; ctx.beginPath(); ctx.moveTo(-14,-15); ctx.quadraticCurveTo(-40,22,-27,30); ctx.lineTo(0,22); ctx.lineTo(27,30); ctx.quadraticCurveTo(40,22,14,-15); ctx.closePath(); ctx.fill();
+    }
+    if (accessoire === "vleugels") {
+      ctx.fillStyle = "#00f5ff"; ctx.beginPath(); ctx.moveTo(-18,-5); ctx.quadraticCurveTo(-55,-30,-45,17); ctx.quadraticCurveTo(-30,35,-15,15); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(18,-5); ctx.quadraticCurveTo(55,-30,45,17); ctx.quadraticCurveTo(30,35,15,15); ctx.fill();
+    }
+    ctx.fillStyle = kleur; ctx.shadowColor = kleur; ctx.shadowBlur = 18;
+    ctx.beginPath(); ctx.ellipse(0, 0, 23, 28, 0, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.strokeStyle = "#000"; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(-8,-4,3,0,Math.PI*2); ctx.arc(8,-4,3,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle = "#000"; ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(-7,8); ctx.quadraticCurveTo(0,15,7,8); ctx.stroke();
+    if (accessoire === "pet") {
+      ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(0,-20,17,Math.PI,0); ctx.fill(); ctx.fillRect(-18,-22,36,5);
+    } else if (accessoire === "kroon") {
+      ctx.fillStyle = "#faff00"; ctx.beginPath(); ctx.moveTo(-15,-20); ctx.lineTo(-19,-37); ctx.lineTo(-7,-28); ctx.lineTo(0,-43); ctx.lineTo(7,-28); ctx.lineTo(19,-37); ctx.lineTo(15,-20); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "#000"; ctx.stroke();
+    } else if (accessoire === "koptelefoon") {
+      ctx.strokeStyle = "#000"; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(0,-4,23,Math.PI,0); ctx.stroke();
+      ctx.fillStyle = "#00f5ff"; ctx.fillRect(-25,-7,7,18); ctx.fillRect(18,-7,7,18);
+    } else if (accessoire === "bril") {
+      ctx.strokeStyle = "#000"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(-8,-3,8,0,Math.PI*2); ctx.arc(8,-3,8,0,Math.PI*2); ctx.stroke();
+    } else if (accessoire === "antenne") {
+      ctx.strokeStyle = "#faff00"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0,-25); ctx.lineTo(0,-39); ctx.stroke();
+      ctx.fillStyle = "#faff00"; ctx.beginPath(); ctx.arc(0,-42,4,0,Math.PI*2); ctx.fill();
+    }
+    if (voortgang.character.effect === "sterren") {
+      ctx.fillStyle = "#faff00";
+      for (let i=0;i<3;i++){const hoek=tijd*2+i*Math.PI*2/3;ctx.beginPath();ctx.arc(Math.cos(hoek)*32,Math.sin(hoek)*30,2.5,0,Math.PI*2);ctx.fill();}
+    } else if (voortgang.character.effect === "vonken") {
+      ctx.strokeStyle = kleur; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-27,17); ctx.lineTo(-36,24); ctx.moveTo(27,17); ctx.lineTo(36,24); ctx.stroke();
+    } else if (voortgang.character.effect === "wolken") {
+      ctx.fillStyle = "#d8ffd0"; ctx.beginPath(); ctx.arc(-29,25,5,0,Math.PI*2); ctx.arc(29,25,5,0,Math.PI*2); ctx.fill();
     }
     ctx.restore();
   }
 
-  function tekenRunnerWereld(ctx) {
+  function tekenRunnerWereld(ctx, delta) {
     const breedte = 960, hoogte = 520;
-    ctx.clearRect(0, 0, breedte, hoogte);
-    ctx.fillStyle = "#000000"; ctx.fillRect(0, 0, breedte, hoogte);
-    const lucht = ctx.createLinearGradient(0, 0, 0, hoogte);
-    lucht.addColorStop(0, "#020502"); lucht.addColorStop(1, "#061006");
-    ctx.fillStyle = lucht; ctx.fillRect(0, 0, breedte, hoogte);
-    ctx.fillStyle = "rgba(57,255,20,.12)";
-    ctx.beginPath(); ctx.arc(480, 85, 94, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#071407";
-    ctx.beginPath(); ctx.moveTo(365, 0); ctx.lineTo(595, 0); ctx.lineTo(870, 520); ctx.lineTo(90, 520); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = "#020502";
-    ctx.beginPath(); ctx.moveTo(380, 0); ctx.lineTo(580, 0); ctx.lineTo(820, 520); ctx.lineTo(140, 520); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = "rgba(57,255,20,.95)"; ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.moveTo(365, 0); ctx.lineTo(90, 520); ctx.moveTo(595, 0); ctx.lineTo(870, 520); ctx.stroke();
-    ctx.strokeStyle = "#071407"; ctx.lineWidth = 2; ctx.setLineDash([13, 13]);
-    ctx.beginPath(); ctx.moveTo(440, 0); ctx.lineTo(360, 520); ctx.moveTo(520, 0); ctx.lineTo(600, 520); ctx.stroke();
-    ctx.setLineDash([]);
-    for (let i = 0; i < 9; i++) {
-      const y = (i * 83 + runner.verstreken * 165) % 520;
-      const alpha = .08 + y / 520 * .16;
-      ctx.fillStyle = "rgba(57,255,20," + alpha + ")";
-      ctx.fillRect(102 + y * .5, y, 7, 3);
-      ctx.fillRect(851 - y * .5, y, 7, 3);
-    }
-    runner.obstakels.forEach(obstakel => tekenRunnerVape(ctx, obstakel));
-    tekenRunnerKarakter(ctx, runner.verstreken);
-    if (runner.verstreken < runner.onkwetsbaarTot) {
-      ctx.strokeStyle = "rgba(57,255,20,.65)"; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(runnerBaanX(runner.baan, 440), 423, 38 + Math.sin(runner.verstreken * 18) * 4, 0, Math.PI * 2); ctx.stroke();
-    }
-    ctx.fillStyle = "#000000"; ctx.font = "700 14px ui-sans-serif, system-ui"; ctx.textAlign = "center";
-    ctx.fillText("WISSEL VAN BAAN OM DE OBSTAKELS TE ONTWIJKEN", 480, 28);
+    ctx.clearRect(0,0,breedte,hoogte); ctx.fillStyle = "#000"; ctx.fillRect(0,0,breedte,hoogte);
+    const lucht = ctx.createLinearGradient(0,0,0,hoogte);
+    lucht.addColorStop(0,"#020502"); lucht.addColorStop(1,"#061006"); ctx.fillStyle = lucht; ctx.fillRect(0,0,breedte,hoogte);
+    ctx.fillStyle = "rgba(57,255,20,.12)"; ctx.beginPath(); ctx.arc(480,85,94,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#071407"; ctx.beginPath(); ctx.moveTo(365,0);ctx.lineTo(595,0);ctx.lineTo(870,520);ctx.lineTo(90,520);ctx.closePath();ctx.fill();
+    ctx.fillStyle = "#020502"; ctx.beginPath(); ctx.moveTo(380,0);ctx.lineTo(580,0);ctx.lineTo(820,520);ctx.lineTo(140,520);ctx.closePath();ctx.fill();
+    ctx.strokeStyle = "rgba(57,255,20,.95)"; ctx.lineWidth = 4;ctx.beginPath();ctx.moveTo(365,0);ctx.lineTo(90,520);ctx.moveTo(595,0);ctx.lineTo(870,520);ctx.stroke();
+    ctx.strokeStyle = "rgba(57,255,20,.2)";ctx.lineWidth=2;ctx.setLineDash([13,13]);ctx.beginPath();ctx.moveTo(440,0);ctx.lineTo(360,520);ctx.moveTo(520,0);ctx.lineTo(600,520);ctx.stroke();ctx.setLineDash([]);
+    for(let i=0;i<9;i++){const y=(i*83+runner.verstreken*235)%520;const alpha=.08+y/520*.18;ctx.fillStyle="rgba(57,255,20,"+alpha+")";ctx.fillRect(102+y*.5,y,7,3);ctx.fillRect(851-y*.5,y,7,3);}
+    runner.munten.forEach(munt=>tekenRunnerMunt(ctx,munt));
+    runner.obstakels.forEach(obstakel=>tekenRunnerVape(ctx,obstakel));
+    tekenRunnerWolkjes(ctx,delta||0);
+    tekenRunnerKarakter(ctx,runner.verstreken);
+    if(runner.verstreken<runner.onkwetsbaarTot){ctx.strokeStyle="rgba(57,255,20,.65)";ctx.lineWidth=3;ctx.beginPath();ctx.arc(runnerBaanX(runner.baan,440),423,38+Math.sin(runner.verstreken*18)*4,0,Math.PI*2);ctx.stroke();}
+    ctx.fillStyle="#d7ffd1";ctx.font="700 14px ui-sans-serif, system-ui";ctx.textAlign="center";ctx.shadowColor="#39ff14";ctx.shadowBlur=8;
+    ctx.fillText("WISSEL VAN BAAN · VIND DE 10 MUNTEN",480,28);ctx.shadowBlur=0;
   }
 
   function werkRunnerHudBij() {
-    const levens = document.getElementById("runner-levens");
-    const tijd = document.getElementById("runner-tijd");
-    if (levens) {
-      levens.innerHTML = [0, 1, 2].map(i => '<span class="runner-leven ' + (i < runner.levens ? 'actief' : 'verloren') + '">●</span>').join("");
-      levens.setAttribute("aria-label", runner.levens + " van de 3 levens over");
-    }
-    if (tijd) {
-      const resterend = Math.max(0, RUNNER_GOAL_SECONDS - runner.verstreken);
-      tijd.textContent = "00:" + String(Math.ceil(resterend)).padStart(2, "0");
-    }
+    const levens=document.getElementById("runner-levens"), munten=document.getElementById("runner-tijd"), klok=document.getElementById("runner-klok");
+    if(levens){levens.innerHTML=[0,1,2,3,4].map(i=>'<span class="runner-leven '+(i<runner.levens?'actief':'verloren')+'">●</span>').join("");levens.setAttribute("aria-label",runner.levens+" van de 5 levens over");}
+    if(munten)munten.textContent=runner.muntenVerzameld+" / "+RUNNER_GOAL_COINS;
+    if(klok){const min=Math.floor(runner.verstreken/60),sec=Math.floor(runner.verstreken%60);klok.textContent=String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");}
   }
 
   function beweegRunner(richting) {
-    if (pagina !== "runner-spel" || !runner.actief) return;
-    runner.baan = Math.max(0, Math.min(2, runner.baan + richting));
+    if(pagina!=="runner-spel"||!runner.actief)return;
+    const oud=runner.doelBaan;runner.doelBaan=Math.max(0,Math.min(2,runner.doelBaan+richting));
+    if(runner.doelBaan!==oud){runner.spring=.72;maakRunnerWolk(runnerBaanX(runner.baan,440),450,7);}
+    registreerActiviteit();
   }
 
   function beeindigRunner(gewonnen) {
-    if (!runner.actief) return;
-    runner.actief = false;
-    if (runner.frame !== null && window.cancelAnimationFrame) window.cancelAnimationFrame(runner.frame);
-    runner.frame = null;
-    voortgang.runnerBest = Math.max(voortgang.runnerBest, Math.floor(runner.verstreken));
-    if (gewonnen) {
-      voortgang.answers["runner-clear"] = true;
-      voortgang.completed[4] = true;
-      voortgang.runnerBest = RUNNER_GOAL_SECONDS;
-      bewaarVoortgang();
-      speelGeluid(true);
-      gaNaar("eind");
-    } else {
-      bewaarVoortgang();
-      speelGeluid(false);
-      gaNaar("runner-mislukt");
-    }
+    if(!runner.actief)return;
+    runner.actief=false;
+    if(runner.frame!==null&&window.cancelAnimationFrame)window.cancelAnimationFrame(runner.frame);
+    runner.frame=null;
+    voortgang.runnerBest=Math.max(voortgang.runnerBest,runner.muntenVerzameld);
+    if(gewonnen){voortgang.answers["runner-clear"]=true;voortgang.completed[4]=true;bewaarVoortgang();speelGeluid(true);gaNaar("eind");}
+    else{bewaarVoortgang();speelGeluid(false);gaNaar("runner-mislukt");}
   }
 
   function stapRunner(tijdstip) {
-    if (!runner.actief || pagina !== "runner-spel") return;
-    if (!runner.vorigeTijd) runner.vorigeTijd = tijdstip;
-    const delta = Math.min(.05, Math.max(0, (tijdstip - runner.vorigeTijd) / 1000));
-    runner.vorigeTijd = tijdstip;
-    runner.verstreken += delta;
-    runner.spawnTijd += delta;
-    const spawnInterval = Math.max(.72, 1.12 - runner.verstreken * .006);
-    if (runner.spawnTijd >= spawnInterval) {
-      runner.spawnTijd = 0;
-      let baan = Math.floor(Math.random() * 3);
-      if (baan === runner.laatsteBaan) baan = (baan + 1 + Math.floor(Math.random() * 2)) % 3;
-      runner.laatsteBaan = baan;
-      runner.obstakels.push({ baan: baan, y: -55, snelheid: 190 + runner.verstreken * 2.8, teller: Math.random() * 6, geraakt: false });
+    if(!runner.actief||pagina!=="runner-spel")return;
+    if(!runner.vorigeTijd)runner.vorigeTijd=tijdstip;
+    const delta=Math.min(.05,Math.max(0,(tijdstip-runner.vorigeTijd)/1000));
+    runner.vorigeTijd=tijdstip;runner.verstreken+=delta;runner.spawnTijd+=delta;runner.muntSpawnTijd+=delta;
+    const versnelling=runner.verstreken*2.4,spawnInterval=Math.max(.48,.78-runner.verstreken*.0035);
+    if(runner.spawnTijd>=spawnInterval){
+      runner.spawnTijd=0;let baan=Math.floor(Math.random()*3);
+      if(baan===runner.laatsteBaan)baan=(baan+1+Math.floor(Math.random()*2))%3;
+      runner.laatsteBaan=baan;
+      runner.obstakels.push({baan,y:-60,snelheid:265+versnelling+Math.random()*24,teller:Math.random()*6,geraakt:false});
     }
-    runner.obstakels.forEach(obstakel => {
-      obstakel.y += obstakel.snelheid * delta;
-      obstakel.teller += delta * 4;
-      if (!obstakel.geraakt && obstakel.baan === runner.baan &&
-          obstakel.y > 385 && obstakel.y < 455 && runner.verstreken >= runner.onkwetsbaarTot) {
-        obstakel.geraakt = true;
-        runner.levens -= 1;
-        runner.onkwetsbaarTot = runner.verstreken + 1.15;
-        runner.raakkans += 1;
+    if(runner.muntSpawnTijd>=runner.volgendeMunt){
+      runner.muntSpawnTijd=0;runner.volgendeMunt=3.1+Math.random()*2.1;
+      const vrij=[0,1,2].filter(baan=>!runner.obstakels.some(o=>o.baan===baan&&o.y>-100&&o.y<120));
+      if(vrij.length)runner.munten.push({baan:vrij[Math.floor(Math.random()*vrij.length)],y:-28,snelheid:210+versnelling*.35,teller:Math.random()*5});
+    }
+    runner.baan+=(runner.doelBaan-runner.baan)*(1-Math.exp(-delta*14));
+    if(Math.abs(runner.doelBaan-runner.baan)<.006)runner.baan=runner.doelBaan;
+    if(runner.spring>0)runner.spring=Math.max(0,runner.spring-delta);
+    runner.obstakels.forEach(obstakel=>{
+      obstakel.y+=obstakel.snelheid*delta;obstakel.teller+=delta*6;
+      if(!obstakel.geraakt&&obstakel.y>345&&obstakel.y<380&&Math.abs(obstakel.baan-runner.baan)<.34){
+        obstakel.geraakt=true;
+        if(runner.verstreken>=runner.onkwetsbaarTot){runner.levens-=1;runner.onkwetsbaarTot=runner.verstreken+1.1;maakRunnerWolk(runnerBaanX(runner.baan,440),425,5);}
       }
     });
-    runner.obstakels = runner.obstakels.filter(obstakel => obstakel.y < 570 && !obstakel.geraakt);
-    const canvas = document.getElementById("runner-canvas");
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) tekenRunnerWereld(ctx);
-    }
+    // Remove vape obstacles before their sprite can overlap Bink.
+    runner.obstakels=runner.obstakels.filter(o=>o.y<380&&!o.geraakt);
+    runner.munten.forEach(munt=>{
+      munt.y+=munt.snelheid*delta;munt.teller+=delta;
+      if(!munt.verzameld&&munt.y>370&&munt.y<400&&Math.abs(munt.baan-runner.baan)<.40){
+        munt.verzameld=true;runner.muntenVerzameld+=1;voortgang.coins+=1;
+        maakRunnerWolk(runnerBaanX(runner.baan,440),410,10);bewaarVoortgang();speelGeluid(true);
+      }
+    });
+    runner.munten=runner.munten.filter(m=>m.y<402&&!m.verzameld);
+    const canvas=document.getElementById("runner-canvas");
+    if(canvas){const ctx=canvas.getContext("2d");if(ctx)tekenRunnerWereld(ctx,delta);}
     werkRunnerHudBij();
-    if (runner.levens <= 0) {
-      beeindigRunner(false);
-      return;
-    }
-    if (runner.verstreken >= RUNNER_GOAL_SECONDS) {
-      beeindigRunner(true);
-      return;
-    }
-    runner.frame = window.requestAnimationFrame(stapRunner);
+    if(runner.levens<=0){beeindigRunner(false);return;}
+    if(runner.muntenVerzameld>=RUNNER_GOAL_COINS){beeindigRunner(true);return;}
+    runner.frame=window.requestAnimationFrame(stapRunner);
   }
 
   function startRunnerLoop() {
-    if (!runner.actief || runner.frame !== null) return;
-    runner.vorigeTijd = 0;
-    werkRunnerHudBij();
-    runner.frame = window.requestAnimationFrame(stapRunner);
+    if(!runner.actief||runner.frame!==null)return;
+    runner.vorigeTijd=0;werkRunnerHudBij();runner.frame=window.requestAnimationFrame(stapRunner);
+  }
+
+  function speelBinkTransitie() {
+    const voorbeeld=document.getElementById("runner-preview-beeld"),paneel=document.querySelector(".runner-preview");
+    if(!voorbeeld||!paneel)return;
+    voorbeeld.classList.remove("bink-spring");void voorbeeld.offsetWidth;voorbeeld.classList.add("bink-spring");
+    for(let i=0;i<5;i++){
+      const wolk=document.createElement("span");wolk.className="bink-wolk";
+      wolk.style.left=(18+Math.random()*64)+"%";wolk.style.setProperty("--wolk-verticaal",(48+Math.random()*28)+"%");
+      wolk.style.animationDelay=(Math.random()*.12)+"s";paneel.appendChild(wolk);
+      window.setTimeout(()=>wolk.remove(),900);
+    }
+  }
+
+  function werkKarakterVoorbeeldBij() {
+    const beeld=document.getElementById("runner-preview-beeld"),naam=document.getElementById("runner-preview-naam");
+    if(beeld)beeld.innerHTML=karakterVoorbeeldSvg();if(naam)naam.textContent=voortgang.character.naam;
+    document.querySelectorAll("[data-action='runner-kleur']").forEach(knop=>{const ok=knop.dataset.kleur===voortgang.character.kleur;knop.classList.toggle("gekozen",ok);knop.setAttribute("aria-pressed",String(ok));});
+    document.querySelectorAll("[data-action='runner-accessoire']").forEach(knop=>{const ok=knop.dataset.accessoire===voortgang.character.accessoire;knop.classList.toggle("gekozen",ok);knop.setAttribute("aria-pressed",String(ok));});
+    document.querySelectorAll("[data-action='runner-effect']").forEach(knop=>{const ok=knop.dataset.effect===(voortgang.character.effect||"neon");knop.classList.toggle("gekozen",ok);knop.setAttribute("aria-pressed",String(ok));});
+    speelBinkTransitie();
   }
 
   function render() {
