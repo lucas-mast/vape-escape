@@ -1652,3 +1652,25 @@ body, body.spel-toegankelijk, body.onderhoud-actief, body.dashboard-actief {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
 }
+
+
+/* Dashboard rows show the complete personalised Bink SVG. */
+.dashboard-bink-wrap {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+}
+.dashboard-bink {
+  display: block;
+  width: 42px;
+  height: 42px;
+  overflow: visible;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: 0 0 12px var(--bink-kleur) !important;
+}
+.dashboard-bink-info small { color: #9dbb98; text-transform: capitalize; }
