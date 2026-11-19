@@ -636,6 +636,294 @@
       '</div></section>';
   }
 
+  function escapeHtml(waarde) {
+    return String(waarde).replace(/[&<>"']/g, teken => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[teken]);
+  }
+
+  function tekenAccessoireSvg(accessoire, kleur) {
+    if (accessoire === "pet") return '<path d="M43 51 Q47 23 80 22 Q112 23 117 51Z" fill="' + kleur + '" stroke="#423d38" stroke-width="3"/><path d="M38 51 Q80 43 124 54 Q116 66 83 63 Q55 62 38 59Z" fill="#edebe9" stroke="#423d38" stroke-width="2"/>';
+    if (accessoire === "kroon") return '<path d="M49 50 L43 27 L67 42 L80 19 L94 42 L117 27 L111 52Z" fill="#ffb74d" stroke="#423d38" stroke-width="3"/><path d="M49 52 H111" stroke="#423d38" stroke-width="3"/>';
+    if (accessoire === "koptelefoon") return '<path d="M43 76 V64 Q43 24 80 24 Q117 24 117 64 V76" fill="none" stroke="#423d38" stroke-width="8"/><rect x="35" y="68" width="16" height="27" rx="7" fill="#3080ff" stroke="#423d38" stroke-width="2"/><rect x="109" y="68" width="16" height="27" rx="7" fill="#3080ff" stroke="#423d38" stroke-width="2"/>';
+    return "";
+  }
+
+  function karakterVoorbeeldSvg() {
+    const kleur = voortgang.character.kleur;
+    return '<svg viewBox="0 0 160 170" role="img" aria-label="Voorbeeld van jouw eigen karakter">' +
+      '<ellipse cx="80" cy="157" rx="42" ry="7" fill="rgba(66,61,56,.12)"/>' +
+      '<path d="M49 127 Q41 148 31 151 Q21 160 44 162 Q65 160 69 139Z" fill="' + kleur + '"/>' +
+      '<path d="M93 139 Q99 160 122 162 Q143 158 129 151 Q115 149 111 126Z" fill="' + kleur + '"/>' +
+      '<path d="M80 39 C111 39 131 60 131 101 C131 137 111 151 80 151 C49 151 29 137 29 101 C29 60 49 39 80 39Z" fill="' + kleur + '" stroke="#423d38" stroke-width="3"/>' +
+      tekenAccessoireSvg(voortgang.character.accessoire, kleur) +
+      '<ellipse cx="63" cy="91" rx="5" ry="7" fill="#423d38"/><ellipse cx="98" cy="91" rx="5" ry="7" fill="#423d38"/>' +
+      '<path d="M64 111 Q80 126 96 111" fill="none" stroke="#423d38" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M48 69 Q55 59 65 63" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="5" stroke-linecap="round"/>' +
+      '</svg>';
+  }
+
+  function renderRunnerAanpassen() {
+    const kleuren = [
+      { kleur: "#fe6e00", naam: "Oranje" },
+      { kleur: "#3080ff", naam: "Blauw" },
+      { kleur: "#00c758", naam: "Groen" },
+      { kleur: "#8200da", naam: "Paars" },
+      { kleur: "#4a423a", naam: "Bruin" }
+    ];
+    const accessoires = [
+      { id: "geen", naam: "Geen" },
+      { id: "pet", naam: "Pet" },
+      { id: "kroon", naam: "Kroon" },
+      { id: "koptelefoon", naam: "Koptelefoon" }
+    ];
+    const kleurKnoppen = kleuren.map(item =>
+      '<button type="button" class="runner-kleur' + (voortgang.character.kleur === item.kleur ? ' gekozen' : '') + '" style="--karakterkleur:' + item.kleur + '" data-action="runner-kleur" data-kleur="' + item.kleur + '" aria-label="Kies ' + item.naam + '" aria-pressed="' + (voortgang.character.kleur === item.kleur) + '"></button>'
+    ).join("");
+    const accessoireKnoppen = accessoires.map(item =>
+      '<button type="button" class="runner-accessoire' + (voortgang.character.accessoire === item.id ? ' gekozen' : '') + '" data-action="runner-accessoire" data-accessoire="' + item.id + '" aria-pressed="' + (voortgang.character.accessoire === item.id) + '">' + item.naam + '</button>'
+    ).join("");
+    return '<section class="pagina runner-pagina">' +
+      '<div class="terugrij">' + terugKnop("Terug naar de missiekaart") + '<span class="mini-label">NIVEAU 05 / KARAKTERKEUZE</span></div>' +
+      '<p class="bovenlabel">KLAAR VOOR DE UITDAGING?</p><h1 class="titel-middel">Maak jouw renner</h1>' +
+      '<p class="subtitel">Geef je karakter een eigen naam, kleur en accessoire. Daarna begint de hindernisbaan.</p>' +
+      '<div class="runner-aanpas-grid">' +
+      '<div class="paneel runner-personalisatie">' +
+      '<span class="mini-label">JOUW KARAKTER</span>' +
+      '<div class="runner-preview">' + karakterVoorbeeldSvg() + '<strong>' + escapeHtml(voortgang.character.naam) + '</strong><span>Deelnemer aan de hindernisbaan</span></div>' +
+      '<label class="runner-label" for="runner-naam">Naam van je karakter</label>' +
+      '<input class="runner-invoer" id="runner-naam" maxlength="16" value="' + escapeHtml(voortgang.character.naam) + '" placeholder="Vul een naam in">' +
+      '<span class="runner-label">Kies een kleur</span><div class="runner-kleuren">' + kleurKnoppen + '</div>' +
+      '<span class="runner-label">Kies een accessoire</span><div class="runner-accessoires">' + accessoireKnoppen + '</div>' +
+      '</div>' +
+      '<div class="runner-uitleg-kolom">' +
+      '<div class="paneel runner-uitleg"><span class="mini-label">DE OPDRACHT</span><h2>Ontwijk de obstakels</h2><p>Ren over drie banen en ontwijk de vape-obstakels. Je hebt drie levens. Houd het 45 seconden vol om de finish te halen.</p><div class="runner-statistieken"><div><strong>3</strong><span>LEVENS</span></div><div><strong>45</strong><span>SECONDEN</span></div><div><strong>+30</strong><span>BONUSPUNTEN</span></div></div></div>' +
+      '<div class="paneel runner-uitleg"><span class="mini-label">BESTURING</span><div class="runner-besturing-regel"><kbd>←</kbd><kbd>→</kbd><span>Wissel van baan met de pijltjestoetsen</span></div><div class="runner-besturing-regel"><kbd>A</kbd><kbd>D</kbd><span>Of gebruik de A- en D-toets</span></div><div class="runner-besturing-regel"><span class="runner-aanraak">LINKS / RECHTS</span><span>Op een telefoon gebruik je de knoppen op het scherm</span></div></div>' +
+      '<button class="knop knop-primair runner-startknop" type="button" data-action="runner-start">START DE HINDERNISBAAN →</button>' +
+      '<p class="runner-record">Beste resultaat: <strong>' + Math.floor(voortgang.runnerBest) + ' van 45 seconden</strong></p>' +
+      '</div></div></section>';
+  }
+
+  function renderRunnerSpel() {
+    return '<section class="pagina runner-pagina">' +
+      '<div class="runner-hud"><button class="tekstknop" type="button" data-action="runner-stop">← Stop en terug</button>' +
+      '<div class="runner-hud-stat"><span>LEVENS</span><strong id="runner-levens">● ● ●</strong></div>' +
+      '<div class="runner-hud-stat"><span>TIJD</span><strong id="runner-tijd">00:45</strong></div>' +
+      '<div class="runner-hud-stat"><span>BAAN</span><strong id="runner-karakter">' + escapeHtml(voortgang.character.naam) + '</strong></div></div>' +
+      '<div class="paneel runner-speelveld"><div class="runner-canvas-omhulsel"><canvas id="runner-canvas" width="960" height="520" aria-label="Hindernisbaan met drie banen. Ontwijk de vape-obstakels door naar links en rechts te bewegen."></canvas><div class="runner-canvas-ondertekst">ONTWIJK DE OBSTAKELS · HOUD HET 45 SECONDEN VOL</div></div>' +
+      '<div class="runner-aanraakbediening"><button type="button" data-action="runner-links" aria-label="Beweeg naar links">← LINKS</button><button type="button" data-action="runner-rechts" aria-label="Beweeg naar rechts">RECHTS →</button></div></div>' +
+      '<p class="runner-spelhint">Tip: kijk vooruit en wissel op tijd van baan. Je hebt drie levens.</p>' +
+      '</section>';
+  }
+
+  function renderRunnerMislukt() {
+    return '<section class="pagina"><div class="paneel afrond-kaart runner-resultaat">' +
+      '<div class="afrond-embleem runner-verlies">!</div><p class="bovenlabel" style="justify-content:center">POGING VOORBIJ</p>' +
+      '<h1 class="titel-middel">Je bent geraakt</h1>' +
+      '<p>Je drie levens zijn op. Geen probleem: pas je route aan en probeer de hindernisbaan opnieuw.</p>' +
+      '<div class="afrond-statistieken"><div class="statistiek"><strong>0</strong><span>Levens over</span></div><div class="statistiek"><strong>' + Math.floor(runner.verstreken) + ' s</strong><span>Volgehouden</span></div><div class="statistiek"><strong>' + Math.floor(voortgang.runnerBest) + ' s</strong><span>Beste tijd</span></div></div>' +
+      '<div class="rij-knoppen"><button class="knop knop-secundair" type="button" data-action="naar-kaart">MISSIEKAART</button><button class="knop knop-primair" type="button" data-action="runner-start">OPNIEUW PROBEREN ↻</button></div>' +
+      '</div></section>';
+  }
+
+  function beginRunner() {
+    stopRunnerLoop();
+    runner = { actief: true, frame: null, vorigeTijd: 0, verstreken: 0, spawnTijd: 0, baan: 1, levens: 3, obstakels: [], onkwetsbaarTot: 0, raakkans: 0, teller: 0, laatsteBaan: -1 };
+    gaNaar("runner-spel");
+  }
+
+  function stopRunnerLoop() {
+    runner.actief = false;
+    if (runner.frame !== null && window.cancelAnimationFrame) {
+      window.cancelAnimationFrame(runner.frame);
+    }
+    runner.frame = null;
+  }
+
+  function runnerBaanX(baan, y) {
+    const verhouding = Math.max(0, Math.min(1, y / 520));
+    const boven = [403, 480, 557];
+    const onder = [245, 480, 715];
+    return boven[baan] + (onder[baan] - boven[baan]) * verhouding;
+  }
+
+  function tekenRunnerVape(ctx, obstakel) {
+    const x = runnerBaanX(obstakel.baan, obstakel.y);
+    const schaal = .72 + Math.max(0, obstakel.y / 520) * .5;
+    const breedte = 31 * schaal;
+    const hoogte = 67 * schaal;
+    ctx.save();
+    ctx.translate(x, obstakel.y);
+    ctx.rotate(Math.sin(obstakel.teller || 0) * .04);
+    ctx.fillStyle = "rgba(66,61,56,.15)";
+    ctx.beginPath(); ctx.ellipse(0, hoogte * .48, breedte * .85, 6 * schaal, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#4a423a";
+    ctx.beginPath(); ctx.roundRect(-breedte / 2, -hoogte / 2, breedte, hoogte, 8 * schaal); ctx.fill();
+    ctx.fillStyle = "#797067";
+    ctx.beginPath(); ctx.roundRect(-breedte / 2 + 4 * schaal, -hoogte / 2 - 5 * schaal, breedte - 8 * schaal, 8 * schaal, 3 * schaal); ctx.fill();
+    ctx.fillStyle = "#fe6e00";
+    ctx.beginPath(); ctx.roundRect(-breedte / 2 + 3 * schaal, -4 * schaal, breedte - 6 * schaal, 19 * schaal, 3 * schaal); ctx.fill();
+    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3 * schaal; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(-7 * schaal, 0); ctx.lineTo(7 * schaal, 11 * schaal); ctx.moveTo(7 * schaal, 0); ctx.lineTo(-7 * schaal, 11 * schaal); ctx.stroke();
+    ctx.fillStyle = "#fb2c36";
+    ctx.beginPath(); ctx.moveTo(0, -hoogte / 2 - 10 * schaal); ctx.lineTo(-9 * schaal, -hoogte / 2 + 3 * schaal); ctx.lineTo(9 * schaal, -hoogte / 2 + 3 * schaal); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function tekenRunnerKarakter(ctx, tijd) {
+    const x = runnerBaanX(runner.baan, 440);
+    const y = 423 + Math.sin(tijd * 13) * 4;
+    const kleur = voortgang.character.kleur;
+    const knipper = runner.verstreken < runner.onkwetsbaarTot && Math.floor(tijd * 12) % 2 === 0;
+    if (knipper) return;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = "rgba(66,61,56,.16)";
+    ctx.beginPath(); ctx.ellipse(0, 31, 28, 7, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = kleur;
+    ctx.beginPath(); ctx.ellipse(0, 0, 23, 28, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#423d38"; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.fillStyle = "#423d38";
+    ctx.beginPath(); ctx.arc(-8, -4, 3, 0, Math.PI * 2); ctx.arc(8, -4, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#423d38"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(-7, 8); ctx.quadraticCurveTo(0, 15, 7, 8); ctx.stroke();
+    if (voortgang.character.accessoire === "pet") {
+      ctx.fillStyle = "#423d38"; ctx.beginPath(); ctx.arc(0, -20, 17, Math.PI, 0); ctx.fill();
+      ctx.fillRect(-18, -22, 36, 5);
+    } else if (voortgang.character.accessoire === "kroon") {
+      ctx.fillStyle = "#ffb74d"; ctx.beginPath(); ctx.moveTo(-15, -20); ctx.lineTo(-19, -37); ctx.lineTo(-7, -28); ctx.lineTo(0, -43); ctx.lineTo(7, -28); ctx.lineTo(19, -37); ctx.lineTo(15, -20); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "#423d38"; ctx.stroke();
+    } else if (voortgang.character.accessoire === "koptelefoon") {
+      ctx.strokeStyle = "#423d38"; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(0, -4, 23, Math.PI, 0); ctx.stroke();
+      ctx.fillStyle = "#3080ff"; ctx.fillRect(-25, -7, 7, 18); ctx.fillRect(18, -7, 7, 18);
+    }
+    ctx.restore();
+  }
+
+  function tekenRunnerWereld(ctx) {
+    const breedte = 960, hoogte = 520;
+    ctx.clearRect(0, 0, breedte, hoogte);
+    ctx.fillStyle = "#fcfaf7"; ctx.fillRect(0, 0, breedte, hoogte);
+    const lucht = ctx.createLinearGradient(0, 0, 0, hoogte);
+    lucht.addColorStop(0, "#ffffff"); lucht.addColorStop(1, "#edebe9");
+    ctx.fillStyle = lucht; ctx.fillRect(0, 0, breedte, hoogte);
+    ctx.fillStyle = "rgba(254,110,0,.08)";
+    ctx.beginPath(); ctx.arc(480, 85, 94, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#e3e0dd";
+    ctx.beginPath(); ctx.moveTo(365, 0); ctx.lineTo(595, 0); ctx.lineTo(870, 520); ctx.lineTo(90, 520); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath(); ctx.moveTo(380, 0); ctx.lineTo(580, 0); ctx.lineTo(820, 520); ctx.lineTo(140, 520); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = "rgba(254,110,0,.28)"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(365, 0); ctx.lineTo(90, 520); ctx.moveTo(595, 0); ctx.lineTo(870, 520); ctx.stroke();
+    ctx.strokeStyle = "#e3e0dd"; ctx.lineWidth = 2; ctx.setLineDash([13, 13]);
+    ctx.beginPath(); ctx.moveTo(440, 0); ctx.lineTo(360, 520); ctx.moveTo(520, 0); ctx.lineTo(600, 520); ctx.stroke();
+    ctx.setLineDash([]);
+    for (let i = 0; i < 9; i++) {
+      const y = (i * 83 + runner.verstreken * 165) % 520;
+      const alpha = .08 + y / 520 * .16;
+      ctx.fillStyle = "rgba(254,110,0," + alpha + ")";
+      ctx.fillRect(102 + y * .5, y, 7, 3);
+      ctx.fillRect(851 - y * .5, y, 7, 3);
+    }
+    runner.obstakels.forEach(obstakel => tekenRunnerVape(ctx, obstakel));
+    tekenRunnerKarakter(ctx, runner.verstreken);
+    if (runner.verstreken < runner.onkwetsbaarTot) {
+      ctx.strokeStyle = "rgba(254,110,0,.65)"; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(runnerBaanX(runner.baan, 440), 423, 38 + Math.sin(runner.verstreken * 18) * 4, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.fillStyle = "#423d38"; ctx.font = "700 14px ui-sans-serif, system-ui"; ctx.textAlign = "center";
+    ctx.fillText("WISSEL VAN BAAN OM DE OBSTAKELS TE ONTWIJKEN", 480, 28);
+  }
+
+  function werkRunnerHudBij() {
+    const levens = document.getElementById("runner-levens");
+    const tijd = document.getElementById("runner-tijd");
+    if (levens) {
+      levens.innerHTML = [0, 1, 2].map(i => '<span class="runner-leven ' + (i < runner.levens ? 'actief' : 'verloren') + '">●</span>').join("");
+      levens.setAttribute("aria-label", runner.levens + " van de 3 levens over");
+    }
+    if (tijd) {
+      const resterend = Math.max(0, RUNNER_GOAL_SECONDS - runner.verstreken);
+      tijd.textContent = "00:" + String(Math.ceil(resterend)).padStart(2, "0");
+    }
+  }
+
+  function beweegRunner(richting) {
+    if (pagina !== "runner-spel" || !runner.actief) return;
+    runner.baan = Math.max(0, Math.min(2, runner.baan + richting));
+  }
+
+  function beeindigRunner(gewonnen) {
+    if (!runner.actief) return;
+    runner.actief = false;
+    if (runner.frame !== null && window.cancelAnimationFrame) window.cancelAnimationFrame(runner.frame);
+    runner.frame = null;
+    voortgang.runnerBest = Math.max(voortgang.runnerBest, Math.floor(runner.verstreken));
+    if (gewonnen) {
+      voortgang.answers["runner-clear"] = true;
+      voortgang.completed[4] = true;
+      voortgang.runnerBest = RUNNER_GOAL_SECONDS;
+      bewaarVoortgang();
+      speelGeluid(true);
+      gaNaar("eind");
+    } else {
+      bewaarVoortgang();
+      speelGeluid(false);
+      gaNaar("runner-mislukt");
+    }
+  }
+
+  function stapRunner(tijdstip) {
+    if (!runner.actief || pagina !== "runner-spel") return;
+    if (!runner.vorigeTijd) runner.vorigeTijd = tijdstip;
+    const delta = Math.min(.05, Math.max(0, (tijdstip - runner.vorigeTijd) / 1000));
+    runner.vorigeTijd = tijdstip;
+    runner.verstreken += delta;
+    runner.spawnTijd += delta;
+    const spawnInterval = Math.max(.72, 1.12 - runner.verstreken * .006);
+    if (runner.spawnTijd >= spawnInterval) {
+      runner.spawnTijd = 0;
+      let baan = Math.floor(Math.random() * 3);
+      if (baan === runner.laatsteBaan) baan = (baan + 1 + Math.floor(Math.random() * 2)) % 3;
+      runner.laatsteBaan = baan;
+      runner.obstakels.push({ baan: baan, y: -55, snelheid: 190 + runner.verstreken * 2.8, teller: Math.random() * 6, geraakt: false });
+    }
+    runner.obstakels.forEach(obstakel => {
+      obstakel.y += obstakel.snelheid * delta;
+      obstakel.teller += delta * 4;
+      if (!obstakel.geraakt && obstakel.baan === runner.baan &&
+          obstakel.y > 385 && obstakel.y < 455 && runner.verstreken >= runner.onkwetsbaarTot) {
+        obstakel.geraakt = true;
+        runner.levens -= 1;
+        runner.onkwetsbaarTot = runner.verstreken + 1.15;
+        runner.raakkans += 1;
+      }
+    });
+    runner.obstakels = runner.obstakels.filter(obstakel => obstakel.y < 570 && !obstakel.geraakt);
+    const canvas = document.getElementById("runner-canvas");
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) tekenRunnerWereld(ctx);
+    }
+    werkRunnerHudBij();
+    if (runner.levens <= 0) {
+      beeindigRunner(false);
+      return;
+    }
+    if (runner.verstreken >= RUNNER_GOAL_SECONDS) {
+      beeindigRunner(true);
+      return;
+    }
+    runner.frame = window.requestAnimationFrame(stapRunner);
+  }
+
+  function startRunnerLoop() {
+    if (!runner.actief || runner.frame !== null) return;
+    runner.vorigeTijd = 0;
+    werkRunnerHudBij();
+    runner.frame = window.requestAnimationFrame(stapRunner);
+  }
+
   function render() {
     let inhoud = "";
     if (pagina === "start") inhoud = renderStart();
