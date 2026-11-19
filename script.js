@@ -4,6 +4,55 @@
   const app = document.getElementById("app");
   const soundButton = document.getElementById("geluid-knop");
   const brandButton = document.getElementById("merk-knop");
+  const TOEGANGSCODE = "9Xq0qTdHoi8IMPgIkro_rlVhA_Ce-T_V";
+  const heeftToegang = new URLSearchParams(window.location.search).get("toegang") === TOEGANGSCODE;
+
+  if (!heeftToegang) {
+    document.body.classList.add("onderhoud-actief");
+    document.title = "Vape Escape — We zijn even aan het klussen";
+    app.innerHTML = `
+      <section class="onderhoud-scherm pagina">
+        <div class="onderhoud-badge"><span class="status-punt"></span> TIJDELIJK ONDERHOUD</div>
+        <div class="onderhoud-paneel">
+          <div class="onderhoud-tekst">
+            <p class="bovenlabel">EVEN GEDULD...</p>
+            <h1 class="titel-groot">WE ZIJN<br><span class="accent">AAN HET KLUSSEN.</span></h1>
+            <p class="subtitel">Vape Escape krijgt een opknapbeurt! Onze mascotte werkt hard aan de volgende update. We zijn zo terug.</p>
+            <div class="onderhoud-status"><span class="status-punt"></span> DE WEBSITE IS TIJDELIJK GESLOTEN</div>
+          </div>
+          <div class="onderhoud-figuur">
+            <div class="onderhoud-licht"></div>
+            <svg class="mascotte-svg mascotte-werk" viewBox="0 0 180 190" role="img" aria-label="Vapo de mascotte draagt een gele bouwhelm en houdt een hamer vast">
+              <ellipse class="mascotte-schaduw" cx="88" cy="174" rx="54" ry="9"></ellipse>
+              <path class="mascotte-arm" d="M47 107 Q22 119 30 142 Q34 153 45 142 L63 124Z"></path>
+              <path class="mascotte-arm" d="M126 107 Q148 103 151 124 L143 146 Q135 151 129 139 L118 122Z"></path>
+              <path class="mascotte-lichaam" d="M89 43 C120 43 141 67 141 104 C141 143 119 164 88 164 C54 164 35 142 35 106 C35 69 56 43 89 43Z"></path>
+              <path class="mascotte-buik" d="M60 124 Q88 143 117 124 Q112 157 88 157 Q65 157 60 124Z"></path>
+              <ellipse class="mascotte-oog" cx="70" cy="100" rx="5" ry="7"></ellipse>
+              <ellipse class="mascotte-oog" cx="106" cy="100" rx="5" ry="7"></ellipse>
+              <path class="mond-blij" d="M76 117 Q88 130 101 117"></path>
+              <path class="mascotte-helm" d="M47 62 Q49 20 89 18 Q130 20 132 62 L47 62Z"></path>
+              <path class="mascotte-helm-rand" d="M39 62 Q89 52 140 62 L137 72 Q89 79 42 71Z"></path>
+              <path class="mascotte-helm-streep" d="M89 23 L89 53"></path>
+              <g class="mascotte-hamer">
+                <path class="hamer-steel" d="M143 132 L163 91"></path>
+                <path class="hamer-kop" d="M149 91 L158 72 L177 81 L169 98Z"></path>
+                <path class="hamer-detail" d="M157 78 L169 84"></path>
+              </g>
+              <path class="mascotte-voet" d="M57 155 Q54 169 43 171 Q34 173 39 180 Q60 186 76 174 L79 161Z"></path>
+              <path class="mascotte-voet" d="M104 160 L108 174 Q124 185 141 179 Q147 173 135 170 L120 154Z"></path>
+              <circle class="mascotte-glans" cx="52" cy="79" r="4"></circle>
+            </svg>
+            <div class="onderhoud-grond"><span></span><span></span><span></span></div>
+            <div class="onderhoud-bubbel"><strong>Vapo zegt:</strong><br>Ik ben bijna klaar! Nog even geduld.</div>
+          </div>
+        </div>
+        <p class="onderhoud-voet">Bedankt voor je geduld. Tot snel bij Vape Escape!</p>
+      </section>`;
+    return;
+  }
+  document.body.classList.add("spel-toegankelijk");
+
   const STORAGE_KEY = "vape-escape-voortgang-v1";
   const TOTAL_QUESTIONS = 17;
   const levelNames = ["Vape-feiten", "Feit of fabel", "Groepsdruk", "De laatste ontsnapping"];
@@ -346,6 +395,30 @@
     return '<button class="tekstknop" type="button" data-action="' + (action || "naar-kaart") + '">← ' + (label || "Terug naar het overzicht") + '</button>';
   }
 
+
+  function mascotteWeergave(uiting, bericht, compact) {
+    const expressie = uiting === "verdrietig" ? "mascotte--verdrietig" : (uiting === "blij" ? "mascotte--blij" : "mascotte--normaal");
+    const extraClass = compact ? " mascotte-compact" : " mascotte-feedback";
+    return '<div class="mascotte-wrap' + extraClass + '">' +
+      '<div class="mascotte-beeld ' + expressie + '">' +
+      '<svg class="mascotte-svg" viewBox="0 0 160 160" role="img" aria-label="' + (uiting === "verdrietig" ? "Vapo kijkt bezorgd" : (uiting === "blij" ? "Vapo is blij" : "Vapo de mascotte")) + '">' +
+      '<ellipse class="mascotte-schaduw" cx="80" cy="148" rx="43" ry="7"></ellipse>' +
+      '<path class="mascotte-arm" d="M43 93 Q19 100 27 124 Q31 134 41 126 L56 109Z"></path>' +
+      '<path class="mascotte-arm" d="M117 92 Q140 98 133 122 Q129 133 119 125 L104 108Z"></path>' +
+      '<path class="mascotte-lichaam" d="M80 25 C111 25 133 49 133 91 C133 128 112 145 80 145 C48 145 27 126 27 91 C27 50 49 25 80 25Z"></path>' +
+      '<path class="mascotte-buik" d="M49 111 Q80 130 111 111 Q105 138 80 138 Q55 138 49 111Z"></path>' +
+      '<ellipse class="mascotte-oog" cx="62" cy="82" rx="5" ry="7"></ellipse><ellipse class="mascotte-oog" cx="98" cy="82" rx="5" ry="7"></ellipse>' +
+      '<path class="wenkbrauw" d="M53 70 Q62 65 70 70 M90 70 Q98 65 107 70"></path>' +
+      '<path class="mond-blij" d="M65 99 Q80 116 95 99"></path>' +
+      '<path class="mond-verdrietig" d="M65 108 Q80 91 95 108"></path>' +
+      '<path class="mascotte-voetje" d="M49 136 Q46 151 34 151 Q27 157 42 160 Q59 160 65 146Z"></path>' +
+      '<path class="mascotte-voetje" d="M95 146 Q103 160 120 159 Q132 155 123 151 Q110 151 109 136Z"></path>' +
+      '<circle class="mascotte-glans" cx="46" cy="56" r="4"></circle>' +
+      '</svg></div>' +
+      '<div class="mascotte-bubbel"><strong>Vapo</strong><span>' + bericht + '</span></div>' +
+      '</div>';
+  }
+
   function renderStart() {
     return [
       '<section class="startpagina pagina">',
@@ -362,6 +435,8 @@
       '<div class="meta-item"><strong>17</strong><span>Kennischecks</span></div>',
       '<div class="meta-item"><strong>170</strong><span>Te verdienen punten</span></div>',
       '</div>',
+      '</div>',
+      mascotteWeergave("normaal", "Hoi! Ik ben Vapo. Klaar voor de missie?", true),
       '</div>',
       '<aside class="missie-kaart" aria-label="Missie: open het digitale slot">',
       '<div class="kaart-kop"><span>MISSIE 001 / GEZONDHEID</span><span class="kaart-code">TOEGANG GEBLOKKEERD</span></div>',
@@ -453,6 +528,7 @@
       '<div><strong>' + kop + '</strong><p>' + (gekozenUitleg || q.explanation || "") + '</p>' +
       (extra ? '<p class="feedback-extra">' + extra + '</p>' : '') +
       '</div></div>' +
+      mascotteWeergave(goed ? "blij" : "verdrietig", goed ? "Yes! Dat had je goed. Weer een stap dichter bij de uitgang!" : "Oei, dat was niet helemaal goed. Geen paniek: van fouten leer je. Lees de uitleg!") +
       '<div class="feedback-acties"><button class="knop knop-primair knop-klein" type="button" data-action="volgende">' + (huidigeVraag + 1 >= aantal ? "NIVEAU AFRONDEN" : "VOLGENDE VRAAG") + ' →</button></div>';
   }
 
