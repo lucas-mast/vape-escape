@@ -556,3 +556,533 @@ body.onderhoud-actief .app-inhoud {
     animation: none !important;
   }
 }
+
+
+/* Vormgeving volgens de warme, rustige stijlgids */
+:root {
+  color-scheme: light;
+  --achtergrond: #fcfaf7;
+  --paneel: rgba(255,255,255,.94);
+  --paneel-licht: #f3f4f6;
+  --rand: #e3e0dd;
+  --tekst: #423d38;
+  --gedempt: #797067;
+  --groen: #00c758;
+  --groen-donker: #dcfce7;
+  --paars: #8200da;
+  --blauw: #3080ff;
+  --rood: #fb2c36;
+  --geel: #edb200;
+  --oranje: #fe6e00;
+  --schaduw: 0 4px 12px rgba(0,0,0,.08);
+  background: var(--achtergrond);
+}
+html, body {
+  color: var(--tekst);
+  background: #fcfaf7;
+}
+body {
+  background:
+    radial-gradient(ellipse at 82% 0%, rgba(254,110,0,.045), transparent 35%),
+    #fcfaf7;
+}
+.achtergrond-licht { display: none; }
+.site-shell { width: min(1400px, calc(100% - 64px)); }
+.bovenbalk {
+  position: relative;
+  z-index: 2;
+  height: 64px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  color: #fff;
+}
+.bovenbalk::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 50%;
+  width: 100vw;
+  height: 64px;
+  transform: translateX(-50%);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  background: rgba(0,0,0,.78);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.merk-icoon {
+  border-color: rgba(254,110,0,.55);
+  background: rgba(254,110,0,.16);
+}
+.merk-icoon span { background: #fe6e00; box-shadow: 0 0 10px rgba(254,110,0,.55); }
+.merk-tekst span { color: #ffb74d; }
+.status-label {
+  border-color: rgba(255,255,255,.18);
+  color: rgba(255,255,255,.88);
+  background: rgba(255,255,255,.08);
+}
+.status-punt { background: #00c758; box-shadow: 0 0 10px rgba(0,199,88,.7); }
+.icoon-knop {
+  color: #fff;
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+}
+.icoon-knop:hover {
+  border-color: rgba(254,110,0,.8);
+  background: rgba(254,110,0,.2);
+}
+.app-inhoud { color: #423d38; }
+.voettekst {
+  border-top-color: #e3e0dd;
+  color: #797067;
+}
+.bronregel > span { color: #797067; }
+.bronregel a { color: #665d54; }
+.bronregel a:hover { color: #fe6e00; }
+.voettekst-klein { color: #8b837a; }
+.bovenlabel { color: #fe6e00; }
+.bovenlabel::before { background: #fe6e00; box-shadow: none; }
+.titel-groot, .titel-middel, .vraag-titel { color: #423d38; }
+.titel-groot .accent, .titel-middel .accent { color: #fe6e00; text-shadow: none; }
+.subtitel { color: #797067; }
+.knop {
+  min-height: 40px;
+  border-radius: 8px;
+  letter-spacing: .035em;
+}
+.knop-primair {
+  color: #fff;
+  background: #fe6e00;
+  box-shadow: 0 2px 5px rgba(254,110,0,.18);
+}
+.knop-primair:hover:not(:disabled) {
+  background: #ff6b00;
+  box-shadow: 0 4px 12px rgba(254,110,0,.22);
+}
+.knop-secundair {
+  color: #423d38;
+  border-color: #d1d5dc;
+  background: rgba(255,255,255,.88);
+}
+.knop-secundair:hover:not(:disabled) {
+  border-color: #fe6e00;
+  color: #fe6e00;
+  background: #fff7ef;
+}
+.tekstknop { color: #797067; }
+.tekstknop:hover { color: #fe6e00; }
+.missie-kaart {
+  border-color: #e3e0dd;
+  border-radius: 12px;
+  color: #423d38;
+  background: linear-gradient(145deg, #fff, #f3f4f6);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+.missie-kaart::before { background: rgba(254,110,0,.13); }
+.missie-kaart::after { background: rgba(0,199,88,.08); }
+.kaart-kop { color: #797067; }
+.kaart-code {
+  color: #fe6e00;
+  border-color: rgba(254,110,0,.25);
+  background: rgba(254,110,0,.07);
+}
+.sluitsymbool {
+  border-color: rgba(254,110,0,.25);
+  background: radial-gradient(circle, rgba(254,110,0,.1), rgba(254,110,0,.02) 66%, transparent 67%);
+  box-shadow: 0 0 0 12px rgba(254,110,0,.025), 0 0 0 26px rgba(254,110,0,.018), inset 0 0 55px rgba(254,110,0,.04);
+}
+.sluitsymbool svg { stroke: #fe6e00; filter: none; }
+.sluitsymbool .ring { border-color: rgba(254,110,0,.25); }
+.sluitsymbool .ring::before { background: #fe6e00; box-shadow: 0 0 9px #fe6e00; }
+.kaart-onder strong { color: #423d38; }
+.kaart-onder span { color: #797067; }
+.kaart-stippen i:first-child { background: #fe6e00; box-shadow: 0 0 8px rgba(254,110,0,.35); }
+.paneel {
+  border-color: #e3e0dd;
+  border-radius: 12px;
+  color: #423d38;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+}
+.uitleg-kaart, .land-kaart {
+  border-color: #e3e0dd;
+  border-radius: 12px;
+  color: #423d38;
+  background: #fff;
+}
+.uitleg-nummer {
+  color: #fe6e00;
+  background: rgba(254,110,0,.09);
+}
+.uitleg-kaart p, .land-kaart p { color: #797067; }
+.voortgang-paneel {
+  border-color: #e3e0dd;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.voortgang-boven { color: #797067; }
+.voortgang-boven strong { color: #fe6e00; }
+.voortgang-balk { background: #edebe9; }
+.voortgang-vulling {
+  background: linear-gradient(90deg, #fe6e00, #ffb74d);
+  box-shadow: none;
+}
+.score-chip { border-left-color: #e3e0dd; }
+.score-chip strong { color: #423d38; }
+.score-chip span { color: #797067; }
+.level-kaart {
+  border-color: #e3e0dd;
+  border-radius: 12px;
+  color: #423d38;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.level-kaart.beschikbaar:hover { border-color: rgba(254,110,0,.55); box-shadow: 0 4px 12px rgba(0,0,0,.09); }
+.level-kaart.afgerond { border-color: rgba(0,199,88,.28); background: #f7fcf8; }
+.level-kaart.vergrendeld { background: #f3f4f6; }
+.level-nummer { color: #fe6e00; }
+.level-status { color: #797067; }
+.level-kaart h3 { color: #423d38; }
+.level-kaart p { color: #797067; }
+.level-kaart .level-actie { color: #fe6e00; }
+.level-kaart.afgerond .level-actie { color: #008b43; }
+.level-kaart.vergrendeld .level-actie { color: #797067; }
+.land-kaart .land-naam { color: #fe6e00; }
+.wet-notitie { color: #8a8177; }
+.mini-label { color: #797067; }
+.spel-voortgang strong { color: #423d38; }
+.spel-voortgang span { color: #797067; }
+.vraag-paneel {
+  border-color: #e3e0dd;
+  border-radius: 12px;
+  background: #fff;
+}
+.vraag-label { color: #fe6e00; }
+.vraag-label::before { background: #fe6e00; box-shadow: none; }
+.vraag-context { color: #797067; }
+.antwoord-knop {
+  border-color: #e3e0dd;
+  border-radius: 8px;
+  color: #423d38;
+  background: #fff;
+}
+.antwoord-knop:hover:not(:disabled) {
+  border-color: rgba(254,110,0,.5);
+  background: #fff8f1;
+}
+.antwoord-letter {
+  border-color: #e3e0dd;
+  color: #797067;
+  background: #f3f4f6;
+}
+.antwoord-knop.goed {
+  border-color: rgba(0,199,88,.45);
+  background: #f0fbf4;
+}
+.antwoord-knop.goed .antwoord-letter { color: #fff; background: #00c758; }
+.antwoord-knop.fout {
+  border-color: rgba(251,44,54,.35);
+  background: #fff3f3;
+}
+.antwoord-knop.fout .antwoord-letter { color: #fff; background: #fb2c36; }
+.feedback {
+  border-color: #e3e0dd;
+  color: #423d38;
+  background: #f3f4f6;
+}
+.feedback.goed-feedback {
+  border-color: rgba(0,199,88,.25);
+  background: #f0fbf4;
+}
+.feedback.fout-feedback {
+  border-color: rgba(251,44,54,.22);
+  background: #fff5f4;
+}
+.feedback p { color: #665d54; }
+.feedback .feedback-extra { color: #423d38; }
+.feedback-icoon {
+  color: #008b43;
+  background: rgba(0,199,88,.1);
+}
+.fout-feedback .feedback-icoon { color: #fb2c36; background: rgba(251,44,54,.1); }
+.zij-kaart h3 { color: #423d38; }
+.zij-kaart p { color: #797067; }
+.zij-score { border-top-color: #e3e0dd; }
+.zij-score span { color: #797067; }
+.zij-score strong { color: #fe6e00; }
+.level-tips span { color: #fe6e00; }
+.code-cijfers span {
+  border-color: rgba(254,110,0,.25);
+  color: #fe6e00;
+  background: rgba(254,110,0,.06);
+}
+.code-aanwijzing {
+  border-color: #e3e0dd;
+  color: #665d54;
+  background: #f3f4f6;
+}
+.code-aanwijzing b { color: #fe6e00; background: rgba(254,110,0,.1); }
+.code-invoer {
+  border-color: #d1d5dc;
+  color: #423d38;
+  background: #fff;
+}
+.code-invoer:focus { border-color: #fe6e00; box-shadow: 0 0 0 3px rgba(254,110,0,.1); }
+.code-melding { color: #fb2c36; }
+.code-melding.goed-tekst { color: #008b43; }
+.afrond-kaart { background: #fff; }
+.afrond-embleem {
+  border-color: rgba(254,110,0,.25);
+  color: #fe6e00;
+  background: rgba(254,110,0,.07);
+  box-shadow: none;
+}
+.afrond-kaart > p { color: #797067; }
+.statistiek {
+  border-color: #e3e0dd;
+  background: #f3f4f6;
+}
+.statistiek strong { color: #fe6e00; }
+.statistiek span { color: #797067; }
+.eindboodschap {
+  border-left-color: #fe6e00;
+  color: #423d38;
+  background: #fff7ef;
+}
+.mascotte-bubbel {
+  border-color: rgba(254,110,0,.2);
+  color: #423d38;
+  background: #fff7ef;
+}
+.mascotte-bubbel::before {
+  border-left-color: rgba(254,110,0,.2);
+  border-bottom-color: rgba(254,110,0,.2);
+  background: #fff7ef;
+}
+.mascotte-bubbel strong { color: #fe6e00; }
+.mascotte-lichaam { fill: #00c758; stroke: #008b43; }
+.mascotte-arm, .mascotte-voetje { fill: #00c758; }
+.mascotte-buik { fill: #dcfce7; }
+.mascotte-glans { fill: #fff; }
+.mascotte--blij .mascotte-lichaam { fill: #00c758; }
+.mascotte--verdrietig .mascotte-lichaam { fill: #edb200; }
+.mascotte--verdrietig .mascotte-arm { fill: #edb200; }
+.mascotte--verdrietig .wenkbrauw { stroke: #8b5200; }
+
+/* Niveau 05: hindernisbaan en karakterbouwer */
+.runner-pagina { width: 100%; }
+.runner-aanpas-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  margin-top: 26px;
+}
+.runner-personalisatie, .runner-uitleg { padding: 24px; }
+.runner-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 14px 0 23px;
+  padding: 15px;
+  border: 1px solid #e3e0dd;
+  border-radius: 12px;
+  background: #fcfaf7;
+}
+.runner-preview svg { width: 150px; height: 155px; animation: mascotteZweef 3s ease-in-out infinite; }
+.runner-preview strong { margin-top: 2px; color: #423d38; font-size: 18px; }
+.runner-preview span { margin-top: 4px; color: #797067; font-size: 10px; }
+.runner-label {
+  display: block;
+  margin: 17px 0 8px;
+  color: #423d38;
+  font-size: 11px;
+  font-weight: 750;
+}
+.runner-invoer {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d1d5dc;
+  border-radius: 8px;
+  color: #423d38;
+  background: #fff;
+  outline: none;
+}
+.runner-invoer:focus { border-color: #fe6e00; box-shadow: 0 0 0 3px rgba(254,110,0,.1); }
+.runner-kleuren { display: flex; gap: 10px; flex-wrap: wrap; }
+.runner-kleur {
+  width: 35px;
+  height: 35px;
+  padding: 4px;
+  border: 1px solid #d1d5dc;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  transition: transform .18s, border-color .18s;
+}
+.runner-kleur::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--karakterkleur);
+}
+.runner-kleur:hover { transform: translateY(-2px); }
+.runner-kleur.gekozen { border: 2px solid #fe6e00; box-shadow: 0 0 0 3px rgba(254,110,0,.1); }
+.runner-accessoires { display: flex; flex-wrap: wrap; gap: 7px; }
+.runner-accessoire {
+  min-height: 35px;
+  padding: 0 11px;
+  border: 1px solid #d1d5dc;
+  border-radius: 8px;
+  color: #665d54;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.runner-accessoire.gekozen {
+  border-color: #fe6e00;
+  color: #c75300;
+  background: #fff7ef;
+}
+.runner-uitleg-kolom { display: flex; flex-direction: column; gap: 14px; }
+.runner-uitleg h2 { margin: 12px 0 8px; color: #423d38; font-size: 20px; }
+.runner-uitleg p { margin: 0; color: #797067; font-size: 12px; line-height: 1.7; }
+.runner-statistieken { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 19px; }
+.runner-statistieken > div {
+  padding: 12px 8px;
+  border: 1px solid #e3e0dd;
+  border-radius: 8px;
+  background: #fcfaf7;
+  text-align: center;
+}
+.runner-statistieken strong { display: block; color: #fe6e00; font-size: 22px; }
+.runner-statistieken span { display: block; margin-top: 4px; color: #797067; font-size: 8px; font-weight: 800; letter-spacing: .08em; }
+.runner-besturing-regel {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 13px;
+  color: #797067;
+  font-size: 10px;
+}
+.runner-besturing-regel kbd {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid #d1d5dc;
+  border-radius: 6px;
+  color: #423d38;
+  background: #f3f4f6;
+  font-size: 12px;
+  font-weight: 800;
+}
+.runner-aanraak {
+  padding: 6px 8px;
+  border: 1px solid #d1d5dc;
+  border-radius: 6px;
+  color: #423d38;
+  font-size: 8px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+.runner-startknop { width: 100%; }
+.runner-record, .runner-spelhint {
+  margin: 0;
+  color: #797067;
+  font-size: 10px;
+}
+.runner-record strong { color: #fe6e00; }
+.runner-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 12px 15px;
+  border: 1px solid #e3e0dd;
+  border-radius: 12px;
+  background: #fff;
+}
+.runner-hud-stat { display: flex; flex-direction: column; gap: 4px; min-width: 65px; }
+.runner-hud-stat span { color: #797067; font-size: 8px; font-weight: 850; letter-spacing: .1em; }
+.runner-hud-stat strong { color: #423d38; font-size: 16px; }
+#runner-levens { display: flex; gap: 4px; }
+.runner-leven { color: #d1d5dc; font-size: 16px; line-height: 1; }
+.runner-leven.actief { color: #fb2c36; }
+.runner-leven.verloren { color: #d1d5dc; }
+.runner-speelveld {
+  padding: 14px;
+  overflow: hidden;
+}
+.runner-canvas-omhulsel {
+  overflow: hidden;
+  border: 1px solid #e3e0dd;
+  border-radius: 8px;
+  background: #fcfaf7;
+}
+.runner-canvas-omhulsel canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: pan-y;
+}
+.runner-canvas-ondertekst {
+  padding: 9px 12px;
+  color: #797067;
+  background: #f3f4f6;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .11em;
+  text-align: center;
+}
+.runner-aanraakbediening {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 13px;
+}
+.runner-aanraakbediening button {
+  flex: 1;
+  max-width: 220px;
+  min-height: 48px;
+  border: 1px solid rgba(254,110,0,.25);
+  border-radius: 8px;
+  color: #c75300;
+  background: #fff7ef;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background .15s, transform .15s;
+}
+.runner-aanraakbediening button:active { transform: scale(.98); background: #ffead7; }
+.runner-spelhint { margin-top: 10px; text-align: center; }
+.runner-verlies { color: #fb2c36; background: #fff2f2; border-color: rgba(251,44,54,.22); }
+.runner-bonus-regel { color: #797067; font-size: 11px; }
+.runner-bonus-regel strong { color: #fe6e00; }
+
+@media (max-width: 680px) {
+  .site-shell { width: calc(100% - 28px); }
+  .bovenbalk { height: 64px; }
+  .bovenbalk::before { height: 64px; }
+  .runner-aanpas-grid { grid-template-columns: 1fr; }
+  .runner-hud { flex-wrap: wrap; justify-content: space-between; }
+  .runner-hud .tekstknop { width: 100%; }
+  .runner-hud-stat { min-width: 60px; }
+  .runner-speelveld { padding: 7px; }
+  .runner-aanraakbediening button { min-height: 56px; }
+  .runner-personalisatie, .runner-uitleg { padding: 18px; }
+}
+@media (max-width: 390px) {
+  .runner-statistieken { gap: 5px; }
+  .runner-statistieken > div { padding: 10px 4px; }
+  .runner-statistieken strong { font-size: 19px; }
+  .runner-hud-stat strong { font-size: 14px; }
+}
