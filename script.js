@@ -400,6 +400,8 @@
     speler.score = score();
     speler.coins = voortgang.coins;
     speler.voltooideNiveaus = voortgang.completed.filter(Boolean).length;
+    const bestaandeVrijgespeelde = Array.isArray(speler.vrijgespeeldeNiveaus) ? speler.vrijgespeeldeNiveaus : [1];
+    speler.vrijgespeeldeNiveaus = Array.from(new Set([1, ...bestaandeVrijgespeelde, ...voortgang.completed.map((klaar, index) => klaar && index < 4 ? index + 2 : null).filter(Boolean)]));
     speler.character = {
       naam: voortgang.character.naam, kleur: voortgang.character.kleur,
       accessoire: voortgang.character.accessoire, effect: voortgang.character.effect || "neon"
