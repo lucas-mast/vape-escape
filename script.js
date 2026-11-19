@@ -491,6 +491,18 @@
       spelers.map(speler => renderSpelerRij(speler, actief)).join("") + '</tbody></table></div>';
   }
 
+  function renderScorebord(spelers) {
+    if (!spelers.length) return '<p class="dashboard-leeg">De ranglijst is nog leeg. Zodra iemand begint, verschijnt die hier.</p>';
+    return '<div class="dashboard-tabel-scroll"><table class="dashboard-tabel"><thead><tr><th>#</th><th>Speler</th><th>Bink</th><th>Munten</th><th>Score</th><th>Status</th></tr></thead><tbody>' +
+      spelers.map((speler, index) => '<tr><td class="getal">' + (index + 1) + '</td>' +
+        '<td><strong>' + escapeHtml(speler.naam) + '</strong></td>' +
+        '<td><div class="dashboard-bink-rij">' + miniBink(speler) + '</div></td>' +
+        '<td class="getal">' + Math.max(0, Number(speler.coins) || 0) + '</td>' +
+        '<td class="getal">' + Math.max(0, Number(speler.score) || 0) + '</td>' +
+        '<td><span class="dashboard-status">' + (speler.status === "actief" ? "ACTIEF" : "OFFLINE") + '</span></td></tr>'
+      ).join("") + '</tbody></table></div>';
+  }
+
   function renderDashboard() {
     const spelers = werkSpelersStatusBij().sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0));
     const actief = spelers.filter(speler => speler.status === "actief");
@@ -499,6 +511,7 @@
     return '<section class="pagina dashboard-pagina"><div class="dashboard-kop"><div><p class="bovenlabel">BEHEEROMGEVING</p><h1 class="titel-middel">Game dashboard</h1><p class="subtitel">Bekijk spelers op dit apparaat, beheer hun niveaus en bekijk hun scores.</p></div>' +
       '<button class="knop knop-secundair" type="button" data-action="dashboard-refresh">VERVERSEN</button></div>' +
       '<div class="dashboard-statistieken"><div><strong>' + actief.length + '</strong><span>ACTIEVE SPELERS</span></div><div><strong>' + offline.length + '</strong><span>OFFLINE / ARCHIEF</span></div><div><strong>' + munten + '</strong><span>VERZAMELDE MUNTEN</span></div><div><strong>' + spelers.length + '</strong><span>TOTALE ENTRIES</span></div></div>' +
+      '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">RANGLIJST</span><h2>Scorebord</h2></div><span class="dashboard-status">HOOGSTE SCORE BOVENAAN</span></div>' + renderScorebord(spelers) + '</section>' +
       '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">LIVE OVERZICHT</span><h2>Actieve spelers</h2></div><span class="dashboard-status">WORDT BIJGEWERKT</span></div>' + renderDashboardTabel(actief, true) + '</section>' +
       '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">BEWAARDE GEGEVENS</span><h2>Offline spelers</h2></div><span class="mini-label">NA VERTREK OF 2 UUR INACTIEF</span></div>' + renderDashboardTabel(offline, false) + '</section>' +
       '<p class="dashboard-waarschuwing">Entries worden alleen in deze browser op dit apparaat opgeslagen. Andere apparaten hebben een eigen lijst. De speciale dashboardlink verbergt het beheer, maar is geen sterke beveiliging zolang de websitecode openbaar is.</p>' +
@@ -1384,7 +1397,13 @@
   window.addEventListener("keydown", () => registreerActiviteit());
   window.addEventListener("pagehide", sluitSpelerSessie);
   window.addEventListener("beforeunload", sluitSpelerSessie);
-  window.setInterval(werkSpelersStatusBij, 60000);
+  window.addEventListener("storage", event => {
+    if (event.key === SPELERS_STORAGE_KEY && pagina === "dashboard") render();
+  });
+  window.setInterval(() => {
+    if (pagina === "dashboard") render();
+    else werkSpelersStatusBij();
+  }, 10000);
 
   function speelBinkTransitie() {
     const voorbeeld = document.getElementById("runner-preview-beeld");
