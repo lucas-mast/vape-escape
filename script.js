@@ -57,7 +57,7 @@
   const TOTAL_QUESTIONS = 17;
   const MAX_SCORE = 200;
   const RUNNER_GOAL_SECONDS = 45;
-  const KARAKTER_KLEUREN = ["#fe6e00", "#3080ff", "#00c758", "#8200da", "#4a423a"];
+  const KARAKTER_KLEUREN = ["#39ff14", "#00f5ff", "#ff00e5", "#a020f0", "#faff00"];
   const KARAKTER_ACCESSOIRES = ["geen", "pet", "kroon", "koptelefoon"];
   const levelNames = ["Vape-feiten", "Feit of fabel", "Groepsdruk", "De laatste ontsnapping", "De vapehindernisbaan"];
   const levelDescriptions = [
@@ -291,7 +291,7 @@
   const validIdSet = new Set(allQuestionIds);
 
   function legeVoortgang() {
-    return { completed: [false, false, false, false, false], answers: {}, runnerBest: 0, character: { naam: "Bink", kleur: "#fe6e00", accessoire: "pet" } };
+    return { completed: [false, false, false, false, false], answers: {}, runnerBest: 0, character: { naam: "Bink", kleur: "#39ff14", accessoire: "pet" } };
   }
 
   function laadVoortgang() {
@@ -759,17 +759,19 @@
     ctx.save();
     ctx.translate(x, obstakel.y);
     ctx.rotate(Math.sin(obstakel.teller || 0) * .04);
-    ctx.fillStyle = "rgba(66,61,56,.15)";
+    ctx.fillStyle = "rgba(57,255,20,.10)";
     ctx.beginPath(); ctx.ellipse(0, hoogte * .48, breedte * .85, 6 * schaal, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#4a423a";
+    ctx.fillStyle = "#020702";
+    ctx.shadowColor = "#39ff14"; ctx.shadowBlur = 16 * schaal;
     ctx.beginPath(); ctx.roundRect(-breedte / 2, -hoogte / 2, breedte, hoogte, 8 * schaal); ctx.fill();
-    ctx.fillStyle = "#797067";
+    ctx.shadowBlur = 0; ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2 * schaal; ctx.stroke();
+    ctx.fillStyle = "#39ff14";
     ctx.beginPath(); ctx.roundRect(-breedte / 2 + 4 * schaal, -hoogte / 2 - 5 * schaal, breedte - 8 * schaal, 8 * schaal, 3 * schaal); ctx.fill();
-    ctx.fillStyle = "#fe6e00";
+    ctx.fillStyle = "#39ff14";
     ctx.beginPath(); ctx.roundRect(-breedte / 2 + 3 * schaal, -4 * schaal, breedte - 6 * schaal, 19 * schaal, 3 * schaal); ctx.fill();
-    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3 * schaal; ctx.lineCap = "round";
+    ctx.strokeStyle = "#020502"; ctx.lineWidth = 3 * schaal; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(-7 * schaal, 0); ctx.lineTo(7 * schaal, 11 * schaal); ctx.moveTo(7 * schaal, 0); ctx.lineTo(-7 * schaal, 11 * schaal); ctx.stroke();
-    ctx.fillStyle = "#fb2c36";
+    ctx.fillStyle = "#ff1744";
     ctx.beginPath(); ctx.moveTo(0, -hoogte / 2 - 10 * schaal); ctx.lineTo(-9 * schaal, -hoogte / 2 + 3 * schaal); ctx.lineTo(9 * schaal, -hoogte / 2 + 3 * schaal); ctx.closePath(); ctx.fill();
     ctx.restore();
   }
@@ -782,24 +784,24 @@
     if (knipper) return;
     ctx.save();
     ctx.translate(x, y);
-    ctx.fillStyle = "rgba(66,61,56,.16)";
+    ctx.fillStyle = "rgba(57,255,20,.12)";
     ctx.beginPath(); ctx.ellipse(0, 31, 28, 7, 0, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = kleur;
     ctx.beginPath(); ctx.ellipse(0, 0, 23, 28, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#423d38"; ctx.lineWidth = 2.5; ctx.stroke();
-    ctx.fillStyle = "#423d38";
+    ctx.strokeStyle = "#000000"; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.fillStyle = "#000000";
     ctx.beginPath(); ctx.arc(-8, -4, 3, 0, Math.PI * 2); ctx.arc(8, -4, 3, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#423d38"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+    ctx.strokeStyle = "#000000"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(-7, 8); ctx.quadraticCurveTo(0, 15, 7, 8); ctx.stroke();
     if (voortgang.character.accessoire === "pet") {
-      ctx.fillStyle = "#423d38"; ctx.beginPath(); ctx.arc(0, -20, 17, Math.PI, 0); ctx.fill();
+      ctx.fillStyle = "#000000"; ctx.beginPath(); ctx.arc(0, -20, 17, Math.PI, 0); ctx.fill();
       ctx.fillRect(-18, -22, 36, 5);
     } else if (voortgang.character.accessoire === "kroon") {
-      ctx.fillStyle = "#ffb74d"; ctx.beginPath(); ctx.moveTo(-15, -20); ctx.lineTo(-19, -37); ctx.lineTo(-7, -28); ctx.lineTo(0, -43); ctx.lineTo(7, -28); ctx.lineTo(19, -37); ctx.lineTo(15, -20); ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = "#423d38"; ctx.stroke();
+      ctx.fillStyle = "#faff00"; ctx.beginPath(); ctx.moveTo(-15, -20); ctx.lineTo(-19, -37); ctx.lineTo(-7, -28); ctx.lineTo(0, -43); ctx.lineTo(7, -28); ctx.lineTo(19, -37); ctx.lineTo(15, -20); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "#000000"; ctx.stroke();
     } else if (voortgang.character.accessoire === "koptelefoon") {
-      ctx.strokeStyle = "#423d38"; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(0, -4, 23, Math.PI, 0); ctx.stroke();
-      ctx.fillStyle = "#3080ff"; ctx.fillRect(-25, -7, 7, 18); ctx.fillRect(18, -7, 7, 18);
+      ctx.strokeStyle = "#000000"; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(0, -4, 23, Math.PI, 0); ctx.stroke();
+      ctx.fillStyle = "#00f5ff"; ctx.fillRect(-25, -7, 7, 18); ctx.fillRect(18, -7, 7, 18);
     }
     ctx.restore();
   }
@@ -807,25 +809,25 @@
   function tekenRunnerWereld(ctx) {
     const breedte = 960, hoogte = 520;
     ctx.clearRect(0, 0, breedte, hoogte);
-    ctx.fillStyle = "#fcfaf7"; ctx.fillRect(0, 0, breedte, hoogte);
+    ctx.fillStyle = "#000000"; ctx.fillRect(0, 0, breedte, hoogte);
     const lucht = ctx.createLinearGradient(0, 0, 0, hoogte);
-    lucht.addColorStop(0, "#ffffff"); lucht.addColorStop(1, "#edebe9");
+    lucht.addColorStop(0, "#020502"); lucht.addColorStop(1, "#061006");
     ctx.fillStyle = lucht; ctx.fillRect(0, 0, breedte, hoogte);
-    ctx.fillStyle = "rgba(254,110,0,.08)";
+    ctx.fillStyle = "rgba(57,255,20,.12)";
     ctx.beginPath(); ctx.arc(480, 85, 94, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#e3e0dd";
+    ctx.fillStyle = "#071407";
     ctx.beginPath(); ctx.moveTo(365, 0); ctx.lineTo(595, 0); ctx.lineTo(870, 520); ctx.lineTo(90, 520); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = "#020502";
     ctx.beginPath(); ctx.moveTo(380, 0); ctx.lineTo(580, 0); ctx.lineTo(820, 520); ctx.lineTo(140, 520); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = "rgba(254,110,0,.28)"; ctx.lineWidth = 4;
+    ctx.strokeStyle = "rgba(57,255,20,.95)"; ctx.lineWidth = 4;
     ctx.beginPath(); ctx.moveTo(365, 0); ctx.lineTo(90, 520); ctx.moveTo(595, 0); ctx.lineTo(870, 520); ctx.stroke();
-    ctx.strokeStyle = "#e3e0dd"; ctx.lineWidth = 2; ctx.setLineDash([13, 13]);
+    ctx.strokeStyle = "#071407"; ctx.lineWidth = 2; ctx.setLineDash([13, 13]);
     ctx.beginPath(); ctx.moveTo(440, 0); ctx.lineTo(360, 520); ctx.moveTo(520, 0); ctx.lineTo(600, 520); ctx.stroke();
     ctx.setLineDash([]);
     for (let i = 0; i < 9; i++) {
       const y = (i * 83 + runner.verstreken * 165) % 520;
       const alpha = .08 + y / 520 * .16;
-      ctx.fillStyle = "rgba(254,110,0," + alpha + ")";
+      ctx.fillStyle = "rgba(57,255,20," + alpha + ")";
       ctx.fillRect(102 + y * .5, y, 7, 3);
       ctx.fillRect(851 - y * .5, y, 7, 3);
     }
@@ -835,7 +837,7 @@
       ctx.strokeStyle = "rgba(254,110,0,.65)"; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(runnerBaanX(runner.baan, 440), 423, 38 + Math.sin(runner.verstreken * 18) * 4, 0, Math.PI * 2); ctx.stroke();
     }
-    ctx.fillStyle = "#423d38"; ctx.font = "700 14px ui-sans-serif, system-ui"; ctx.textAlign = "center";
+    ctx.fillStyle = "#000000"; ctx.font = "700 14px ui-sans-serif, system-ui"; ctx.textAlign = "center";
     ctx.fillText("WISSEL VAN BAAN OM DE OBSTAKELS TE ONTWIJKEN", 480, 28);
   }
 
@@ -1132,6 +1134,57 @@
     event.preventDefault();
     gaNaar("start");
   });
+
+
+  const developerTools = Object.freeze({
+    help() {
+      console.info(
+        "Vape Escape — ontwikkelaarscommando's\\n" +
+        "vapeEscape.level(1) t/m vapeEscape.level(5)  Open direct een niveau\\n" +
+        "vapeEscape.map()                            Open de missiekaart\\n" +
+        "vapeEscape.home()                           Ga naar het hoofdmenu"
+      );
+      return "Gebruik vapeEscape.level(1) t/m vapeEscape.level(5).";
+    },
+    level(levelNumber) {
+      const number = Number(levelNumber);
+      if (!Number.isInteger(number) || number < 1 || number > 5) {
+        console.warn("Kies een niveau van 1 t/m 5. Gebruik vapeEscape.help() voor uitleg.");
+        return false;
+      }
+      stopRunnerLoop();
+      feedback = null;
+      huidigeVraag = 0;
+      codeMelding = "";
+      codePogingen = 0;
+      if (number === 5) {
+        gaNaar("runner-aanpassen");
+      } else {
+        huidigLevel = number - 1;
+        gaNaar("spel");
+      }
+      console.info("Niveau " + String(number).padStart(2, "0") + " geopend.");
+      return true;
+    },
+    map() {
+      stopRunnerLoop();
+      gaNaar("kaart");
+      return true;
+    },
+    home() {
+      stopRunnerLoop();
+      gaNaar("start");
+      return true;
+    }
+  });
+
+  Object.defineProperty(window, "vapeEscape", {
+    value: developerTools,
+    configurable: true,
+    enumerable: false,
+    writable: false
+  });
+  console.info("Vape Escape developer tools actief. Typ vapeEscape.help() voor commando's.");
 
   render();
 })();
