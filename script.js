@@ -5,7 +5,10 @@
   const soundButton = document.getElementById("geluid-knop");
   const brandButton = document.getElementById("merk-knop");
   const TOEGANGSCODE = "9Xq0qTdHoi8IMPgIkro_rlVhA_Ce-T_V";
-  const heeftToegang = new URLSearchParams(window.location.search).get("toegang") === TOEGANGSCODE;
+  const DASHBOARD_TOEGANGSCODE = "VE-DASH-8f4a2c7d9e31-5d62b90c4a71-2026";
+  const paginaParameters = new URLSearchParams(window.location.search);
+  const heeftToegang = paginaParameters.get("toegang") === TOEGANGSCODE;
+  const dashboardMode = paginaParameters.get("beheer") === DASHBOARD_TOEGANGSCODE;
 
   if (!heeftToegang) {
     document.body.classList.add("onderhoud-actief");
@@ -52,13 +55,17 @@
     return;
   }
   document.body.classList.add("spel-toegankelijk");
+  if (dashboardMode) document.body.classList.add("dashboard-actief");
 
   const STORAGE_KEY = "vape-escape-voortgang-v1";
   const TOTAL_QUESTIONS = 17;
   const MAX_SCORE = 200;
-  const RUNNER_GOAL_SECONDS = 45;
+  const RUNNER_GOAL_COINS = 10;
+  const SPELERS_STORAGE_KEY = "vape-escape-spelers-v1";
+  const INACTIEF_NA_MS = 2 * 60 * 60 * 1000;
   const KARAKTER_KLEUREN = ["#39ff14", "#00f5ff", "#ff00e5", "#a020f0", "#faff00"];
-  const KARAKTER_ACCESSOIRES = ["geen", "pet", "kroon", "koptelefoon"];
+  const KARAKTER_ACCESSOIRES = ["geen", "pet", "kroon", "koptelefoon", "bril", "cape", "vleugels", "antenne"];
+  const KARAKTER_EFFECTEN = ["neon", "vonken", "sterren", "wolken"];
   const levelNames = ["Vape-feiten", "Feit of fabel", "Groepsdruk", "De laatste ontsnapping", "De vapehindernisbaan"];
   const levelDescriptions = [
     "Ontdek wat er in een vape zit en wat nicotine met je lichaam doet.",
@@ -291,7 +298,7 @@
   const validIdSet = new Set(allQuestionIds);
 
   function legeVoortgang() {
-    return { completed: [false, false, false, false, false], answers: {}, runnerBest: 0, character: { naam: "Bink", kleur: "#39ff14", accessoire: "pet" } };
+    return { completed: [false, false, false, false, false], answers: {}, runnerBest: 0, coins: 0, character: { naam: "Bink", kleur: "#39ff14", accessoire: "pet", effect: "neon" } };
   }
 
   function laadVoortgang() {
@@ -310,11 +317,13 @@
           }
         });
       }
-      if (Number.isFinite(parsed.runnerBest)) clean.runnerBest = Math.max(0, Math.min(RUNNER_GOAL_SECONDS, parsed.runnerBest));
+      if (Number.isFinite(parsed.runnerBest)) clean.runnerBest = Math.max(0, Math.min(RUNNER_GOAL_COINS, Math.floor(parsed.runnerBest)));
+      if (Number.isFinite(parsed.coins)) clean.coins = Math.max(0, Math.floor(parsed.coins));
       if (parsed.character && typeof parsed.character === "object") {
         if (typeof parsed.character.naam === "string") clean.character.naam = parsed.character.naam === "Vapo" ? "Bink" : parsed.character.naam.slice(0, 16);
         if (KARAKTER_KLEUREN.includes(parsed.character.kleur)) clean.character.kleur = parsed.character.kleur;
         if (KARAKTER_ACCESSOIRES.includes(parsed.character.accessoire)) clean.character.accessoire = parsed.character.accessoire;
+        if (KARAKTER_EFFECTEN.includes(parsed.character.effect)) clean.character.effect = parsed.character.effect;
       }
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(clean));
@@ -328,19 +337,203 @@
   }
 
   let voortgang = laadVoortgang();
-  let pagina = "start";
+  let pagina = dashboardMode ? "dashboard" : "start";
   let huidigLevel = 0;
   let huidigeVraag = 0;
   let feedback = null;
   let codeMelding = "";
   let codePogingen = 0;
-  let runner = { actief: false, frame: null, vorigeTijd: 0, verstreken: 0, spawnTijd: 0, baan: 1, levens: 3, obstakels: [], onkwetsbaarTot: 0, raakkans: 0, teller: 0 };
+  let runner = { actief: false, frame: null, vorigeTijd: 0, verstreken: 0, spawnTijd: 0, muntSpawnTijd: 0, volgendeMunt: 3.2, baan: 1, doelBaan: 1, levens: 5, obstakels: [], munten: [], deeltjes: [], muntenVerzameld: 0, onkwetsbaarTot: 0, spring: 0, teller: 0, laatsteBaan: -1 };
   let geluidAan = false;
   let audioContext = null;
+
+
+  let huidigeSpelerId = null;
+  let laatsteActiviteitBijgewerkt = 0;
+
+  function leesSpelers() {
+    try {
+      const gegevens = JSON.parse(localStorage.getItem(SPELERS_STORAGE_KEY) || "[]");
+      return Array.isArray(gegevens) ? gegevens.filter(speler => speler && typeof speler.id === "string") : [];
+    } catch (error) { return []; }
+  }
+
+  function bewaarSpelers(spelers) {
+    try { localStorage.setItem(SPELERS_STORAGE_KEY, JSON.stringify(spelers)); } catch (error) {}
+  }
+
+  function spelerMetId(id) {
+    return id ? leesSpelers().find(speler => speler.id === id) || null : null;
+  }
+
+  function maakSpelerId() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
+    return "speler-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+  }
+
+  function werkSpelersStatusBij() {
+    const nu = Date.now();
+    let aangepast = false;
+    const spelers = leesSpelers();
+    spelers.forEach(speler => {
+      const laatste = Number(speler.laatsteActiviteit || speler.aangemaaktOp || nu);
+      if (speler.status === "actief" && nu - laatste >= INACTIEF_NA_MS) {
+        speler.status = "offline";
+        speler.afgemeldOp = nu;
+        aangepast = true;
+        if (speler.id === huidigeSpelerId) huidigeSpelerId = null;
+      }
+    });
+    if (aangepast) bewaarSpelers(spelers);
+    if (!huidigeSpelerId) {
+      try { localStorage.removeItem("vape-escape-huidige-speler"); } catch (error) {}
+    }
+    return spelers;
+  }
+
+  function synchroniseerSpeler() {
+    if (!huidigeSpelerId) return;
+    const spelers = leesSpelers();
+    const speler = spelers.find(item => item.id === huidigeSpelerId);
+    if (!speler || speler.status !== "actief") return;
+    const nu = Date.now();
+    speler.score = score();
+    speler.coins = voortgang.coins;
+    speler.voltooideNiveaus = voortgang.completed.filter(Boolean).length;
+    speler.character = {
+      naam: voortgang.character.naam, kleur: voortgang.character.kleur,
+      accessoire: voortgang.character.accessoire, effect: voortgang.character.effect || "neon"
+    };
+    speler.laatsteActiviteit = nu;
+    laatsteActiviteitBijgewerkt = nu;
+    bewaarSpelers(spelers);
+  }
+
+  function registreerActiviteit() {
+    const nu = Date.now();
+    if (huidigeSpelerId && nu - laatsteActiviteitBijgewerkt >= 15000) synchroniseerSpeler();
+  }
+
+  function startSpelerSessie() {
+    const invoer = document.getElementById("speler-naam");
+    const fout = document.getElementById("speler-naam-fout");
+    const naam = invoer ? invoer.value.trim().replace(/\\s+/g, " ").slice(0, 20) : "";
+    if (naam.length < 2) {
+      if (fout) fout.textContent = "Vul eerst je naam in (minimaal 2 tekens).";
+      if (invoer) invoer.focus();
+      return;
+    }
+    const nu = Date.now();
+    huidigeSpelerId = maakSpelerId();
+    const spelers = leesSpelers();
+    spelers.push({
+      id: huidigeSpelerId, naam,
+      character: { naam: voortgang.character.naam, kleur: voortgang.character.kleur, accessoire: voortgang.character.accessoire, effect: voortgang.character.effect || "neon" },
+      score: 0, coins: 0, voltooideNiveaus: 0, vrijgespeeldeNiveaus: [1],
+      status: "actief", aangemaaktOp: nu, laatsteActiviteit: nu
+    });
+    bewaarSpelers(spelers);
+    try {
+      localStorage.setItem("vape-escape-laatste-naam", naam);
+      localStorage.setItem("vape-escape-huidige-speler", huidigeSpelerId);
+    } catch (error) {}
+    voortgang = legeVoortgang();
+    bewaarVoortgang();
+    gaNaar("kaart");
+  }
+
+  function sluitSpelerSessie() {
+    if (!huidigeSpelerId) return;
+    const spelers = leesSpelers();
+    const speler = spelers.find(item => item.id === huidigeSpelerId);
+    if (speler) { speler.status = "offline"; speler.afgemeldOp = Date.now(); }
+    bewaarSpelers(spelers);
+    huidigeSpelerId = null;
+    try { localStorage.removeItem("vape-escape-huidige-speler"); } catch (error) {}
+  }
+
+  function miniBink(speler) {
+    const character = speler.character || {};
+    const kleur = KARAKTER_KLEUREN.includes(character.kleur) ? character.kleur : "#39ff14";
+    const accessoire = KARAKTER_ACCESSOIRES.includes(character.accessoire) ? character.accessoire : "geen";
+    return '<span class="dashboard-bink" style="--bink-kleur:' + kleur + '" aria-label="Bink-karakter"></span>' +
+      '<span class="dashboard-bink-info"><strong>' + escapeHtml(character.naam || "Bink") + '</strong><small>' + escapeHtml(accessoire) + '</small></span>';
+  }
+
+  function renderSpelerRij(speler, actief) {
+    const levels = [1, 2, 3, 4, 5].map(level =>
+      '<button class="dashboard-levelknop' + ((speler.vrijgespeeldeNiveaus || []).includes(level) ? ' vrij' : '') + '" type="button" data-action="dashboard-unlock" data-speler="' + escapeHtml(speler.id) + '" data-level="' + level + '" title="Niveau ' + level + ' vrijspelen">N' + level + '</button>'
+    ).join("");
+    return '<tr><td><strong>' + escapeHtml(speler.naam) + '</strong><small class="dashboard-subregel">' + (actief ? "ACTIEF" : "OFFLINE") + '</small></td>' +
+      '<td><div class="dashboard-bink-rij">' + miniBink(speler) + '</div></td>' +
+      '<td class="getal">' + Math.max(0, Number(speler.coins) || 0) + '</td><td class="getal">' + Math.max(0, Number(speler.score) || 0) + '</td>' +
+      '<td><div class="dashboard-levels">' + levels + '</div></td>' +
+      '<td><button class="knop knop-klein knop-secundair" type="button" data-action="dashboard-all" data-speler="' + escapeHtml(speler.id) + '">ALLES VRIJ</button> ' +
+      '<button class="knop knop-klein knop-secundair" type="button" data-action="dashboard-remove" data-speler="' + escapeHtml(speler.id) + '">VERWIJDER</button></td></tr>';
+  }
+
+  function renderDashboardTabel(spelers, actief) {
+    if (!spelers.length) return '<p class="dashboard-leeg">' + (actief ? "Er zijn op dit apparaat geen actieve spelers." : "Er staan nog geen offline spelers in het archief.") + '</p>';
+    return '<div class="dashboard-tabel-scroll"><table class="dashboard-tabel"><thead><tr><th>Speler</th><th>Bink-karakter</th><th>Munten</th><th>Score</th><th>Niveaus vrijspelen</th><th>Beheer</th></tr></thead><tbody>' +
+      spelers.map(speler => renderSpelerRij(speler, actief)).join("") + '</tbody></table></div>';
+  }
+
+  function renderDashboard() {
+    const spelers = werkSpelersStatusBij().sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0));
+    const actief = spelers.filter(speler => speler.status === "actief");
+    const offline = spelers.filter(speler => speler.status !== "actief");
+    const munten = spelers.reduce((totaal, speler) => totaal + (Number(speler.coins) || 0), 0);
+    return '<section class="pagina dashboard-pagina"><div class="dashboard-kop"><div><p class="bovenlabel">BEHEEROMGEVING</p><h1 class="titel-middel">Game dashboard</h1><p class="subtitel">Bekijk spelers op dit apparaat, beheer hun niveaus en bekijk hun scores.</p></div>' +
+      '<button class="knop knop-secundair" type="button" data-action="dashboard-refresh">VERVERSEN</button></div>' +
+      '<div class="dashboard-statistieken"><div><strong>' + actief.length + '</strong><span>ACTIEVE SPELERS</span></div><div><strong>' + offline.length + '</strong><span>OFFLINE / ARCHIEF</span></div><div><strong>' + munten + '</strong><span>VERZAMELDE MUNTEN</span></div><div><strong>' + spelers.length + '</strong><span>TOTALE ENTRIES</span></div></div>' +
+      '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">LIVE OVERZICHT</span><h2>Actieve spelers</h2></div><span class="dashboard-status">WORDT BIJGEWERKT</span></div>' + renderDashboardTabel(actief, true) + '</section>' +
+      '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">BEWAARDE GEGEVENS</span><h2>Offline spelers</h2></div><span class="mini-label">NA VERTREK OF 2 UUR INACTIEF</span></div>' + renderDashboardTabel(offline, false) + '</section>' +
+      '<p class="dashboard-waarschuwing">Entries worden alleen in deze browser op dit apparaat opgeslagen. Andere apparaten hebben een eigen lijst. De speciale dashboardlink verbergt het beheer, maar is geen sterke beveiliging zolang de websitecode openbaar is.</p>' +
+      '<div class="rij-knoppen"><button class="knop knop-secundair" type="button" data-action="dashboard-game">TERUG NAAR DE GAME</button><button class="knop knop-secundair" type="button" data-action="dashboard-clear">VERWIJDER ALLE ENTRIES</button></div></section>';
+  }
+
+  function verwerkDashboardActie(knop) {
+    const actie = knop.dataset.action;
+    const spelerId = knop.dataset.speler;
+    const spelers = leesSpelers();
+    if (actie === "dashboard-refresh") { gaNaar("dashboard"); return; }
+    if (actie === "dashboard-game") {
+      window.location.href = window.location.pathname + "?toegang=" + encodeURIComponent(TOEGANGSCODE);
+      return;
+    }
+    if (actie === "dashboard-clear") {
+      if (!window.confirm("Alle spelers op dit apparaat verwijderen?")) return;
+      bewaarSpelers([]); gaNaar("dashboard"); return;
+    }
+    if (actie === "dashboard-remove") {
+      if (!window.confirm("Deze entry verwijderen?")) return;
+      bewaarSpelers(spelers.filter(speler => speler.id !== spelerId)); gaNaar("dashboard"); return;
+    }
+    const speler = spelers.find(item => item.id === spelerId);
+    if (!speler) return;
+    if (!Array.isArray(speler.vrijgespeeldeNiveaus)) speler.vrijgespeeldeNiveaus = [1];
+    if (actie === "dashboard-all") speler.vrijgespeeldeNiveaus = [1, 2, 3, 4, 5];
+    if (actie === "dashboard-unlock") {
+      const level = Number(knop.dataset.level);
+      if (Number.isInteger(level) && level >= 1 && level <= 5 && !speler.vrijgespeeldeNiveaus.includes(level)) speler.vrijgespeeldeNiveaus.push(level);
+    }
+    bewaarSpelers(spelers);
+    gaNaar("dashboard");
+  }
+
+  function renderProfiel() {
+    const speler = spelerMetId(huidigeSpelerId);
+    if (!speler) return '<section class="pagina"><div class="paneel afrond-kaart"><h1 class="titel-middel">Geen actieve speler</h1><p>Ga terug naar het hoofdmenu en vul je naam in om een nieuwe missie te starten.</p><button class="knop knop-primair" type="button" data-action="naar-start">NAAR START</button></div></section>';
+    return '<section class="pagina profiel-pagina"><div class="terugrij"><button class="tekstknop" type="button" data-action="naar-kaart">← Missiekaart</button><span class="mini-label">JOUW SPELERSPROFIEL</span></div>' +
+      '<div class="paneel profiel-paneel"><div class="profiel-karakter">' + miniBink(speler) + '</div><p class="bovenlabel">DIT BEN JIJ</p><h1 class="titel-middel">' + escapeHtml(speler.naam) + '</h1>' +
+      '<div class="dashboard-statistieken"><div><strong>' + speler.coins + '</strong><span>MUNTEN</span></div><div><strong>' + speler.score + '</strong><span>PUNTEN</span></div><div><strong>' + speler.voltooideNiveaus + ' / 5</strong><span>NIVEAUS KLAAR</span></div><div><strong>' + (speler.vrijgespeeldeNiveaus || [1]).length + ' / 5</strong><span>NIVEAUS VRIJ</span></div></div>' +
+      '<p class="dashboard-waarschuwing">Je profiel blijft op dit apparaat bewaard. Als je de website verlaat, wordt je sessie offline gezet. Na twee uur zonder activiteit wordt de sessie automatisch gearchiveerd.</p></div></section>';
+  }
 
   function bewaarVoortgang() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(voortgang));
+      synchroniseerSpeler();
     } catch (error) {
       // Het spel blijft speelbaar wanneer lokale opslag niet beschikbaar is.
     }
@@ -359,7 +552,9 @@
   }
 
   function isLevelVrij(index) {
-    return index === 0 || voortgang.completed[index - 1] === true;
+    const speler = spelerMetId(huidigeSpelerId);
+    const handmatigVrij = speler && Array.isArray(speler.vrijgespeeldeNiveaus) && speler.vrijgespeeldeNiveaus.includes(index + 1);
+    return index === 0 || voortgang.completed[index - 1] === true || handmatigVrij;
   }
 
   function levelPunten(index) {
