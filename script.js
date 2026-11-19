@@ -931,13 +931,22 @@
     else if (pagina === "kaart") inhoud = renderKaart();
     else if (pagina === "spel") inhoud = renderLevel();
     else if (pagina === "level-klaar") inhoud = renderLevelKlaar();
+    else if (pagina === "runner-aanpassen") inhoud = renderRunnerAanpassen();
+    else if (pagina === "runner-spel") inhoud = renderRunnerSpel();
+    else if (pagina === "runner-mislukt") inhoud = renderRunnerMislukt();
     else if (pagina === "eind") inhoud = renderEindscherm();
     app.innerHTML = inhoud;
     werkGeluidBij();
+    if (pagina === "runner-spel") startRunnerLoop();
+    else if (runner.actief) stopRunnerLoop();
   }
 
   function startLevel(index) {
     if (!isLevelVrij(index)) return;
+    if (index === 4) {
+      gaNaar("runner-aanpassen");
+      return;
+    }
     huidigLevel = index;
     huidigeVraag = 0;
     feedback = null;
@@ -982,7 +991,8 @@
   function rondLevelAf() {
     voortgang.completed[huidigLevel] = true;
     bewaarVoortgang();
-    if (huidigLevel === 3) {
+    if (huidigLevel === 4) {
+      voortgang.answers["runner-clear"] = true;
       gaNaar("eind");
     } else {
       gaNaar("level-klaar");
@@ -1005,8 +1015,7 @@
       registreerAntwoord("escape-code", true);
       voortgang.completed[3] = true;
       bewaarVoortgang();
-      speelGeluid(true);
-      gaNaar("eind");
+      rondLevelAf();
     } else {
       speelGeluid(false);
       const hints = [
@@ -1055,6 +1064,29 @@
       gaNaar("eind");
     } else if (knopElement.dataset.action === "reset") {
       resetSpel();
+    } else if (knopElement.dataset.action === "runner-start") {
+      beginRunner();
+    } else if (knopElement.dataset.action === "runner-links") {
+      beweegRunner(-1);
+    } else if (knopElement.dataset.action === "runner-rechts") {
+      beweegRunner(1);
+    } else if (knopElement.dataset.action === "runner-kleur") {
+      const kleur = knopElement.dataset.kleur;
+      if (KARAKTER_KLEUREN.includes(kleur)) {
+        voortgang.character.kleur = kleur;
+        bewaarVoortgang();
+        render();
+      }
+    } else if (knopElement.dataset.action === "runner-accessoire") {
+      const accessoire = knopElement.dataset.accessoire;
+      if (KARAKTER_ACCESSOIRES.includes(accessoire)) {
+        voortgang.character.accessoire = accessoire;
+        bewaarVoortgang();
+        render();
+      }
+    } else if (knopElement.dataset.action === "runner-stop") {
+      stopRunnerLoop();
+      gaNaar("runner-aanpassen");
     }
   });
 
@@ -1062,6 +1094,27 @@
     if (event.target && event.target.id === "code-formulier") {
       event.preventDefault();
       controleerCode();
+    }
+  });
+
+  app.addEventListener("change", event => {
+    if (event.target && event.target.id === "runner-naam") {
+      const naam = event.target.value.trim().slice(0, 16);
+      voortgang.character.naam = naam || "Vapo";
+      bewaarVoortgang();
+      render();
+    }
+  });
+
+  window.addEventListener("keydown", event => {
+    if (pagina !== "runner-spel" || !runner.actief) return;
+    const toets = event.key.toLowerCase();
+    if (toets === "arrowleft" || toets === "a") {
+      event.preventDefault();
+      beweegRunner(-1);
+    } else if (toets === "arrowright" || toets === "d") {
+      event.preventDefault();
+      beweegRunner(1);
     }
   });
 
