@@ -503,21 +503,82 @@
       ).join("") + '</tbody></table></div>';
   }
 
+  function renderScoreGrafiek(spelers) {
+    const topSpelers = spelers.slice(0, 5).map(speler => ({
+      naam: typeof speler.naam === "string" ? speler.naam : "Speler",
+      score: Math.max(0, Number(speler.score) || 0)
+    }));
+    if (!topSpelers.length) {
+      return '<div class="dashboard-grafiek-leeg">Zodra spelers punten verzamelen, verschijnt hier de scoreverdeling.</div>';
+    }
+
+    const maximum = Math.max(100, ...topSpelers.map(speler => speler.score));
+    const punten = topSpelers.map((speler, index) => ({
+      x: topSpelers.length === 1 ? 360 : 58 + (index / (topSpelers.length - 1)) * 620,
+      y: 164 - (speler.score / maximum) * 116,
+      score: speler.score,
+      positie: index + 1
+    }));
+    const lijn = punten.map((punt, index) => (index ? "L " : "M ") + punt.x.toFixed(1) + " " + punt.y.toFixed(1)).join(" ");
+    const vlak = "M " + punten[0].x.toFixed(1) + " 164 " +
+      punten.map(punt => "L " + punt.x.toFixed(1) + " " + punt.y.toFixed(1)).join(" ") +
+      " L " + punten[punten.length - 1].x.toFixed(1) + " 164 Z";
+    const raster = [48, 86, 125, 164].map((y, index) => {
+      const waarde = Math.round(maximum * (3 - index) / 3);
+      return '<line x1="58" y1="' + y + '" x2="678" y2="' + y + '" class="dashboard-grafiek-raster"/>' +
+        '<text x="48" y="' + (y + 4) + '" text-anchor="end" class="dashboard-grafiek-as">' + waarde + '</text>';
+    }).join("");
+    const puntenSvg = punten.map(punt =>
+      '<circle cx="' + punt.x.toFixed(1) + '" cy="' + punt.y.toFixed(1) + '" r="5" class="dashboard-grafiek-punt">' +
+      '<title>Positie ' + punt.positie + ': ' + punt.score + ' punten</title></circle>' +
+      '<text x="' + punt.x.toFixed(1) + '" y="195" text-anchor="middle" class="dashboard-grafiek-as">#' + punt.positie + '</text>'
+    ).join("");
+
+    return '<div class="dashboard-grafiek-wrap">' +
+      '<svg class="dashboard-grafiek-svg" viewBox="0 0 700 212" role="img" aria-label="Scoreverdeling van de vijf hoogst scorende spelers; horizontaal de rangpositie en verticaal het aantal punten.">' +
+      '<defs><linearGradient id="dashboard-score-vulling" x1="0" x2="0" y1="0" y2="1">' +
+      '<stop offset="0%" stop-color="#30D158" stop-opacity=".42"/><stop offset="100%" stop-color="#00E5FF" stop-opacity=".025"/>' +
+      '</linearGradient></defs>' + raster +
+      '<path d="' + vlak + '" fill="url(#dashboard-score-vulling)"/>' +
+      '<path d="' + lijn + '" class="dashboard-grafiek-lijn"/>' +
+      puntenSvg + '</svg>' +
+      '<div class="dashboard-grafiek-legenda"><span><i></i> Score per rangpositie</span><span>Hoogste scores eerst</span></div>' +
+      '</div>';
+  }
+
   function renderDashboard() {
     const spelers = werkSpelersStatusBij().sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0));
     const actief = spelers.filter(speler => speler.status === "actief");
     const offline = spelers.filter(speler => speler.status !== "actief");
     const munten = spelers.reduce((totaal, speler) => totaal + (Number(speler.coins) || 0), 0);
-    return '<section class="pagina dashboard-pagina"><div class="dashboard-kop"><div><p class="bovenlabel">BEHEEROMGEVING</p><h1 class="titel-middel">Game dashboard</h1><p class="subtitel">Bekijk spelers op dit apparaat, beheer hun niveaus en bekijk hun scores.</p></div>' +
-      '<button class="knop knop-secundair" type="button" data-action="dashboard-refresh">VERVERSEN</button></div>' +
-      '<div class="dashboard-statistieken"><div><strong>' + actief.length + '</strong><span>ACTIEVE SPELERS</span></div><div><strong>' + offline.length + '</strong><span>OFFLINE / ARCHIEF</span></div><div><strong>' + munten + '</strong><span>VERZAMELDE MUNTEN</span></div><div><strong>' + spelers.length + '</strong><span>TOTALE ENTRIES</span></div></div>' +
+    const hoogsteScore = spelers.length ? Math.max(0, Number(spelers[0].score) || 0) : 0;
+    return '<section class="pagina dashboard-pagina">' +
+      '<div class="dashboard-kop"><div><p class="bovenlabel">BEHEEROMGEVING</p><h1 class="titel-middel">Spelmonitor</h1>' +
+      '<p class="subtitel">Een duidelijk overzicht van spelers, prestaties en voortgang in Vape Escape.</p></div>' +
+      '<div class="dashboard-header-acties"><span class="dashboard-archief-chip">' + offline.length + ' OFFLINE IN ARCHIEF</span>' +
+      '<button class="knop knop-secundair" type="button" data-action="dashboard-refresh">VERVERSEN</button></div></div>' +
+      '<div class="dashboard-statistieken">' +
+      '<div><span>ACTIEVE SPELERS</span><strong>' + actief.length + '</strong><small>Nu actief op dit apparaat</small></div>' +
+      '<div><span>HOOGSTE SCORE</span><strong>' + hoogsteScore + '</strong><small>Punten op het scorebord</small></div>' +
+      '<div><span>VERZAMELDE MUNTEN</span><strong>' + munten + '</strong><small>Over alle bewaarde entries</small></div>' +
+      '</div>' +
+      '<div class="dashboard-overzicht-grid">' +
+      '<section class="paneel dashboard-grafiek-paneel"><div class="dashboard-sectie-kop"><div><span class="mini-label">SPELPRESTATIES</span><h2>Scoreoverzicht</h2><p>De vijf hoogste actuele scores, gerangschikt per positie.</p></div>' +
+      '<span class="dashboard-status">TOP ' + Math.min(5, spelers.length) + ' SCORES</span></div>' +
+      renderScoreGrafiek(spelers) + '</section>' +
+      '<aside class="dashboard-zijpaneel" aria-label="Dashboardmeldingen">' +
+      '<section class="dashboard-alert-card" role="note"><span class="dashboard-alert-label">BELANGRIJKE WAARSCHUWING</span>' +
+      '<h2>Beveiliging</h2><p>De beheerlink is geen sterke beveiliging: de toegangscode staat in openbare websitecode. Deel de link niet als je het dashboard privé wilt houden.</p></section>' +
+      '<section class="dashboard-zijkaart"><span class="mini-label">OFFLINE ARCHIEF</span><strong>' + offline.length + '</strong>' +
+      '<p>Spelers die de website hebben verlaten of langer dan twee uur inactief zijn.</p></section>' +
+      '<section class="dashboard-zijkaart dashboard-opslagkaart"><span class="mini-label">OPSLAGSTATUS</span><strong>Alleen lokaal</strong>' +
+      '<p>Spelersgegevens worden in deze browser op dit apparaat opgeslagen.</p></section>' +
+      '</aside></div>' +
       '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">RANGLIJST</span><h2>Scorebord</h2></div><span class="dashboard-status">HOOGSTE SCORE BOVENAAN</span></div>' + renderScorebord(spelers) + '</section>' +
       '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">LIVE OVERZICHT</span><h2>Actieve spelers</h2></div><span class="dashboard-status">WORDT BIJGEWERKT</span></div>' + renderDashboardTabel(actief, true) + '</section>' +
       '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">BEWAARDE GEGEVENS</span><h2>Offline spelers</h2></div><span class="mini-label">NA VERTREK OF 2 UUR INACTIEF</span></div>' + renderDashboardTabel(offline, false) + '</section>' +
-      '<p class="dashboard-waarschuwing">Entries worden alleen in deze browser op dit apparaat opgeslagen. Andere apparaten hebben een eigen lijst. De speciale dashboardlink verbergt het beheer, maar is geen sterke beveiliging zolang de websitecode openbaar is.</p>' +
       '<div class="rij-knoppen"><button class="knop knop-secundair" type="button" data-action="dashboard-game">TERUG NAAR DE GAME</button><button class="knop knop-secundair" type="button" data-action="dashboard-clear">VERWIJDER ALLE ENTRIES</button></div></section>';
   }
-
   function verwerkDashboardActie(knop) {
     const actie = knop.dataset.action;
     const spelerId = knop.dataset.speler;
