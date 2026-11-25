@@ -2003,7 +2003,7 @@ body.dashboard-actief .bronregel a:hover { color: #177ce8 !important; }
 /* Vape Escape: unified black + blue visual system across the entire experience. */
 :root {
   color-scheme: dark;
-  --achtergrond: #000000;
+  --achtergrond: #0D0F14;
   --paneel: #151515;
   --paneel-licht: #1B1B1B;
   --rand: #2B2B2B;
@@ -2018,7 +2018,7 @@ body.dashboard-actief .bronregel a:hover { color: #177ce8 !important; }
   --schaduw: 0 16px 44px rgba(0,0,0,.32);
 }
 html, body {
-  background: #000000 !important;
+  background: #0D0F14 !important;
   color: #FFFFFF;
 }
 body {
@@ -2095,7 +2095,7 @@ body {
 .level-nummer, .vraag-label, .code-aanwijzing b { color: #75B9FF !important; }
 .vraag-label::before { background: #2997FF !important; box-shadow: none !important; }
 .feedback-icoon { color: #FFFFFF !important; background: #237ED1 !important; }
-.runner-canvas-omhulsel { background: #000000 !important; }
+.runner-canvas-omhulsel { background: #0D0F14 !important; }
 .runner-canvas-ondertekst { color: #A9CFFF !important; background: #101010 !important; }
 .runner-leven.actief { color: #FF5A5F !important; text-shadow: none !important; }
 .speler-start-form label, .runner-label { color: #A9CFFF !important; }
@@ -2117,7 +2117,7 @@ body {
 
 /* Keep the optional accessible-game theme aligned with the site palette too. */
 body.spel-toegankelijk {
-  --achtergrond: #000000;
+  --achtergrond: #0D0F14;
   --paneel: #151515;
   --paneel-licht: #1B1B1B;
   --rand: #2B2B2B;
