@@ -4,56 +4,10 @@
   const app = document.getElementById("app");
   const soundButton = document.getElementById("geluid-knop");
   const brandButton = document.getElementById("merk-knop");
-  const TOEGANGSCODE = "9Xq0qTdHoi8IMPgIkro_rlVhA_Ce-T_V";
   const DASHBOARD_TOEGANGSCODE = "VE-DASH-8f4a2c7d9e31-5d62b90c4a71-2026";
   const paginaParameters = new URLSearchParams(window.location.search);
-  const heeftToegang = paginaParameters.get("toegang") === TOEGANGSCODE;
   const dashboardMode = paginaParameters.get("beheer") === DASHBOARD_TOEGANGSCODE;
 
-  if (!heeftToegang) {
-    document.body.classList.add("onderhoud-actief");
-    document.title = "Vape Escape — We zijn even aan het klussen";
-    app.innerHTML = `
-      <section class="onderhoud-scherm pagina">
-        <div class="onderhoud-badge"><span class="status-punt"></span> TIJDELIJK ONDERHOUD</div>
-        <div class="onderhoud-paneel">
-          <div class="onderhoud-tekst">
-            <p class="bovenlabel">EVEN GEDULD...</p>
-            <h1 class="titel-groot">WE ZIJN<br><span class="accent">AAN HET KLUSSEN.</span></h1>
-            <p class="subtitel">Vape Escape krijgt een opknapbeurt! Onze mascotte werkt hard aan de volgende update. We zijn zo terug.</p>
-            <div class="onderhoud-status"><span class="status-punt"></span> DE WEBSITE IS TIJDELIJK GESLOTEN</div>
-          </div>
-          <div class="onderhoud-figuur">
-            <div class="onderhoud-licht"></div>
-            <svg class="mascotte-svg mascotte-werk" viewBox="0 0 180 190" role="img" aria-label="Bink de mascotte draagt een gele bouwhelm en houdt een hamer vast">
-              <ellipse class="mascotte-schaduw" cx="88" cy="174" rx="54" ry="9"></ellipse>
-              <path class="mascotte-arm" d="M47 107 Q22 119 30 142 Q34 153 45 142 L63 124Z"></path>
-              <path class="mascotte-arm" d="M126 107 Q148 103 151 124 L143 146 Q135 151 129 139 L118 122Z"></path>
-              <path class="mascotte-lichaam" d="M89 43 C120 43 141 67 141 104 C141 143 119 164 88 164 C54 164 35 142 35 106 C35 69 56 43 89 43Z"></path>
-              <path class="mascotte-buik" d="M60 124 Q88 143 117 124 Q112 157 88 157 Q65 157 60 124Z"></path>
-              <ellipse class="mascotte-oog" cx="70" cy="100" rx="5" ry="7"></ellipse>
-              <ellipse class="mascotte-oog" cx="106" cy="100" rx="5" ry="7"></ellipse>
-              <path class="mond-blij" d="M76 117 Q88 130 101 117"></path>
-              <path class="mascotte-helm" d="M47 62 Q49 20 89 18 Q130 20 132 62 L47 62Z"></path>
-              <path class="mascotte-helm-rand" d="M39 62 Q89 52 140 62 L137 72 Q89 79 42 71Z"></path>
-              <path class="mascotte-helm-streep" d="M89 23 L89 53"></path>
-              <g class="mascotte-hamer">
-                <path class="hamer-steel" d="M143 132 L163 91"></path>
-                <path class="hamer-kop" d="M149 91 L158 72 L177 81 L169 98Z"></path>
-                <path class="hamer-detail" d="M157 78 L169 84"></path>
-              </g>
-              <path class="mascotte-voet" d="M57 155 Q54 169 43 171 Q34 173 39 180 Q60 186 76 174 L79 161Z"></path>
-              <path class="mascotte-voet" d="M104 160 L108 174 Q124 185 141 179 Q147 173 135 170 L120 154Z"></path>
-              <circle class="mascotte-glans" cx="52" cy="79" r="4"></circle>
-            </svg>
-            <div class="onderhoud-grond"><span></span><span></span><span></span></div>
-            <div class="onderhoud-bubbel"><strong>Bink zegt:</strong><br>Ik ben bijna klaar! Nog even geduld.</div>
-          </div>
-        </div>
-        <p class="onderhoud-voet">Bedankt voor je geduld. Tot snel bij Vape Escape!</p>
-      </section>`;
-    return;
-  }
   document.body.classList.add("spel-toegankelijk");
   if (dashboardMode) document.body.classList.add("dashboard-actief");
 
@@ -585,7 +539,7 @@
     const spelers = leesSpelers();
     if (actie === "dashboard-refresh") { gaNaar("dashboard"); return; }
     if (actie === "dashboard-game") {
-      window.location.href = window.location.pathname + "?toegang=" + encodeURIComponent(TOEGANGSCODE);
+      window.location.href = window.location.pathname;
       return;
     }
     if (actie === "dashboard-clear") {
