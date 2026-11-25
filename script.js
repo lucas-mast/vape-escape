@@ -1461,7 +1461,10 @@
   },5000);
   if(!dashboardMode&&spelersCode()){
     laadRemoteSpeler(spelersCode()).then(data=>{
-      if(!data){localStorage.removeItem("vape-escape-spelerscode");return;}
+      if(!data){
+        ["vape-escape-spelerscode","vape-escape-huidige-speler"].forEach(key=>localStorage.removeItem(key));
+        sessionStorage.removeItem("vape-escape-sessie-speler");huidigeSpelerId=null;voortgang=legeVoortgang();gaNaar("start");return;
+      }
       huidigeSpelerId=data.id;herstelRemoteVoortgang(data);
       const lijst=leesSpelers().filter(p=>p.id!==data.id);
       lijst.push({id:data.id,naam:data.name,score:data.score,coins:data.coins,vrijgespeeldeNiveaus:data.unlocked_levels||[1],voltooideNiveaus:(data.completed_levels||[]).length,character:data.character||{},status:"actief",laatsteActiviteit:Date.now()});
