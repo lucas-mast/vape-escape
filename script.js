@@ -344,7 +344,7 @@
   }
 
   function werkSpelersStatusBij() {
-    if(remoteSpelers)return remoteSpelers.map(speler=>({...speler,vrijgespeeldeNiveaus:speler.unlocked_levels||[1],voltooideNiveaus:(speler.completed_levels||[]).length,status:Date.now()-new Date(speler.last_seen_at).getTime()<120000?"actief":"offline"}));
+    if(remoteSpelers)return remoteSpelers.map(speler=>({...speler,vrijgespeeldeNiveaus:speler.unlocked_levels||[1],voltooideNiveaus:(speler.completed_levels||[]).length,status:Date.now()-new Date(speler.last_seen_at).getTime()<INACTIEF_NA_MS?"actief":"offline"}));
     const nu = Date.now();
     let aangepast = false;
     const spelers = leesSpelers();
