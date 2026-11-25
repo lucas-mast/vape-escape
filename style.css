@@ -1146,10 +1146,10 @@ body.onderhoud-actief .onderhoud-voet { color: #797067; }
   --gedempt: #83aad4;
   --groen: #2986ea;
   --groen-donker: #0e4a8b;
-  --paars: #ff00e5;
+  --paars: #2997FF;
   --blauw: #177ce8;
   --rood: #ff1744;
-  --geel: #faff00;
+  --geel: #A9CFFF;
   --schaduw: 0 0 28px rgba(41, 134, 234, .12);
 }
 
@@ -2112,4 +2112,30 @@ body {
 * { text-shadow: none !important; }
 @media (prefers-reduced-motion: no-preference) {
   .knop, .antwoord-knop, .level-kaart { transition-duration: .18s; }
+}
+
+
+/* Keep the optional accessible-game theme aligned with the site palette too. */
+body.spel-toegankelijk {
+  --achtergrond: #000000;
+  --paneel: #151515;
+  --paneel-licht: #1B1B1B;
+  --rand: #2B2B2B;
+  --tekst: #FFFFFF;
+  --gedempt: #98989D;
+  --groen: #2997FF;
+  --groen-donker: #102B46;
+  --paars: #2997FF;
+  --blauw: #2997FF;
+  --geel: #A9CFFF;
+  --schaduw: none;
+  color: #FFFFFF !important;
+  background: #000000 !important;
+}
+body.spel-toegankelijk .paneel,
+body.spel-toegankelijk .missie-kaart,
+body.spel-toegankelijk .level-kaart {
+  background: #151515 !important;
+  border-color: #2B2B2B !important;
+  box-shadow: none !important;
 }
