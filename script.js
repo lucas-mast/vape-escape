@@ -544,6 +544,9 @@
   }
 
   function renderDashboard() {
+    if (!remoteSpelers) {
+      return '<section class="pagina dashboard-pagina"><div class="dashboard-kop"><div><p class="bovenlabel">BEHEEROMGEVING</p><h1 class="titel-middel">Spelmonitor</h1><p class="subtitel">Voer de beheersleutel in om de centrale spelersgegevens te bekijken.</p></div></div><section class="paneel dashboard-sectie"><h2>Toegang vereist</h2><p>Er worden geen spelersgegevens getoond voordat de beheersleutel is gecontroleerd.</p><button class="knop knop-primair" type="button" data-action="dashboard-auth">BEHEERSLEUTEL INVOEREN</button></section></section>';
+    }
     const spelers = werkSpelersStatusBij().filter(speler=>!speler.deleted_at).sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0));
     const actief = spelers.filter(speler => speler.status === "actief");
     const offline = spelers.filter(speler => speler.status !== "actief");
