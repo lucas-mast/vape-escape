@@ -12,6 +12,11 @@
   if (dashboardMode) document.body.classList.add("dashboard-actief");
 
   const STORAGE_KEY = "vape-escape-voortgang-v1";
+  const SUPABASE_URL = "https://xhlvttahazjgnxolnlxk";
+  const SUPABASE_KEY = "sb_publishable_HrmLgS3ADp7A_B2zWYWgZQ_5G8bY68R";
+  const ADMIN_FUNCTION_URL = SUPABASE_URL + "/functions/v1/vape-escape-admin";
+  let remoteSpelers = null;
+  let remoteAdminKey = "";
   const TOTAL_QUESTIONS = 17;
   const MAX_SCORE = 200;
   const RUNNER_GOAL_COINS = 10;
@@ -339,6 +344,7 @@
   }
 
   function werkSpelersStatusBij() {
+    if(remoteSpelers)return remoteSpelers.map(speler=>({...speler,vrijgespeeldeNiveaus:speler.unlocked_levels||[1],voltooideNiveaus:(speler.completed_levels||[]).length,status:Date.now()-new Date(speler.last_seen_at).getTime()<120000?"actief":"offline"}));
     const nu = Date.now();
     let aangepast = false;
     const spelers = leesSpelers();
@@ -358,24 +364,51 @@
     return spelers;
   }
 
-  function synchroniseerSpeler() {
-    if (!huidigeSpelerId) return;
-    const spelers = leesSpelers();
-    const speler = spelers.find(item => item.id === huidigeSpelerId);
-    if (!speler || speler.status !== "actief") return;
-    const nu = Date.now();
-    speler.score = score();
-    speler.coins = voortgang.coins;
-    speler.voltooideNiveaus = voortgang.completed.filter(Boolean).length;
-    const bestaandeVrijgespeelde = Array.isArray(speler.vrijgespeeldeNiveaus) ? speler.vrijgespeeldeNiveaus : [1];
-    speler.vrijgespeeldeNiveaus = Array.from(new Set([1, ...bestaandeVrijgespeelde, ...voortgang.completed.map((klaar, index) => klaar && index < 4 ? index + 2 : null).filter(Boolean)]));
-    speler.character = {
-      naam: voortgang.character.naam, kleur: voortgang.character.kleur,
-      accessoire: voortgang.character.accessoire, effect: voortgang.character.effect || "neon"
-    };
-    speler.laatsteActiviteit = nu;
-    laatsteActiviteitBijgewerkt = nu;
-    bewaarSpelers(spelers);
+  function spelersCode() {
+    try { return localStorage.getItem("vape-escape-spelerscode") || ""; } catch (error) { return ""; }
+  }
+  async function supabaseRpc(name, body) {
+    const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/" + name,{method:"POST",headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const data=await response.json().catch(()=>null);
+    if(!response.ok) throw new Error(data&&data.message||"Databaseverbinding mislukt");
+    return data;
+  }
+  function remoteSpelerPayload() {
+    const vrij=new Set([1]);
+    voortgang.completed.forEach((klaar,index)=>{if(klaar&&index<4)vrij.add(index+2);});
+    const speler=spelerMetId(huidigeSpelerId);
+    (speler&&speler.vrijgespeeldeNiveaus||[]).forEach(level=>vrij.add(level));
+    return {p_code:spelersCode(),p_progress:voortgang,p_score:score(),p_coins:voortgang.coins,p_completed_levels:voortgang.completed.map((klaar,index)=>klaar?index+1:null).filter(Boolean),p_unlocked_levels:Array.from(vrij),p_character:voortgang.character};
+  }
+  async function synchroniseerSpeler() {
+    if(!huidigeSpelerId||!spelersCode())return;
+    const nu=Date.now(), spelers=leesSpelers(), speler=spelers.find(item=>item.id===huidigeSpelerId);
+    if(speler){speler.score=score();speler.coins=voortgang.coins;speler.voltooideNiveaus=voortgang.completed.filter(Boolean).length;speler.character=voortgang.character;speler.laatsteActiviteit=nu;speler.status="actief";bewaarSpelers(spelers);}
+    laatsteActiviteitBijgewerkt=nu;
+    try{await supabaseRpc("ve_save_player",remoteSpelerPayload());}catch(error){console.warn("Vape Escape cloud save:",error.message);}
+  }
+  async function laadRemoteSpeler(code){return await supabaseRpc("ve_load_player",{p_code:code});}
+  function herstelRemoteVoortgang(data){
+    const saved=data.progress&&typeof data.progress==="object"?data.progress:{};
+    voortgang=legeVoortgang();
+    if(Array.isArray(saved.completed))voortgang.completed=voortgang.completed.map((_,i)=>saved.completed[i]===true);
+    if(saved.answers&&typeof saved.answers==="object")voortgang.answers=Object.fromEntries(Object.entries(saved.answers).filter(([k,v])=>validIdSet.has(k)&&typeof v==="boolean"));
+    if(Number.isFinite(saved.coins))voortgang.coins=Math.max(0,saved.coins);
+    if(saved.character&&typeof saved.character==="object")voortgang.character={...voortgang.character,...saved.character};
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(voortgang));}catch(error){}
+  }
+  async function controleerVerwijderd(){
+    const code=spelersCode();if(!code||!huidigeSpelerId||dashboardMode)return;
+    try{
+      const data=await laadRemoteSpeler(code);
+      if(!data){
+        huidigeSpelerId=null;
+        ["vape-escape-spelerscode","vape-escape-huidige-speler"].forEach(key=>localStorage.removeItem(key));
+        sessionStorage.removeItem("vape-escape-sessie-speler");voortgang=legeVoortgang();gaNaar("start");
+        window.alert("Je spelersaccount is verwijderd. Je bent teruggezet naar het hoofdmenu.");return;
+      }
+      const local=spelerMetId(huidigeSpelerId);if(local){local.vrijgespeeldeNiveaus=data.unlocked_levels||[1];bewaarSpelers(leesSpelers());}
+    }catch(error){console.warn("Vape Escape accountcontrole:",error.message);}
   }
 
   function registreerActiviteit() {
@@ -383,33 +416,29 @@
     if (huidigeSpelerId && nu - laatsteActiviteitBijgewerkt >= 15000) synchroniseerSpeler();
   }
 
-  function startSpelerSessie() {
-    const invoer = document.getElementById("speler-naam");
-    const fout = document.getElementById("speler-naam-fout");
-    const naam = invoer ? invoer.value.trim().replace(/\\s+/g, " ").slice(0, 20) : "";
-    if (naam.length < 2) {
-      if (fout) fout.textContent = "Vul eerst je naam in (minimaal 2 tekens).";
-      if (invoer) invoer.focus();
-      return;
-    }
-    const nu = Date.now();
-    huidigeSpelerId = maakSpelerId();
-    const spelers = leesSpelers();
-    spelers.push({
-      id: huidigeSpelerId, naam,
-      character: { naam: voortgang.character.naam, kleur: voortgang.character.kleur, accessoire: voortgang.character.accessoire, effect: voortgang.character.effect || "neon" },
-      score: 0, coins: 0, voltooideNiveaus: 0, vrijgespeeldeNiveaus: [1],
-      status: "actief", aangemaaktOp: nu, laatsteActiviteit: nu
-    });
-    bewaarSpelers(spelers);
-    try {
-      localStorage.setItem("vape-escape-laatste-naam", naam);
-      localStorage.setItem("vape-escape-huidige-speler", huidigeSpelerId);
-      sessionStorage.setItem("vape-escape-sessie-speler", huidigeSpelerId);
-    } catch (error) {}
-    voortgang = legeVoortgang();
-    bewaarVoortgang();
-    gaNaar("kaart");
+  async function startSpelerSessie(){
+    const invoer=document.getElementById("speler-naam"),codeInvoer=document.getElementById("speler-code"),fout=document.getElementById("speler-naam-fout");
+    const naam=invoer?invoer.value.trim().replace(/\\s+/g," ").slice(0,20):"",code=codeInvoer?codeInvoer.value.trim().toUpperCase():"";
+    try{
+      if(code){
+        const data=await laadRemoteSpeler(code);if(!data)throw new Error("Deze spelerscode bestaat niet meer of is verwijderd.");
+        localStorage.setItem("vape-escape-spelerscode",code);huidigeSpelerId=data.id;
+        localStorage.setItem("vape-escape-huidige-speler",huidigeSpelerId);sessionStorage.setItem("vape-escape-sessie-speler",huidigeSpelerId);
+        herstelRemoteVoortgang(data);const lijst=leesSpelers().filter(p=>p.id!==data.id);
+        lijst.push({id:data.id,naam:data.name,score:data.score,coins:data.coins,voltooideNiveaus:(data.completed_levels||[]).length,vrijgespeeldeNiveaus:data.unlocked_levels||[1],character:data.character||{},status:"actief",laatsteActiviteit:Date.now()});
+        bewaarSpelers(lijst);gaNaar("kaart");return;
+      }
+      if(naam.length<2)throw new Error("Vul een naam in of gebruik je bestaande spelerscode.");
+      const nieuweCode="VE-"+Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b=>b.toString(16).padStart(2,"0")).join("").toUpperCase();
+      const data=await supabaseRpc("ve_create_player",{p_name:naam,p_code:nieuweCode});huidigeSpelerId=data.id;
+      localStorage.setItem("vape-escape-spelerscode",nieuweCode);localStorage.setItem("vape-escape-laatste-naam",naam);
+      localStorage.setItem("vape-escape-huidige-speler",huidigeSpelerId);sessionStorage.setItem("vape-escape-sessie-speler",huidigeSpelerId);
+      voortgang=legeVoortgang();const lijst=leesSpelers();
+      lijst.push({id:data.id,naam,character:voortgang.character,score:0,coins:0,voltooideNiveaus:0,vrijgespeeldeNiveaus:[1],status:"actief",aangemaaktOp:Date.now(),laatsteActiviteit:Date.now()});
+      bewaarSpelers(lijst);await synchroniseerSpeler();
+      window.alert("Je persoonlijke spelerscode is: "+nieuweCode+"\\nBewaar deze code goed. Je hebt hem nodig om op een ander apparaat verder te spelen.");
+      gaNaar("kaart");
+    }catch(error){if(fout)fout.textContent=error.message;}
   }
 
   function sluitSpelerSessie() {
@@ -515,7 +544,7 @@
   }
 
   function renderDashboard() {
-    const spelers = werkSpelersStatusBij().sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0));
+    const spelers = werkSpelersStatusBij().filter(speler=>!speler.deleted_at).sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0));
     const actief = spelers.filter(speler => speler.status === "actief");
     const offline = spelers.filter(speler => speler.status !== "actief");
     const munten = spelers.reduce((totaal, speler) => totaal + (Number(speler.coins) || 0), 0);
@@ -524,9 +553,10 @@
       '<div class="dashboard-kop"><div><p class="bovenlabel">BEHEEROMGEVING</p><h1 class="titel-middel">Spelmonitor</h1>' +
       '<p class="subtitel">Een duidelijk overzicht van spelers, prestaties en voortgang in Vape Escape.</p></div>' +
       '<div class="dashboard-header-acties"><span class="dashboard-archief-chip">' + offline.length + ' OFFLINE IN ARCHIEF</span>' +
+      '<button class="knop knop-secundair" type="button" data-action="dashboard-auth">BEHEERSLEUTEL</button>' +
       '<button class="knop knop-secundair" type="button" data-action="dashboard-refresh">VERVERSEN</button></div></div>' +
       '<div class="dashboard-statistieken">' +
-      '<div><span>ACTIEVE SPELERS</span><strong>' + actief.length + '</strong><small>Nu actief op dit apparaat</small></div>' +
+      '<div><span>ACTIEVE SPELERS</span><strong>' + actief.length + '</strong><small>Actief op alle apparaten</small></div>' +
       '<div><span>HOOGSTE SCORE</span><strong>' + hoogsteScore + '</strong><small>Punten op het scorebord</small></div>' +
       '<div><span>VERZAMELDE MUNTEN</span><strong>' + munten + '</strong><small>Over alle bewaarde entries</small></div>' +
       '</div>' +
@@ -539,41 +569,32 @@
       '<h2>Beveiliging</h2><p>De beheerlink is geen sterke beveiliging: de toegangscode staat in openbare websitecode. Deel de link niet als je het dashboard privé wilt houden.</p></section>' +
       '<section class="dashboard-zijkaart"><span class="mini-label">OFFLINE ARCHIEF</span><strong>' + offline.length + '</strong>' +
       '<p>Spelers die de website hebben verlaten of langer dan twee uur inactief zijn.</p></section>' +
-      '<section class="dashboard-zijkaart dashboard-opslagkaart"><span class="mini-label">OPSLAGSTATUS</span><strong>Alleen lokaal</strong>' +
-      '<p>Spelersgegevens worden in deze browser op dit apparaat opgeslagen.</p></section>' +
+      '<section class="dashboard-zijkaart dashboard-opslagkaart"><span class="mini-label">OPSLAGSTATUS</span><strong>Clouddatabase</strong>' +
+      '<p>Spelersgegevens worden centraal opgeslagen en zijn beschikbaar op andere apparaten.</p></section>' +
       '</aside></div>' +
       '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">RANGLIJST</span><h2>Scorebord</h2></div><span class="dashboard-status">HOOGSTE SCORE BOVENAAN</span></div>' + renderScorebord(spelers) + '</section>' +
       '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">LIVE OVERZICHT</span><h2>Actieve spelers</h2></div><span class="dashboard-status">WORDT BIJGEWERKT</span></div>' + renderDashboardTabel(actief, true) + '</section>' +
       '<section class="paneel dashboard-sectie"><div class="dashboard-sectie-kop"><div><span class="mini-label">BEWAARDE GEGEVENS</span><h2>Offline spelers</h2></div><span class="mini-label">NA VERTREK OF 2 UUR INACTIEF</span></div>' + renderDashboardTabel(offline, false) + '</section>' +
       '<div class="rij-knoppen"><button class="knop knop-secundair" type="button" data-action="dashboard-game">TERUG NAAR DE GAME</button><button class="knop knop-secundair" type="button" data-action="dashboard-clear">VERWIJDER ALLE ENTRIES</button></div></section>';
   }
-  function verwerkDashboardActie(knop) {
-    const actie = knop.dataset.action;
-    const spelerId = knop.dataset.speler;
-    const spelers = leesSpelers();
-    if (actie === "dashboard-refresh") { gaNaar("dashboard"); return; }
-    if (actie === "dashboard-game") {
-      window.location.href = window.location.pathname;
-      return;
+  async function laadDashboardCloud(){
+    if(!remoteAdminKey)return;
+    try{const response=await fetch(ADMIN_FUNCTION_URL,{headers:{"x-admin-key":remoteAdminKey,apikey:SUPABASE_KEY}});const data=await response.json();if(!response.ok)throw new Error(data.error||"Dashboard laden mislukt");remoteSpelers=data.players||[];}
+    catch(error){window.alert("Dashboardfout: "+error.message);}
+    if(pagina==="dashboard")render();
+  }
+  async function verwerkDashboardActie(knop){
+    const actie=knop.dataset.action;
+    if(actie==="dashboard-auth"){const entered=window.prompt("Voer de Vape Escape dashboard-beheersleutel in:");if(!entered)return;remoteAdminKey=entered.trim();try{sessionStorage.setItem("ve-dashboard-key",remoteAdminKey);}catch(error){}await laadDashboardCloud();return;}
+    if(actie==="dashboard-refresh"){await laadDashboardCloud();return;}
+    if(actie==="dashboard-game"){window.location.href=window.location.pathname;return;}
+    if(["dashboard-remove","dashboard-all","dashboard-unlock"].includes(actie)){
+      if(!remoteAdminKey){window.alert("Voer eerst de beheersleutel in.");return;}
+      const body={id:knop.dataset.speler,action:actie==="dashboard-remove"?"delete":actie==="dashboard-all"?"all":"unlock",level:Number(knop.dataset.level)};
+      if(actie==="dashboard-remove"&&!window.confirm("Deze speler verwijderen? Alle apparaten worden bij de volgende controle naar het hoofdmenu gestuurd."))return;
+      try{const response=await fetch(ADMIN_FUNCTION_URL,{method:"POST",headers:{"x-admin-key":remoteAdminKey,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw new Error(data.error||"Actie mislukt");await laadDashboardCloud();}
+      catch(error){window.alert(error.message);}
     }
-    if (actie === "dashboard-clear") {
-      if (!window.confirm("Alle spelers op dit apparaat verwijderen?")) return;
-      bewaarSpelers([]); gaNaar("dashboard"); return;
-    }
-    if (actie === "dashboard-remove") {
-      if (!window.confirm("Deze entry verwijderen?")) return;
-      bewaarSpelers(spelers.filter(speler => speler.id !== spelerId)); gaNaar("dashboard"); return;
-    }
-    const speler = spelers.find(item => item.id === spelerId);
-    if (!speler) return;
-    if (!Array.isArray(speler.vrijgespeeldeNiveaus)) speler.vrijgespeeldeNiveaus = [1];
-    if (actie === "dashboard-all") speler.vrijgespeeldeNiveaus = [1, 2, 3, 4, 5];
-    if (actie === "dashboard-unlock") {
-      const level = Number(knop.dataset.level);
-      if (Number.isInteger(level) && level >= 1 && level <= 5 && !speler.vrijgespeeldeNiveaus.includes(level)) speler.vrijgespeeldeNiveaus.push(level);
-    }
-    bewaarSpelers(spelers);
-    gaNaar("dashboard");
   }
 
   function renderProfiel() {
@@ -582,16 +603,12 @@
     return '<section class="pagina profiel-pagina"><div class="terugrij"><button class="tekstknop" type="button" data-action="naar-kaart">← Missiekaart</button><span class="mini-label">JOUW SPELERSPROFIEL</span></div>' +
       '<div class="paneel profiel-paneel"><div class="profiel-karakter">' + miniBink(speler) + '</div><p class="bovenlabel">DIT BEN JIJ</p><h1 class="titel-middel">' + escapeHtml(speler.naam) + '</h1>' +
       '<div class="dashboard-statistieken"><div><strong>' + speler.coins + '</strong><span>MUNTEN</span></div><div><strong>' + speler.score + '</strong><span>PUNTEN</span></div><div><strong>' + speler.voltooideNiveaus + ' / 5</strong><span>NIVEAUS KLAAR</span></div><div><strong>' + (speler.vrijgespeeldeNiveaus || [1]).length + ' / 5</strong><span>NIVEAUS VRIJ</span></div></div>' +
-      '<p class="dashboard-waarschuwing">Je profiel blijft op dit apparaat bewaard. Als je de website verlaat, wordt je sessie offline gezet. Na twee uur zonder activiteit wordt de sessie automatisch gearchiveerd.</p></div></section>';
+      '<p class="dashboard-waarschuwing">Je spelerscode: <strong>' + escapeHtml(spelersCode()) + '</strong>. Bewaar deze code om op andere apparaten verder te spelen. Je voortgang wordt automatisch online opgeslagen.</p></div></section>';
   }
 
   function bewaarVoortgang() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(voortgang));
-      synchroniseerSpeler();
-    } catch (error) {
-      // Het spel blijft speelbaar wanneer lokale opslag niet beschikbaar is.
-    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(voortgang)); } catch (error) {}
+    synchroniseerSpeler();
   }
 
   function aantalGoed() {
@@ -700,7 +717,9 @@
       '<div class="startknoppen">',
       '<form class="speler-start-form" id="start-form">',
       '<label for="speler-naam">VUL EERST JE NAAM IN</label>',
-      '<input id="speler-naam" name="naam" maxlength="20" minlength="2" autocomplete="nickname" placeholder="Jouw naam" required>',
+      '<input id="speler-naam" name="naam" maxlength="20" minlength="2" autocomplete="nickname" placeholder="Jouw naam">',
+      '<label for="speler-code">BESTAANDE SPELERSCODE (OPTIONEEL)</label>',
+      '<input id="speler-code" name="code" maxlength="40" autocomplete="off" placeholder="VE-... om verder te spelen">',
       '<p id="speler-naam-fout" class="form-fout" aria-live="polite"></p>',
       '<button class="knop knop-primair" type="submit" id="start-knop">START DE MISSIE <span class="knop-pijl">→</span></button>',
       '</form>',
@@ -1431,17 +1450,25 @@
     }
   });
 
-  app.addEventListener("click", () => registreerActiviteit());
-  window.addEventListener("pointerdown", () => registreerActiviteit(), { passive: true });
-  window.addEventListener("keydown", () => registreerActiviteit());
-  // Keep the session resumable across refreshes; inactivity cleanup archives it after two hours.
-  window.addEventListener("storage", event => {
-    if (event.key === SPELERS_STORAGE_KEY && pagina === "dashboard") render();
-  });
-  window.setInterval(() => {
-    if (pagina === "dashboard") render();
-    else werkSpelersStatusBij();
-  }, 10000);
+  app.addEventListener("click",()=>registreerActiviteit());
+  window.addEventListener("pointerdown",()=>registreerActiviteit(),{passive:true});
+  window.addEventListener("keydown",()=>registreerActiviteit());
+  window.addEventListener("storage",event=>{if(event.key===SPELERS_STORAGE_KEY&&pagina==="dashboard")render();});
+  try{remoteAdminKey=sessionStorage.getItem("ve-dashboard-key")||"";}catch(error){}
+  window.setInterval(()=>{
+    if(pagina==="dashboard"){if(remoteAdminKey)laadDashboardCloud();}
+    else{werkSpelersStatusBij();controleerVerwijderd();if(huidigeSpelerId&&Date.now()-laatsteActiviteitBijgewerkt>15000)synchroniseerSpeler();}
+  },5000);
+  if(!dashboardMode&&spelersCode()){
+    laadRemoteSpeler(spelersCode()).then(data=>{
+      if(!data){localStorage.removeItem("vape-escape-spelerscode");return;}
+      huidigeSpelerId=data.id;herstelRemoteVoortgang(data);
+      const lijst=leesSpelers().filter(p=>p.id!==data.id);
+      lijst.push({id:data.id,naam:data.name,score:data.score,coins:data.coins,vrijgespeeldeNiveaus:data.unlocked_levels||[1],voltooideNiveaus:(data.completed_levels||[]).length,character:data.character||{},status:"actief",laatsteActiviteit:Date.now()});
+      bewaarSpelers(lijst);if(pagina==="start")gaNaar("kaart");
+    }).catch(error=>console.warn("Account herstellen mislukt:",error.message));
+  }
+  if(dashboardMode&&remoteAdminKey)laadDashboardCloud();
 
   function speelBinkTransitie() {
     const voorbeeld = document.getElementById("runner-preview-beeld");
