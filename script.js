@@ -12,7 +12,7 @@
   if (dashboardMode) document.body.classList.add("dashboard-actief");
 
   const STORAGE_KEY = "vape-escape-voortgang-v1";
-  const SUPABASE_URL = "https://xhlvttahazjgnxolnlxk";
+  const SUPABASE_URL = "https://xhlvttahazjgnxolnlxk.supabase.co";
   const SUPABASE_KEY = "sb_publishable_HrmLgS3ADp7A_B2zWYWgZQ_5G8bY68R";
   const ADMIN_FUNCTION_URL = SUPABASE_URL + "/functions/v1/vape-escape-admin";
   let remoteSpelers = null;
