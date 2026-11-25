@@ -1027,7 +1027,7 @@
       deeltje.leven -= delta;
       ctx.save();
       ctx.globalAlpha = Math.max(0, deeltje.leven / deeltje.maxLeven) * .68;
-      ctx.fillStyle = "#d8ffd0"; ctx.shadowColor = "#39ff14"; ctx.shadowBlur = 10;
+      ctx.fillStyle = "#d8ffd0"; ctx.shadowColor = "transparent"; ctx.shadowBlur = 0;
       ctx.beginPath(); ctx.arc(deeltje.x, deeltje.y, deeltje.grootte, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     });
@@ -1042,7 +1042,7 @@
     ctx.rotate(Math.sin(obstakel.teller || 0) * .07);
     ctx.fillStyle = "rgba(57,255,20,.10)";
     ctx.beginPath(); ctx.ellipse(0, hoogte * .48, breedte * .85, 6 * schaal, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#020702"; ctx.shadowColor = "#39ff14"; ctx.shadowBlur = 17 * schaal;
+    ctx.fillStyle = "#020702"; ctx.shadowColor = "transparent"; ctx.shadowBlur = 0;
     ctx.beginPath(); ctx.roundRect(-breedte / 2, -hoogte / 2, breedte, hoogte, 8 * schaal); ctx.fill();
     ctx.shadowBlur = 0; ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2 * schaal; ctx.stroke();
     ctx.fillStyle = "#39ff14";
@@ -1059,7 +1059,7 @@
     const x = runnerBaanX(munt.baan, munt.y), y = munt.y + Math.sin(munt.teller * 3) * 4;
     const schaal = .72 + Math.max(0, munt.y / 520) * .35;
     ctx.save(); ctx.translate(x, y); ctx.scale(schaal, schaal);
-    ctx.shadowColor = "#faff00"; ctx.shadowBlur = 22; ctx.fillStyle = "#faff00";
+    ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.fillStyle = "#faff00";
     ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fill();
     ctx.shadowBlur = 0; ctx.strokeStyle = "#fffca8"; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.stroke();
@@ -1087,7 +1087,7 @@
       ctx.fillStyle = "#00f5ff"; ctx.beginPath(); ctx.moveTo(-18,-5); ctx.quadraticCurveTo(-55,-30,-45,17); ctx.quadraticCurveTo(-30,35,-15,15); ctx.fill();
       ctx.beginPath(); ctx.moveTo(18,-5); ctx.quadraticCurveTo(55,-30,45,17); ctx.quadraticCurveTo(30,35,15,15); ctx.fill();
     }
-    ctx.fillStyle = kleur; ctx.shadowColor = kleur; ctx.shadowBlur = 18;
+    ctx.fillStyle = kleur; ctx.shadowColor = "transparent"; ctx.shadowBlur = 0;
     ctx.beginPath(); ctx.ellipse(0, 0, 23, 28, 0, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
     ctx.strokeStyle = "#000"; ctx.lineWidth = 2.5; ctx.stroke();
     ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(-8,-4,3,0,Math.PI*2); ctx.arc(8,-4,3,0,Math.PI*2); ctx.fill();
@@ -1133,7 +1133,7 @@
     tekenRunnerWolkjes(ctx,delta||0);
     tekenRunnerKarakter(ctx,runner.verstreken);
     if(runner.verstreken<runner.onkwetsbaarTot){ctx.strokeStyle="rgba(57,255,20,.65)";ctx.lineWidth=3;ctx.beginPath();ctx.arc(runnerBaanX(runner.baan,440),423,38+Math.sin(runner.verstreken*18)*4,0,Math.PI*2);ctx.stroke();}
-    ctx.fillStyle="#d7ffd1";ctx.font="700 14px ui-sans-serif, system-ui";ctx.textAlign="center";ctx.shadowColor="#39ff14";ctx.shadowBlur=8;
+    ctx.fillStyle="#d7ffd1";ctx.font="700 14px ui-sans-serif, system-ui";ctx.textAlign="center";ctx.shadowColor="transparent";ctx.shadowBlur=0;
     ctx.fillText("WISSEL VAN BAAN · VIND DE 10 MUNTEN",480,28);ctx.shadowBlur=0;
   }
 
