@@ -291,7 +291,10 @@
   }
 
   let voortgang = laadVoortgang();
-  let pagina = dashboardMode ? "dashboard" : "start";
+  const BEWAARDE_PAGINAS = new Set(["start", "hoe", "kaart", "spel", "level-klaar", "runner-aanpassen", "runner-spel", "runner-mislukt", "eind", "profiel"]);
+  let opgeslagenPagina = null;
+  try { opgeslagenPagina = sessionStorage.getItem("vape-escape-huidige-pagina"); } catch (error) {}
+  let pagina = dashboardMode ? "dashboard" : (BEWAARDE_PAGINAS.has(opgeslagenPagina) ? (opgeslagenPagina === "runner-spel" ? "runner-aanpassen" : opgeslagenPagina) : "start");
   let huidigLevel = 0;
   let huidigeVraag = 0;
   let feedback = null;
@@ -303,6 +306,10 @@
 
 
   let huidigeSpelerId = null;
+  try {
+    huidigeSpelerId = sessionStorage.getItem("vape-escape-sessie-speler") || localStorage.getItem("vape-escape-huidige-speler") || null;
+    if (huidigeSpelerId && !spelerMetId(huidigeSpelerId)) huidigeSpelerId = null;
+  } catch (error) { huidigeSpelerId = null; }
   let laatsteActiviteitBijgewerkt = 0;
 
   function leesSpelers() {
@@ -392,6 +399,7 @@
     try {
       localStorage.setItem("vape-escape-laatste-naam", naam);
       localStorage.setItem("vape-escape-huidige-speler", huidigeSpelerId);
+      sessionStorage.setItem("vape-escape-sessie-speler", huidigeSpelerId);
     } catch (error) {}
     voortgang = legeVoortgang();
     bewaarVoortgang();
@@ -643,6 +651,7 @@
 
   function gaNaar(nieuwePagina) {
     pagina = nieuwePagina;
+    try { sessionStorage.setItem("vape-escape-huidige-pagina", nieuwePagina); } catch (error) {}
     render();
     app.focus({ preventScroll: true });
   }
@@ -909,6 +918,7 @@
       '<ellipse cx="63" cy="91" rx="5" ry="7" fill="#423d38"/><ellipse cx="98" cy="91" rx="5" ry="7" fill="#423d38"/>' +
       '<path d="M64 111 Q80 126 96 111" fill="none" stroke="#423d38" stroke-width="3" stroke-linecap="round"/>' +
       '<path d="M48 69 Q55 59 65 63" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="5" stroke-linecap="round"/>' +
+      (voortgang.character.effect === "neon" ? '<circle cx="80" cy="96" r="66" fill="none" stroke="' + kleur + '" stroke-width="3" stroke-dasharray="8 6"/>' : voortgang.character.effect === "sterren" ? '<g fill="#faff00"><path d="M23 47l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/><path d="M135 52l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path d="M126 132l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>' : voortgang.character.effect === "vonken" ? '<g stroke="' + kleur + '" stroke-width="4" stroke-linecap="round"><path d="M15 82l12 0m-6-6v12M133 82h12m-6-6v12M80 8v12m-6-6h12"/></g>' : '<g fill="#d8eaff"><circle cx="17" cy="117" r="7"/><circle cx="27" cy="109" r="9"/><circle cx="39" cy="117" r="7"/><circle cx="121" cy="117" r="7"/><circle cx="133" cy="109" r="9"/><circle cx="143" cy="117" r="7"/></g>') +
       '</svg>';
   }
 
@@ -1106,7 +1116,10 @@
       ctx.strokeStyle = "#faff00"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0,-25); ctx.lineTo(0,-39); ctx.stroke();
       ctx.fillStyle = "#faff00"; ctx.beginPath(); ctx.arc(0,-42,4,0,Math.PI*2); ctx.fill();
     }
-    if (voortgang.character.effect === "sterren") {
+    if (voortgang.character.effect === "neon") {
+      ctx.strokeStyle = kleur; ctx.lineWidth = 3; ctx.setLineDash([7, 5]); ctx.beginPath(); ctx.ellipse(0, 0, 36, 43, 0, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = kleur; for (let i = 0; i < 4; i++) { const hoek = tijd * 1.8 + i * Math.PI / 2; ctx.beginPath(); ctx.arc(Math.cos(hoek) * 43, Math.sin(hoek) * 49, 3.5, 0, Math.PI * 2); ctx.fill(); }
+    } else if (voortgang.character.effect === "sterren") {
       ctx.fillStyle = "#faff00";
       for (let i=0;i<3;i++){const hoek=tijd*2+i*Math.PI*2/3;ctx.beginPath();ctx.arc(Math.cos(hoek)*32,Math.sin(hoek)*30,2.5,0,Math.PI*2);ctx.fill();}
     } else if (voortgang.character.effect === "vonken") {
@@ -1410,8 +1423,7 @@
   app.addEventListener("click", () => registreerActiviteit());
   window.addEventListener("pointerdown", () => registreerActiviteit(), { passive: true });
   window.addEventListener("keydown", () => registreerActiviteit());
-  window.addEventListener("pagehide", sluitSpelerSessie);
-  window.addEventListener("beforeunload", sluitSpelerSessie);
+  // Keep the session resumable across refreshes; inactivity cleanup archives it after two hours.
   window.addEventListener("storage", event => {
     if (event.key === SPELERS_STORAGE_KEY && pagina === "dashboard") render();
   });
