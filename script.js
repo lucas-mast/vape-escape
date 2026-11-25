@@ -297,6 +297,12 @@
   let pagina = dashboardMode ? "dashboard" : (BEWAARDE_PAGINAS.has(opgeslagenPagina) ? (opgeslagenPagina === "runner-spel" ? "runner-aanpassen" : opgeslagenPagina) : "start");
   let huidigLevel = 0;
   let huidigeVraag = 0;
+  try {
+    const opgeslagenLevel = Number(sessionStorage.getItem("vape-escape-huidig-level"));
+    const opgeslagenVraag = Number(sessionStorage.getItem("vape-escape-huidige-vraag"));
+    if (Number.isInteger(opgeslagenLevel) && opgeslagenLevel >= 0 && opgeslagenLevel <= 3) huidigLevel = opgeslagenLevel;
+    if (Number.isInteger(opgeslagenVraag) && opgeslagenVraag >= 0 && opgeslagenVraag <= 6) huidigeVraag = opgeslagenVraag;
+  } catch (error) {}
   let feedback = null;
   let codeMelding = "";
   let codePogingen = 0;
@@ -1251,6 +1257,10 @@
     }
     huidigLevel = index;
     huidigeVraag = 0;
+    try {
+      sessionStorage.setItem("vape-escape-huidig-level", String(index));
+      sessionStorage.setItem("vape-escape-huidige-vraag", "0");
+    } catch (error) {}
     feedback = null;
     codeMelding = "";
     codePogingen = 0;
@@ -1284,6 +1294,7 @@
     const totaal = huidigLevel === 0 ? factsQuestions.length : (huidigLevel === 1 ? truthQuestions.length : scenarios.length);
     if (huidigeVraag + 1 < totaal) {
       huidigeVraag += 1;
+      try { sessionStorage.setItem("vape-escape-huidige-vraag", String(huidigeVraag)); } catch (error) {}
       render();
     } else {
       rondLevelAf();
