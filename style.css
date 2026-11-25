@@ -2139,3 +2139,33 @@ body.spel-toegankelijk .level-kaart {
   border-color: #2B2B2B !important;
   box-shadow: none !important;
 }
+
+/* Vape Escape: flat charcoal-blue finish — no glow. */
+:root {
+  --achtergrond: #0e131a;
+  --schaduw: none;
+}
+html,
+body,
+body.dashboard-actief,
+body.spel-toegankelijk,
+.runner-canvas-omhulsel {
+  background: #0e131a !important;
+  background-color: #0e131a !important;
+  background-image: none !important;
+}
+.achtergrond-licht {
+  display: none !important;
+}
+.missie-kaart::before,
+.missie-kaart::after {
+  display: none !important;
+  content: none !important;
+}
+*,
+*::before,
+*::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
