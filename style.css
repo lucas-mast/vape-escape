@@ -2172,3 +2172,23 @@ body.spel-toegankelijk,
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+
+/* N5: make the life indicators clearly readable without adding glow. */
+#runner-levens {
+  align-items: center;
+  gap: 7px !important;
+  min-height: 34px;
+}
+#runner-levens .runner-leven {
+  display: inline-block;
+  font-size: 27px !important;
+  line-height: 1 !important;
+  transform: scale(1.08);
+}
+#runner-levens .runner-leven.actief {
+  color: #ff5a5f !important;
+}
+#runner-levens .runner-leven.verloren {
+  color: #59616d !important;
+}
