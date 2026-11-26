@@ -17,6 +17,8 @@
   const ADMIN_FUNCTION_URL = SUPABASE_URL + "/functions/v1/vape-escape-admin";
   let remoteSpelers = null;
   let remoteAdminKey = "";
+  let dashboardFetchBezig = false;
+  let dashboardWeergaveHandtekening = "";
   const TOTAL_QUESTIONS = 17;
   const MAX_SCORE = 200;
   const RUNNER_GOAL_COINS = 10;
@@ -617,7 +619,8 @@
       '<div class="rij-knoppen"><button class="knop knop-secundair" type="button" data-action="dashboard-game">TERUG NAAR DE GAME</button><button class="knop knop-secundair" type="button" data-action="dashboard-clear">VERWIJDER ALLE ENTRIES</button></div></section>';
   }
   async function laadDashboardCloud(){
-    if(!remoteAdminKey)return;
+    if(!remoteAdminKey||dashboardFetchBezig)return;
+    dashboardFetchBezig=true;
     let unauthorized=false;
     try{
       const response=await fetch(ADMIN_FUNCTION_URL,{headers:{"x-admin-key":remoteAdminKey,apikey:SUPABASE_KEY}});
@@ -625,7 +628,7 @@
       if(response.status===401)unauthorized=true;
       if(!response.ok)throw new Error(data.error||data.message||"Dashboard laden mislukt");
       const rows=Array.isArray(data.players)?data.players:(Array.isArray(data.data)?data.data:[]);
-      remoteSpelers=rows.map(speler=>({
+      const nieuweSpelers=rows.map(speler=>({
         ...speler,
         id:speler.id||speler.player_id||"",
         name:String(speler.name||speler.naam||speler.player_name||"Onbekende speler"),
@@ -635,15 +638,22 @@
         completed_levels:Array.isArray(speler.completed_levels)?speler.completed_levels:[],
         character:speler.character&&typeof speler.character==="object"?speler.character:{}
       }));
+      const handtekening=JSON.stringify(nieuweSpelers.map(speler=>({id:speler.id,name:speler.name,score:speler.score,coins:speler.coins,unlocked_levels:speler.unlocked_levels,completed_levels:speler.completed_levels,character:speler.character,last_seen_at:speler.last_seen_at,deleted_at:speler.deleted_at})));
+      const gewijzigd=handtekening!==dashboardWeergaveHandtekening;
+      remoteSpelers=nieuweSpelers;
+      dashboardWeergaveHandtekening=handtekening;
+      if(pagina==="dashboard"&&gewijzigd)render();
     }catch(error){
       remoteSpelers=null;
+      dashboardWeergaveHandtekening="";
       if(unauthorized){
         remoteAdminKey="";
         try{sessionStorage.removeItem("ve-dashboard-key");}catch(storageError){}
       }
       window.alert("Dashboardfout: "+error.message);
+    }finally{
+      dashboardFetchBezig=false;
     }
-    if(pagina==="dashboard")render();
   }
   async function verwerkDashboardActie(knop){
     const actie=knop.dataset.action;
