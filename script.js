@@ -344,7 +344,17 @@
   }
 
   function werkSpelersStatusBij() {
-    if(remoteSpelers)return remoteSpelers.map(speler=>({...speler,naam:speler.name||"Onbekende speler",vrijgespeeldeNiveaus:Array.isArray(speler.unlocked_levels)?speler.unlocked_levels:[1],voltooideNiveaus:Array.isArray(speler.completed_levels)?speler.completed_levels.length:0,status:speler.last_seen_at&&Date.now()-new Date(speler.last_seen_at).getTime()<INACTIEF_NA_MS?"actief":"offline"}));
+    if(remoteSpelers)return remoteSpelers.map(speler=>({
+      ...speler,
+      id:speler.id||speler.player_id||"",
+      naam:String(speler.name||speler.naam||speler.player_name||"Onbekende speler"),
+      score:Number(speler.score)||0,
+      coins:Number(speler.coins)||0,
+      character:speler.character&&typeof speler.character==="object"?speler.character:{},
+      vrijgespeeldeNiveaus:Array.isArray(speler.unlocked_levels)?speler.unlocked_levels.map(Number).filter(Number.isInteger):[1],
+      voltooideNiveaus:Array.isArray(speler.completed_levels)?speler.completed_levels.length:0,
+      status:speler.last_seen_at&&Date.now()-new Date(speler.last_seen_at).getTime()<INACTIEF_NA_MS?"actief":"offline"
+    }));
     const nu = Date.now();
     let aangepast = false;
     const spelers = leesSpelers();
@@ -387,7 +397,15 @@
     laatsteActiviteitBijgewerkt=nu;
     try{await supabaseRpc("ve_save_player",remoteSpelerPayload());}catch(error){console.warn("Vape Escape cloud save:",error.message);}
   }
-  async function laadRemoteSpeler(code){return await supabaseRpc("ve_load_player",{p_code:code});}
+  function normaliseerRemoteSpeler(data){
+    if(Array.isArray(data))return data[0]||null;
+    if(data&&typeof data==="object"){
+      if(data.player&&typeof data.player==="object")return normaliseerRemoteSpeler(data.player);
+      if(data.data&&typeof data.data==="object")return normaliseerRemoteSpeler(data.data);
+    }
+    return data&&typeof data==="object"?data:null;
+  }
+  async function laadRemoteSpeler(code){return normaliseerRemoteSpeler(await supabaseRpc("ve_load_player",{p_code:code}));}
   function herstelRemoteVoortgang(data){
     const saved=data.progress&&typeof data.progress==="object"?data.progress:{};
     voortgang=legeVoortgang();
@@ -407,7 +425,23 @@
         sessionStorage.removeItem("vape-escape-sessie-speler");voortgang=legeVoortgang();gaNaar("start");
         window.alert("Je spelersaccount is verwijderd. Je bent teruggezet naar het hoofdmenu.");return;
       }
-      const local=spelerMetId(huidigeSpelerId);if(local){local.vrijgespeeldeNiveaus=data.unlocked_levels||[1];bewaarSpelers(leesSpelers());}
+      const lijst=leesSpelers();
+      let local=lijst.find(speler=>speler.id===huidigeSpelerId);
+      if(!local){
+        local={id:data.id||huidigeSpelerId,naam:data.name||data.naam||"Speler",character:data.character||{},score:Number(data.score)||0,coins:Number(data.coins)||0,voltooideNiveaus:Array.isArray(data.completed_levels)?data.completed_levels.length:0,vrijgespeeldeNiveaus:[1],status:"actief",laatsteActiviteit:Date.now()};
+        lijst.push(local);
+      }
+      const remoteLevels=Array.isArray(data.unlocked_levels)?data.unlocked_levels.map(Number).filter(level=>Number.isInteger(level)&&level>=1&&level<=5):[1];
+      const mergedLevels=Array.from(new Set([1,...(local.vrijgespeeldeNiveaus||[]),...remoteLevels])).sort((a,b)=>a-b);
+      const changed=mergedLevels.length!==(local.vrijgespeeldeNiveaus||[]).length||mergedLevels.some((level,index)=>level!==(local.vrijgespeeldeNiveaus||[])[index]);
+      local.vrijgespeeldeNiveaus=mergedLevels;
+      local.naam=data.name||data.naam||local.naam||"Speler";
+      local.score=Number(data.score)||0;
+      local.coins=Number(data.coins)||0;
+      local.character=data.character&&typeof data.character==="object"?data.character:local.character||{};
+      local.voltooideNiveaus=Array.isArray(data.completed_levels)?data.completed_levels.length:local.voltooideNiveaus||0;
+      bewaarSpelers(lijst);
+      if(changed&&pagina==="kaart")render();
     }catch(error){console.warn("Vape Escape accountcontrole:",error.message);}
   }
 
@@ -582,8 +616,25 @@
   }
   async function laadDashboardCloud(){
     if(!remoteAdminKey)return;
-    try{const response=await fetch(ADMIN_FUNCTION_URL,{headers:{"x-admin-key":remoteAdminKey,apikey:SUPABASE_KEY}});const data=await response.json();if(!response.ok)throw new Error(data.error||"Dashboard laden mislukt");remoteSpelers=data.players||[];}
-    catch(error){window.alert("Dashboardfout: "+error.message);}
+    try{
+      const response=await fetch(ADMIN_FUNCTION_URL,{headers:{"x-admin-key":remoteAdminKey,apikey:SUPABASE_KEY}});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(data.error||data.message||"Dashboard laden mislukt");
+      const rows=Array.isArray(data.players)?data.players:(Array.isArray(data.data)?data.data:[]);
+      remoteSpelers=rows.map(speler=>({
+        ...speler,
+        id:speler.id||speler.player_id||"",
+        name:String(speler.name||speler.naam||speler.player_name||"Onbekende speler"),
+        score:Number(speler.score)||0,
+        coins:Number(speler.coins)||0,
+        unlocked_levels:Array.isArray(speler.unlocked_levels)?speler.unlocked_levels.map(Number).filter(level=>Number.isInteger(level)&&level>=1&&level<=5):[1],
+        completed_levels:Array.isArray(speler.completed_levels)?speler.completed_levels:[],
+        character:speler.character&&typeof speler.character==="object"?speler.character:{}
+      }));
+    }catch(error){
+      remoteSpelers=null;
+      window.alert("Dashboardfout: "+error.message);
+    }
     if(pagina==="dashboard")render();
   }
   async function verwerkDashboardActie(knop){
@@ -595,8 +646,13 @@
       if(!remoteAdminKey){window.alert("Voer eerst de beheersleutel in.");return;}
       const body={id:knop.dataset.speler,action:actie==="dashboard-remove"?"delete":actie==="dashboard-all"?"all":"unlock",level:Number(knop.dataset.level)};
       if(actie==="dashboard-remove"&&!window.confirm("Deze speler verwijderen? Alle apparaten worden bij de volgende controle naar het hoofdmenu gestuurd."))return;
-      try{const response=await fetch(ADMIN_FUNCTION_URL,{method:"POST",headers:{"x-admin-key":remoteAdminKey,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw new Error(data.error||"Actie mislukt");await laadDashboardCloud();}
-      catch(error){window.alert(error.message);}
+      try{
+        const response=await fetch(ADMIN_FUNCTION_URL,{method:"POST",headers:{"x-admin-key":remoteAdminKey,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||data.ok===false)throw new Error(data.error||data.message||"Actie mislukt");
+        await laadDashboardCloud();
+        if(remoteSpelers&&pagina==="dashboard")render();
+      }catch(error){window.alert(error.message);}
     }
   }
 
