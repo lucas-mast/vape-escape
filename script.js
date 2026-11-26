@@ -392,12 +392,15 @@
     (speler&&speler.vrijgespeeldeNiveaus||[]).forEach(level=>vrij.add(level));
     return {p_code:spelersCode(),p_progress:voortgang,p_score:score(),p_coins:voortgang.coins,p_completed_levels:voortgang.completed.map((klaar,index)=>klaar?index+1:null).filter(Boolean),p_unlocked_levels:Array.from(vrij),p_character:voortgang.character};
   }
+  let spelerSaveQueue = Promise.resolve();
   async function synchroniseerSpeler() {
     if(!huidigeSpelerId||!spelersCode())return;
     const nu=Date.now(), spelers=leesSpelers(), speler=spelers.find(item=>item.id===huidigeSpelerId);
-    if(speler){speler.score=score();speler.coins=voortgang.coins;speler.voltooideNiveaus=voortgang.completed.filter(Boolean).length;speler.character=voortgang.character;speler.laatsteActiviteit=nu;speler.status="actief";bewaarSpelers(spelers);}
+    if(speler){speler.score=score();speler.coins=voortgang.coins;speler.voltooideNiveaus=voortgang.completed.filter(Boolean).length;speler.character={...voortgang.character};speler.laatsteActiviteit=nu;speler.status="actief";bewaarSpelers(spelers);}
     laatsteActiviteitBijgewerkt=nu;
-    try{await supabaseRpc("ve_save_player",remoteSpelerPayload());}catch(error){console.warn("Vape Escape cloud save:",error.message);}
+    const payload=remoteSpelerPayload();
+    spelerSaveQueue=spelerSaveQueue.catch(()=>{}).then(()=>supabaseRpc("ve_save_player",payload));
+    try{await spelerSaveQueue;}catch(error){console.warn("Vape Escape cloud save:",error.message);}
   }
   function normaliseerRemoteSpeler(data){
     if(Array.isArray(data))return data[0]||null;
@@ -408,13 +411,24 @@
     return data&&typeof data==="object"?data:null;
   }
   async function laadRemoteSpeler(code){return normaliseerRemoteSpeler(await supabaseRpc("ve_load_player",{p_code:code}));}
+  function normaliseerKarakter(bron){
+    const basis=legeVoortgang().character;
+    if(!bron||typeof bron!=="object"||Array.isArray(bron))return basis;
+    return {
+      naam:typeof bron.naam==="string"&&bron.naam.trim()?bron.naam.trim().slice(0,16):basis.naam,
+      kleur:KARAKTER_KLEUREN.includes(bron.kleur)?bron.kleur:basis.kleur,
+      accessoire:KARAKTER_ACCESSOIRES.includes(bron.accessoire)?bron.accessoire:basis.accessoire,
+      effect:KARAKTER_EFFECTEN.includes(bron.effect)?bron.effect:basis.effect
+    };
+  }
   function herstelRemoteVoortgang(data){
     const saved=data.progress&&typeof data.progress==="object"?data.progress:{};
     voortgang=legeVoortgang();
     if(Array.isArray(saved.completed))voortgang.completed=voortgang.completed.map((_,i)=>saved.completed[i]===true);
     if(saved.answers&&typeof saved.answers==="object")voortgang.answers=Object.fromEntries(Object.entries(saved.answers).filter(([k,v])=>validIdSet.has(k)&&typeof v==="boolean"));
     if(Number.isFinite(saved.coins))voortgang.coins=Math.max(0,saved.coins);
-    if(saved.character&&typeof saved.character==="object")voortgang.character={...voortgang.character,...saved.character};
+    if(Number.isFinite(saved.runnerBest))voortgang.runnerBest=Math.max(0,Math.min(RUNNER_GOAL_COINS,Math.floor(saved.runnerBest)));
+    voortgang.character=normaliseerKarakter(saved.character||data.character);
     try{localStorage.setItem(STORAGE_KEY,JSON.stringify(voortgang));}catch(error){}
   }
   async function controleerVerwijderd(){
@@ -1011,15 +1025,19 @@
 
   function karakterVoorbeeldSvg() {
     const kleur = voortgang.character.kleur;
+    const accessoire = voortgang.character.accessoire;
+    const accessoireAchtergrond = ["cape","vleugels"].includes(accessoire) ? tekenAccessoireSvg(accessoire,kleur) : "";
+    const accessoireVoorgrond = ["cape","vleugels"].includes(accessoire) ? "" : tekenAccessoireSvg(accessoire,kleur);
     return '<svg viewBox="0 0 160 170" role="img" aria-label="Voorbeeld van jouw eigen karakter">' +
       '<ellipse cx="80" cy="157" rx="42" ry="7" fill="rgba(66,61,56,.12)"/>' +
       '<path d="M49 127 Q41 148 31 151 Q21 160 44 162 Q65 160 69 139Z" fill="' + kleur + '"/>' +
       '<path d="M93 139 Q99 160 122 162 Q143 158 129 151 Q115 149 111 126Z" fill="' + kleur + '"/>' +
       '<path d="M80 39 C111 39 131 60 131 101 C131 137 111 151 80 151 C49 151 29 137 29 101 C29 60 49 39 80 39Z" fill="' + kleur + '" stroke="#423d38" stroke-width="3"/>' +
-      tekenAccessoireSvg(voortgang.character.accessoire, kleur) +
+      accessoireAchtergrond +
       '<ellipse cx="63" cy="91" rx="5" ry="7" fill="#423d38"/><ellipse cx="98" cy="91" rx="5" ry="7" fill="#423d38"/>' +
       '<path d="M64 111 Q80 126 96 111" fill="none" stroke="#423d38" stroke-width="3" stroke-linecap="round"/>' +
       '<path d="M48 69 Q55 59 65 63" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="5" stroke-linecap="round"/>' +
+      accessoireVoorgrond +
       (voortgang.character.effect === "neon" ? '<circle cx="80" cy="96" r="66" fill="none" stroke="' + kleur + '" stroke-width="3" stroke-dasharray="8 6"/>' : voortgang.character.effect === "sterren" ? '<g fill="#faff00"><path d="M23 47l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/><path d="M135 52l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path d="M126 132l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>' : voortgang.character.effect === "vonken" ? '<g stroke="' + kleur + '" stroke-width="4" stroke-linecap="round"><path d="M15 82l12 0m-6-6v12M133 82h12m-6-6v12M80 8v12m-6-6h12"/></g>' : '<g fill="#d8eaff"><circle cx="17" cy="117" r="7"/><circle cx="27" cy="109" r="9"/><circle cx="39" cy="117" r="7"/><circle cx="121" cy="117" r="7"/><circle cx="133" cy="109" r="9"/><circle cx="143" cy="117" r="7"/></g>') +
       '</svg>';
   }
