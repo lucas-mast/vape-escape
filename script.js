@@ -506,7 +506,9 @@
 
   function renderSpelerRij(speler, actief) {
     const levels = [1, 2, 3, 4, 5].map(level =>
-      '<button class="dashboard-levelknop' + ((speler.vrijgespeeldeNiveaus || []).includes(level) ? ' vrij' : '') + '" type="button" data-action="dashboard-unlock" data-speler="' + escapeHtml(speler.id) + '" data-level="' + level + '" title="Niveau ' + level + ' vrijspelen">N' + level + '</button>'
+      level === 1
+        ? '<button class="dashboard-levelknop vrij" type="button" disabled title="Niveau 1 is standaard vrij">N1</button>'
+        : '<button class="dashboard-levelknop' + ((speler.vrijgespeeldeNiveaus || []).includes(level) ? ' vrij' : '') + '" type="button" data-action="dashboard-unlock" data-speler="' + escapeHtml(speler.id) + '" data-level="' + level + '" title="Niveau ' + level + ' vrijspelen">N' + level + '</button>'
     ).join("");
     return '<tr><td><strong>' + escapeHtml(speler.naam) + '</strong><small class="dashboard-subregel">' + (actief ? "ACTIEF" : "OFFLINE") + '</small></td>' +
       '<td><div class="dashboard-bink-rij">' + miniBink(speler) + '</div></td>' +
@@ -616,9 +618,11 @@
   }
   async function laadDashboardCloud(){
     if(!remoteAdminKey)return;
+    let unauthorized=false;
     try{
       const response=await fetch(ADMIN_FUNCTION_URL,{headers:{"x-admin-key":remoteAdminKey,apikey:SUPABASE_KEY}});
       const data=await response.json().catch(()=>({}));
+      if(response.status===401)unauthorized=true;
       if(!response.ok)throw new Error(data.error||data.message||"Dashboard laden mislukt");
       const rows=Array.isArray(data.players)?data.players:(Array.isArray(data.data)?data.data:[]);
       remoteSpelers=rows.map(speler=>({
@@ -633,6 +637,10 @@
       }));
     }catch(error){
       remoteSpelers=null;
+      if(unauthorized){
+        remoteAdminKey="";
+        try{sessionStorage.removeItem("ve-dashboard-key");}catch(storageError){}
+      }
       window.alert("Dashboardfout: "+error.message);
     }
     if(pagina==="dashboard")render();
